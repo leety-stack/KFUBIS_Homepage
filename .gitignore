@@ -9,3 +9,10 @@ Thumbs.db
 ~$*
 제안서/png2/
 제안서/assets/
+server/pb_data/
+server/bin/
+admin/node_modules/
+admin/dist/
+.env
+admin/tests/shots/
+*.log

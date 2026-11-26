@@ -1,0 +1,23 @@
+# 한방유비스 홈페이지 — 운영 배포용
+# 관리자 화면(admin)은 빌드 결과(admin/dist)를 웹서버에서 서비스하고 /api 를 PocketBase로 넘긴다
+services:
+  pocketbase:
+    build: ./server
+    container_name: kfubis-cms-pocketbase
+    ports:
+      - "${PB_PORT:-8095}:8090"
+    environment:
+      PB_ADMIN_EMAIL: ${PB_ADMIN_EMAIL}        # PocketBase 시스템 관리자 (/_/)
+      PB_ADMIN_PASSWORD: ${PB_ADMIN_PASSWORD}
+      CMS_ADMIN_EMAIL: ${CMS_ADMIN_EMAIL}      # 관리자 화면 첫 계정 (처음 한 번만 생성)
+      CMS_ADMIN_PASSWORD: ${CMS_ADMIN_PASSWORD}
+    volumes:
+      - ./server/pb_data:/pb/pb_data
+      - ./server/pb_migrations:/pb/pb_migrations
+      - ./server/pb_hooks:/pb/pb_hooks
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8090/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

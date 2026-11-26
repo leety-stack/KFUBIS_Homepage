@@ -1,0 +1,25 @@
+/* 실제 앱에서 더한 것 (시안 admin.css 위에) */
+body{margin:0}
+.view.on{display:grid;gap:18px}
+aside .brand img{height:30px}
+aside a{align-items:center;gap:6px}
+aside a span{flex:1}
+aside a em.soon{background:none;min-width:0;height:auto;font-style:normal;font-size:10px;font-weight:700;color:#94a3b8;border:1px solid #334155;border-radius:4px;padding:1px 5px}
+.login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#0f172a,#1d395e)}
+.login-box{background:#fff;border-radius:16px;padding:40px 36px;width:min(400px,92vw);display:grid;gap:14px;box-shadow:0 30px 60px rgba(0,0,0,.3)}
+.login-box img{height:36px;justify-self:start}
+.login-box h1{font-size:20px;margin-bottom:6px}
+.login-box label{display:grid;gap:6px;font-weight:600;font-size:13px}
+.login-box .btn{justify-content:center;padding:12px;font-size:15px}
+.login-err{color:var(--pri);font-size:13px;background:#fef2f2;padding:10px 12px;border-radius:8px}
+.imgin{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.imgin img,.imgin .noimg{width:160px;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.imgin .noimg{display:grid;place-items:center;color:var(--sub);background:#f9fafb;font-size:13px}
+.imgbtns{display:grid;gap:6px;justify-items:start}
+.filesin{display:grid;gap:6px}
+.filesin .fi{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.filesin .fi a{color:var(--blue)}
+.filesin .drop{cursor:pointer}
+.rte-a h3{font-size:17px;margin:8px 0}
+.rte-a ul{padding-left:20px}
+.rte-a p{margin:4px 0}

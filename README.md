@@ -28,3 +28,24 @@ B2B·B2G(대기업·공공기관) 대응을 위한 한방유비스 대표홈페�
 
 - 사진·로고는 현재 홈페이지(kfubis.co.kr) 자산이며 사진과 실적 이름의 짝은 확인 전입니다.
 - 게시판 글·날짜, 관리자 화면의 숫자는 화면 구성을 보여 주기 위한 예시입니다.
+
+## 개발 (관리자) — 1단계
+
+| 폴더 | 내용 |
+|---|---|
+| `server/` | PocketBase 0.39.4 — `pb_migrations/`(데이터 구조·권한 규칙·초기 데이터), `pb_hooks/`, Dockerfile |
+| `admin/` | 관리자 화면 — React + Vite + TypeScript, 개발 포트 5183 |
+
+**로컬 실행**
+```bash
+# 1) PocketBase (8095) — 윈도우 실행 파일은 server/bin/ 에 직접 받기 (저장소에 안 올림)
+cd server && ./bin/pocketbase.exe serve --http=127.0.0.1:8095 --dir pb_data --migrationsDir pb_migrations --hooksDir pb_hooks
+# 2) 관리자 화면 (5183, /api 는 8095로 넘김)
+cd admin && npm install && npm run dev
+```
+- 개발용 첫 계정: `admin@kfubis.local` / `kfubis-dev-1234` (운영은 `.env`의 `CMS_ADMIN_EMAIL`·`CMS_ADMIN_PASSWORD`로 처음 한 번 생성 — 반드시 바꿀 것)
+- 권한은 서버에서도 확인: 역할(`roles.perms`)의 메뉴별 단계 0 없음 · 1 보기 · 2 수정(임시저장까지) · 3 게시. 최고 관리자는 전부.
+- 점검: `py -3.10 server/tests/perm_test.py`(서버 권한 16개), `py -3.10 admin/tests/ui_test.py`(화면 13개)
+
+**1단계에서 동작하는 것:** 로그인, 대시보드, 게시판 6종(실적·소식·R&D·인증·자료실·채용 — 목록·필터·검색·노출 스위치·편집 팝업·국문/영문·사진·첨부·달력·예약 게시). 나머지 메뉴는 "준비" 표시.
+**운영 배포:** `docker compose up -d --build` (PocketBase), `admin/` 은 `npm run build` 결과를 웹서버에 올리고 `/api` 를 PocketBase로 넘김.
