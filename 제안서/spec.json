@@ -3,14 +3,15 @@
  "out": "[한방유비스 홈페이지] 대표홈페이지 개편_제안자료.pptx",
  "shots": "shots",
  "brand": {
-  "name": "(주)위트코시스템즈"
+  "name": "",
+  "copyright": " "
  },
  "slides": [
   {
    "type": "cover",
    "title": "대표홈페이지를\n영업 창구로",
    "subtitle": "한방유비스 대표홈페이지 개편 제안 — 대기업·공공기관 대응",
-   "meta": "2026. 11.  (주)위트코시스템즈",
+   "meta": "2026. 11.",
    "images": [
     [
      "showcase_A.png",

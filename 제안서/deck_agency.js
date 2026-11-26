@@ -11,7 +11,7 @@ const C = { dark: "0E1014", dark2: "171A20", off: "F3F1EC", white: "FFFFFF", ink
 const pptx = new pptxgen();
 pptx.layout = "LAYOUT_WIDE"; // 13.333 x 7.5
 pptx.title = "한방유비스 대표홈페이지 개편 제안";
-pptx.author = "(주)위트코시스템즈";
+pptx.author = "";
 const W = 13.333, H = 7.5;
 const shadow = () => ({ type: "outer", blur: 18, offset: 6, angle: 90, color: "000000", opacity: 0.28 });
 
@@ -48,7 +48,7 @@ function phone(s, img, x, y, w) {
   s.addShape(pptx.ShapeType.rect, { x: 0.72, y: 4.95, w: 0.5, h: 0.06, fill: { color: C.red }, line: { color: C.red } });
   T(s, "한방유비스 대표홈페이지 개편 제안", { x: 0.7, y: 5.2, w: 6, h: 0.45, fontSize: 20, fontFace: B, color: C.white });
   T(s, "대기업 · 공공기관과 일하는 회사를 위한 B2B 홈페이지", { x: 0.7, y: 5.7, w: 6, h: 0.35, fontSize: 12.5, color: "B8BDC6" });
-  T(s, "2026. 11   |   (주)위트코시스템즈", { x: 0.7, y: 6.75, w: 6, h: 0.3, fontSize: 10, color: C.mute });
+  T(s, "2026. 11", { x: 0.7, y: 6.75, w: 6, h: 0.3, fontSize: 10, color: C.mute });
   s.addImage({ path: A("A_show.jpg"), x: 6.55, y: 1.25, w: 7.6, h: 7.6 / 1.567 });
 }
 
@@ -293,7 +293,6 @@ CON.forEach((c, i) => {
   T(s, "THANK\nYOU", { x: 0.65, y: 1.6, w: 6, h: 2.8, fontSize: 80, fontFace: EB, color: C.white, charSpacing: -2, lineSpacingMultiple: 0.88 });
   s.addShape(pptx.ShapeType.rect, { x: 0.72, y: 4.6, w: 0.5, h: 0.06, fill: { color: C.red }, line: { color: C.red } });
   T(s, "시안은 브라우저로 직접 열어 보실 수 있습니다.\n국문 / 영문, PC / 폰, 관리자 화면까지 실제로 눌러 보실 수 있습니다.", { x: 0.7, y: 4.85, w: 6, h: 0.8, fontSize: 12, color: "B8BDC6", lineSpacingMultiple: 1.5 });
-  T(s, "(주)위트코시스템즈", { x: 0.7, y: 6.55, w: 5, h: 0.3, fontSize: 11, fontFace: B, color: C.white });
 }
 
 pptx.writeFile({ fileName: OUT }).then((f) => console.log("written", f));
