@@ -179,6 +179,76 @@ s, _ = req("DELETE", f"/api/collections/roles/records/{roles['최고 관리자']
 s, d = req("POST", "/api/collections/roles/records", {"name": "삭제시험 역할", "perms": {"dash": 1}}, token=top)
 s, _ = req("DELETE", f"/api/collections/roles/records/{d.get('id')}", token=top); check(f"안 쓰는 역할은 삭제 ({s})", s == 204)
 
+# ── 5단계: 다국어·페이지·검색 노출·접속 통계·변경 이력 ──
+promo_id = mkuser("promo@test.local", "홍보 담당"); promo = login("promo@test.local", "test-12345")
+s, d = req("POST", "/api/collections/roles/records", {"name": "시험 페이지 수정", "perms": {"page": 2, "history": 1}}, token=top); r2 = d.get("id")
+s, d = req("POST", "/api/collections/users/records", {"email": "pg2@test.local", "password": "test-12345", "passwordConfirm": "test-12345", "name": "페이지 수정", "role": r2, "status": "사용"}, token=top); pg2_id = d.get("id")
+pg2 = login("pg2@test.local", "test-12345")
+# 다국어 문구
+s, d = req("GET", "/api/collections/i18n/records?perPage=200"); check(f"다국어 문구 공개 읽기 ({d.get('totalItems')}개)", s == 200 and d.get("totalItems", 0) >= 10)
+ik = d["items"][0]
+s, _ = req("PATCH", f"/api/collections/i18n/records/{ik['id']}", {"en": "x"}); check(f"비로그인 문구 수정 막힘 ({s})", s in (403, 404))
+s, _ = req("PATCH", f"/api/collections/i18n/records/{ik['id']}", {"en": "x"}, token=bonbu); check(f"권한 없으면 문구 수정 막힘 ({s})", s in (403, 404))
+s, _ = req("PATCH", f"/api/collections/i18n/records/{ik['id']}", {"en": ik["en"] + " (test)"}, token=promo); check(f"홍보 담당 문구 수정 ({s})", s == 200)
+# 페이지: 임시저장은 홈페이지에 안 보이고 게시해야 보임
+s, d = req("GET", "/api/collections/pages/records"); check(f"비로그인은 페이지 원본(임시저장 포함) 못 봄 ({d.get('totalItems', 0)}건)", d.get("totalItems", 0) == 0)
+pid = req("GET", "/api/collections/pages/records", token=top)[1]["items"][0]["id"]
+s, page0 = req("GET", "/api/site/page?slug=company/ceo"); check(f"홈페이지용 페이지 읽기 ({s}, 블록 {len(page0.get('blocks', []))})", s == 200 and page0.get("blocks"))
+nb = [dict(page0["blocks"][0], h={"ko": "시험 제목", "en": "Test"})] + page0["blocks"][1:]
+s, _ = req("PATCH", f"/api/collections/pages/records/{pid}", {"draft": nb, "live": nb}, token=pg2); check(f"'수정' 권한은 게시 못 함 ({s})", s in (400, 403, 404))
+s, _ = req("PATCH", f"/api/collections/pages/records/{pid}", {"draft": nb}, token=pg2); check(f"'수정' 권한은 임시저장 가능 ({s})", s == 200)
+check("임시저장은 홈페이지에 안 보임", req("GET", "/api/site/page?slug=company/ceo")[1]["blocks"][0]["h"]["ko"] != "시험 제목")
+s, _ = req("PATCH", f"/api/collections/pages/records/{pid}", {"live": nb, "published": "2026-11-26 00:00:00.000Z"}, token=promo); check(f"'게시' 권한으로 게시 ({s})", s == 200)
+check("게시하면 홈페이지에 보임", req("GET", "/api/site/page?slug=company/ceo")[1]["blocks"][0]["h"]["ko"] == "시험 제목")
+# 검색 노출
+s, d = req("GET", "/api/collections/seo_site/records"); site = d["items"][0]; check("검색 노출 사이트 설정 공개 읽기", s == 200 and site.get("site_name"))
+s, _ = req("PATCH", f"/api/collections/seo_site/records/{site['id']}", {"naver": "test-code"}, token=promo); check(f"홍보 담당(수정) 사이트 설정 저장 ({s})", s == 200)
+s, _ = req("POST", "/api/collections/seo_pages/records", {"label": "x", "path": "/x"}, token=promo); check(f"'수정' 권한은 검색 설정 페이지 추가 못 함 ({s})", s in (400, 403))
+req("PATCH", f"/api/collections/seo_site/records/{site['id']}", {"naver": ""}, token=top)
+sm = requests.get(f"{B}/sitemap.xml"); check(f"sitemap.xml ({sm.status_code})", sm.status_code == 200 and "/company/ceo" in sm.text and 'hreflang="en"' in sm.text)
+rb = requests.get(f"{B}/robots.txt").text; check("robots.txt (사이트맵 주소·관리자 제외)", "Sitemap:" in rb and "Disallow: /api/" in rb)
+# 접속 통계
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0) Chrome/120"}
+import uuid
+sid = "t" + uuid.uuid4().hex[:12]
+st0 = req("GET", "/api/cms/stats?days=1", token=top)[1]
+requests.post(f"{B}/api/site/hit", json={"path": "/", "ref": "https://search.naver.com/search?q=소방감리", "sid": sid}, headers=UA)
+requests.post(f"{B}/api/site/hit", json={"path": "/projects", "ref": "https://kfubis.co.kr/", "sid": sid}, headers=UA)
+requests.post(f"{B}/api/site/hit", json={"path": "/", "sid": "t" + uuid.uuid4().hex[:12], "utm": "expo2026", "lang": "en"}, headers=UA)
+requests.post(f"{B}/api/site/hit", json={"path": "/", "sid": "bot1"}, headers={"User-Agent": "Googlebot/2.1"})
+s, d = req("GET", "/api/collections/visits/records"); check(f"비로그인은 접속 기록 못 봄 ({s})", s in (403, 404) or d.get("totalItems", 0) == 0)
+s, _ = req("GET", "/api/cms/stats", token=bonbu); check(f"권한 없으면 통계 못 봄 ({s})", s == 403)
+s, st = req("GET", "/api/cms/stats?days=1", token=promo)
+src = {x["name"]: x["n"] for x in st.get("sources", [])}; src0 = {x["name"]: x["n"] for x in st0.get("sources", [])}
+check(f"방문자 2명 늘고 로봇 제외 ({st0.get('visitors')}→{st.get('visitors')})", st.get("visitors", 0) - st0.get("visitors", 0) == 2)
+check("들어온 곳: 네이버 검색·홍보 링크 (처음 연 페이지 기준)", src.get("네이버 검색", 0) - src0.get("네이버 검색", 0) == 1 and src.get("홍보 링크", 0) - src0.get("홍보 링크", 0) == 1)
+check("홍보 링크 꼬리표·영문 방문 집계", any(x["name"] == "expo2026" for x in st.get("utms", [])) and st.get("en", 0) >= 1)
+# 변경 이력·되돌리기
+def logs(rid): return req("GET", "/api/collections/change_log/records?sort=-created&perPage=20&filter=" + urllib.parse.quote(f'rec_id="{rid}"'), token=top)[1].get("items", [])
+L = logs(pid); check(f"페이지 변경이 이력에 남음 ({len(L)}건, 누가: {L[0]['who_name'] if L else '-'})", len(L) >= 2 and L[0]["who_name"] == "홍보 담당" and "live" in L[0]["fields"])
+s, _ = req("GET", "/api/collections/change_log/records", token=bonbu); check(f"권한 없으면 이력 못 봄 ({_.get('totalItems', 0)}건)", _.get("totalItems", 0) == 0)
+s, _ = req("POST", "/api/cms/history/revert", {"id": L[0]["id"]}, token=pg2); check(f"'보기' 권한은 되돌리기 못 함 ({s})", s == 403)
+s, _ = req("POST", "/api/cms/history/revert", {"id": L[0]["id"]}, token=top); check(f"게시 되돌리기 ({s})", s == 200)
+check("되돌리면 홈페이지도 이전 게시본", req("GET", "/api/site/page?slug=company/ceo")[1]["blocks"][0]["h"]["ko"] == page0["blocks"][0]["h"]["ko"])
+s, _ = req("POST", "/api/cms/history/revert", {"id": L[0]["id"]}, token=top); check(f"같은 변경 두 번 되돌리기 막힘 ({s})", s == 400)
+# 충돌: 그 뒤 또 바뀌면 409, force 로 강제
+s, w = req("POST", "/api/collections/i18n/records", {"key": "test.history", "area": "시험", "ko": "이력 시험 문구"}, token=top); nid2 = w.get("id")
+req("PATCH", f"/api/collections/i18n/records/{nid2}", {"ko": "이력 시험 문구 v2"}, token=top)
+req("PATCH", f"/api/collections/i18n/records/{nid2}", {"ko": "이력 시험 문구 v3"}, token=top)
+L = logs(nid2); v2 = [x for x in L if x["action"] == "수정"][-1]
+s, d = req("POST", "/api/cms/history/revert", {"id": v2["id"]}, token=top); check(f"뒤에 또 바뀐 변경은 확인 요청 ({s})", s == 409)
+s, _ = req("POST", "/api/cms/history/revert", {"id": v2["id"], "force": True}, token=top)
+check(f"확인 후 되돌리기 ({s})", s == 200 and req("GET", f"/api/collections/i18n/records/{nid2}", token=top)[1].get("ko") == "이력 시험 문구")
+req("DELETE", f"/api/collections/i18n/records/{nid2}", token=top)
+dl = [x for x in logs(nid2) if x["action"] == "삭제"][0]
+s, _ = req("POST", "/api/cms/history/revert", {"id": dl["id"]}, token=top); check(f"삭제 되돌리기 → 다시 만듦 ({s})", s == 200 and req("GET", f"/api/collections/i18n/records/{nid2}", token=top)[0] == 200)
+ad = [x for x in logs(nid2) if x["action"] == "추가"][0]
+s, _ = req("POST", "/api/cms/history/revert", {"id": ad["id"]}, token=top); check(f"추가 되돌리기 → 지움 ({s})", s == 200 and req("GET", f"/api/collections/i18n/records/{nid2}", token=top)[0] == 404)
+ul = logs(promo_id); check("계정 이력에 비밀번호 안 남음", bool(ul) and all("password" not in json.dumps(x["after"] or {}) and "tokenKey" not in json.dumps(x["after"] or {}) for x in ul))
+req("PATCH", f"/api/collections/i18n/records/{ik['id']}", {"en": ik["en"]}, token=top)
+for i in [promo_id, pg2_id]: req("DELETE", f"/api/collections/users/records/{i}", token=top)
+req("DELETE", f"/api/collections/roles/records/{r2}", token=top)
+
 # 정리
 req("PATCH", f"/api/collections/site_settings/records/{_st['id']}", {"dept_emails": _de}, token=top)
 for c, i in [("works", wid), ("jobs", jid), ("news", nid)]:

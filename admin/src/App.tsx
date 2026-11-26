@@ -12,6 +12,11 @@ import Company from "./pages/Company";
 import Users from "./pages/Users";
 import Roles from "./pages/Roles";
 import Logins from "./pages/Logins";
+import I18n from "./pages/I18n";
+import Seo from "./pages/Seo";
+import Stats from "./pages/Stats";
+import History from "./pages/History";
+import PageEdit from "./pages/PageEdit";
 import { AuthProvider, useAuth } from "./lib/auth";
 import { ForcePwChange } from "./components/PwChange";
 import { ToastProvider, Opt } from "./components/ui";
@@ -27,7 +32,7 @@ function Page() {
   if (key === "dash") return <Dashboard />;
   if (BOARDS[key]) return <Board boardKey={key} />;
   if (INBOX[key]) return <Inbox inboxKey={key} />;
-  const P: Record<string, () => React.ReactElement> = { menu: Menus, banner: Banners, popup: Popups, main: MainSections, company: Company, users: Users, roles: Roles, logins: Logins };
+  const P: Record<string, () => React.ReactElement> = { menu: Menus, banner: Banners, popup: Popups, main: MainSections, company: Company, users: Users, roles: Roles, logins: Logins, i18n: I18n, seo: Seo, stats: Stats, history: History, page: PageEdit };
   if (P[key]) { const C = P[key]; return <C />; }
   return (
     <section className="view on">

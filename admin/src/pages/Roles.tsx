@@ -4,9 +4,9 @@ import { useAuth } from "../lib/auth";
 import { errText, pb, type Rec } from "../lib/pb";
 import { MENU, type MenuKey } from "../menu";
 
-// 메뉴 성격별 단계: c 콘텐츠(없음·보기·수정·게시), q 접수(없음·보기·처리), a 입사 지원(처리 + 지원서 삭제), v 보기만
-const KIND: Partial<Record<MenuKey, "q" | "a" | "v">> = { dash: "v", inquiry: "q", certreq: "q", apply: "a", stats: "v", logins: "v" };
-const LV = { c: ["없음", "보기", "수정", "게시"], q: ["없음", "보기", "처리"], a: ["없음", "보기", "처리", "삭제까지"], v: ["없음", "보기"] };
+// 메뉴 성격별 단계: c 콘텐츠(없음·보기·수정·게시), q 접수(없음·보기·처리), a 입사 지원(처리 + 지원서 삭제), v 보기만, h 이력(없음·보기·되돌리기)
+const KIND: Partial<Record<MenuKey, "q" | "a" | "v" | "h">> = { dash: "v", inquiry: "q", certreq: "q", apply: "a", stats: "v", logins: "v", history: "h" };
+const LV = { c: ["없음", "보기", "수정", "게시"], q: ["없음", "보기", "처리"], a: ["없음", "보기", "처리", "삭제까지"], v: ["없음", "보기"], h: ["없음", "보기", "되돌리기"] };
 const cls = (n: number, max: number) => (n === 0 ? 0 : n === max ? 3 : n === 1 ? 1 : 2);
 
 export default function Roles() {
@@ -72,7 +72,7 @@ export default function Roles() {
               return <li key={i.key} className="pr"><span><b>{i.label}</b>{i.option && <Opt />}</span>
                 <span className="seg">{L.map((t, n) => <button key={n} type="button" disabled={ro} className={n === v ? "on lvs" + cls(n, max) : ""} onClick={() => setP(i.key, n)}>{t}</button>)}</span></li>;
             })])}</ul>
-          <div className="panel-bd help">"수정"은 임시저장까지, "게시"는 홈페이지 반영·노출 켜기까지, "처리"는 상태 변경·메모·답장까지입니다. 관리자 계정·역할·권한은 최고 관리자만 고칠 수 있습니다.</div>
+          <div className="panel-bd help">"수정"은 임시저장까지, "게시"는 홈페이지 반영·노출 켜기까지, "처리"는 상태 변경·메모·답장까지, "되돌리기"는 변경 이력에서 바꾸기 전으로 돌리기까지입니다. 관리자 계정·역할·권한은 최고 관리자만 고칠 수 있습니다.</div>
         </section>}
       </div>
     </section>

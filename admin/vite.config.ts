@@ -7,6 +7,6 @@ export default defineConfig({
   server: {
     port: 5183,
     strictPort: true,
-    proxy: { "/api": "http://127.0.0.1:8095" },
+    proxy: { "/api": "http://127.0.0.1:8095", "/sitemap.xml": "http://127.0.0.1:8095", "/robots.txt": "http://127.0.0.1:8095" },
   },
 });

@@ -14,6 +14,8 @@ export default function Menus() {
   const [form, setForm] = useState<Rec | null>(null);
   const [from, setFrom] = useState<number | null>(null);
   const [dragParent, setDragParent] = useState<string | null>(null);
+  const [pageList, setPageList] = useState<Rec[] | null>(null); // 페이지 편집 보기 권한이 없으면 null → 글자로 입력
+  useEffect(() => { pb.collection("pages").getFullList({ sort: "name", fields: "id,name,slug" }).then((r) => setPageList(r as Rec[])).catch(() => setPageList(null)); }, []);
 
   const load = useCallback(async () => {
     const r = await pb.collection("menus").getFullList({ sort: "sort,created" });
@@ -92,7 +94,7 @@ export default function Menus() {
                 <div className="f"><label>누르면 이동할 곳</label>
                   <div className="chips">{TYPES.map(([k, l]) => <label key={k}><input type="radio" name="lt" checked={form.link_type === k} disabled={ro} onChange={() => set("link_type", k)} /> {l}</label>)}</div></div>
                 {form.link_type === "board" && <div className="f"><label>연결 게시판</label><select value={form.target || ""} disabled={ro} onChange={(e) => set("target", e.target.value)}><option value="">선택</option>{BOARD_TARGETS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></div>}
-                {form.link_type === "page" && <div className="f"><label>연결 페이지</label><input value={form.target || ""} disabled={ro} placeholder="예: 인사말" onChange={(e) => set("target", e.target.value)} /><span className="help">페이지 내용은 "페이지 편집(옵션)"에서 만듭니다</span></div>}
+                {form.link_type === "page" && <div className="f"><label>연결 페이지</label>{pageList && pageList.length ? <select value={form.target || ""} disabled={ro} onChange={(e) => set("target", e.target.value)}><option value="">선택</option>{pageList.map((p) => <option key={p.id} value={p.slug}>{p.name} ({p.slug})</option>)}{form.target && !pageList.some((p) => p.slug === form.target) && <option value={form.target}>{form.target} (없는 페이지)</option>}</select> : <input value={form.target || ""} disabled={ro} placeholder="예: company/ceo" onChange={(e) => set("target", e.target.value)} />}<span className="help">페이지 내용은 "페이지 편집(옵션)"에서 만듭니다</span></div>}
                 {form.link_type === "url" && <div className="f"><label>외부 주소</label><input value={form.target || ""} disabled={ro} placeholder="https://" onChange={(e) => set("target", e.target.value)} /></div>}
                 {form.link_type !== "none" && <label className="ck"><input type="checkbox" checked={!!form.new_window} disabled={ro} onChange={(e) => set("new_window", e.target.checked)} /> 새 창으로 열기</label>}
               </div>
