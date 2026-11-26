@@ -29,8 +29,8 @@ function fillTarget(){var t=sel.type,s=document.getElementById('m-target'),w=doc
  w.style.display=t==='none'?'none':'';
  if(t==='url'){s.outerHTML='<input id="m-target">';s=document.getElementById('m-target');s.value=sel.target||'https://';l.textContent='외부 주소';}
  else{if(s.tagName!=='SELECT'){s.outerHTML='<select id="m-target"></select>';s=document.getElementById('m-target');}
-  var src=t==='board'?BOARDS:PAGES;l.textContent=t==='board'?'연결 게시판':'연결 페이지';s.innerHTML=src.map(function(x){return '<option'+(x===sel.target?' selected':'')+'>'+x+'</option>'}).join('')+'<option value="__new">+ 새 페이지 만들기</option>';}
- s.oninput=function(){sel.target=s.value;if(s.value==='__new'){toast('빈 페이지를 만들고 페이지 편집으로 이동합니다 (시안)')}};}
+  var src=t==='board'?BOARDS:PAGES;l.textContent=t==='board'?'연결 게시판':'연결 페이지';s.innerHTML=src.map(function(x){return '<option'+(x===sel.target?' selected':'')+'>'+x+'</option>'}).join('')+'';}
+ s.oninput=function(){sel.target=s.value;};}
 function fillForm(){document.getElementById('mtitle').textContent='메뉴 설정 — '+sel.ko;
  ['ko','en','slug'].forEach(function(k){document.getElementById('m-'+k).value=sel[k]||''});document.getElementById('m-slug-v').textContent=sel.slug||'';
  document.querySelectorAll('#m-type input').forEach(function(r){r.checked=r.value===sel.type});
@@ -86,7 +86,7 @@ function renderProps(){var b=B[bs],h='';document.getElementById('pr-title').text
  var sg=document.getElementById('side-seg');if(sg)sg.querySelectorAll('button').forEach(function(x){x.onclick=function(){b.t=x.dataset.t;renderAll();dirty();}});}
 function renderAll(){renderBlocks();renderProps();}
 function dirty(){var s=document.getElementById('pg-st');s.textContent='수정 중 · 게시 전';s.className='tag t-wait';}
-function pub(){var s=document.getElementById('pg-st');s.textContent='게시됨 '+new Date().toTimeString().slice(0,5);s.className='tag t-on';toast('홈페이지에 게시했습니다 — 이전 버전은 변경 이력에 남습니다');}
+function pub(){var s=document.getElementById('pg-st');s.textContent='게시됨 '+new Date().toTimeString().slice(0,5);s.className='tag t-on';toast('홈페이지에 게시했습니다');}
 function delBlock(){if(!B.length)return;B.splice(bs,1);bs=Math.max(0,bs-1);renderAll();dirty();}
 document.querySelectorAll('.palette button').forEach(function(x){x.onclick=function(){var t=x.dataset.add,n;
  if(t==='hero')n={t:t,img:LIB[2],sub:{ko:'작은 제목',en:''},h:{ko:'큰 제목을 입력하세요',en:''}};

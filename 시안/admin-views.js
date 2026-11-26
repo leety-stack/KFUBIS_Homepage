@@ -13,11 +13,13 @@
     dash: '대시보드', main: '메인 화면 구성', banner: '메인 배너', menu: '메뉴 관리', page: '페이지 편집', popup: '팝업 관리',
     works: '실적 관리', news: '소식·보도자료', rnd: 'R&D 과제', certs: '인증·수상·특허', files: '자료실', jobs: '채용공고',
     inquiry: '문의 관리', certreq: '실적증명 요청', apply: '입사 지원',
-    company: '회사 정보·하단 문구', i18n: '다국어 문구', seo: '검색 노출 (SEO)', users: '관리자 계정·권한', stats: '접속 통계', history: '변경 이력·되돌리기'
+    company: '회사 정보·하단 문구', i18n: '다국어 문구', seo: '검색 노출 (SEO)', stats: '접속 통계', history: '변경 이력·되돌리기', users: '관리자 계정', roles: '역할·권한', logins: '로그인 기록'
   };
+  /* 숨긴 메뉴 — 실제로 해 보고 확정되면 여기서 지우기만 하면 다시 켜짐 */
+  var HIDDEN = { page: 1, seo: 1, stats: 1, history: 1 };
   var built = {};
   function view(v) {
-    if (!TT[v]) v = 'dash';
+    if (!TT[v] || HIDDEN[v]) v = 'dash';
     if (!built[v] && R[v]) { R[v]($('#v-' + v)); built[v] = 1; }
     $$('.view').forEach(function (x) { x.classList.toggle('on', x.id === 'v-' + v); });
     $$('aside a[data-v]').forEach(function (a) { a.classList.toggle('on', a.dataset.v === v); });
@@ -26,6 +28,7 @@
     if (v === 'stats' || v === 'dash') $$('#v-' + v + ' [data-chart]').forEach(drawChart);
   }
   window.view = view;
+  $$('aside a[data-v]').forEach(function (a) { if (HIDDEN[a.dataset.v]) a.remove(); });
   addEventListener('hashchange', function () { view(location.hash.slice(1)); });
 
   function head(t, p, btns) { return '<div class="ph"><div><h1>' + t + '</h1><p>' + p + '</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">' + (btns || '') + '</div></div>'; }
@@ -69,23 +72,31 @@
     el.innerHTML = head('대시보드', '2026.11.26 (목) 기준 — 오늘 처리할 일과 홈페이지 현황') +
       '<div class="kpis">' +
       '<a class="kpi" href="#inquiry"><small>처리 대기 문의</small><b style="color:var(--pri)">3</b><span>신규 3 · 1영업일 넘은 것 0</span></a>' +
-      '<a class="kpi" href="#stats"><small>방문자 (30일)</small><b>' + visits30.reduce(function (a, b) { return a + b; }, 0).toLocaleString() + '</b><span style="color:var(--ok)">지난 30일보다 12% 늘어남</span></a>' +
+      '<a class="kpi" href="#works"><small>게시 대기</small><b>2</b><span>임시저장 실적 1 · 예약 소식 1</span></a>' +
       '<a class="kpi" href="#inquiry"><small>이번 달 문의</small><b>27</b><span>공공 11 · 기업 13 · 기타 3</span></a>' +
       '<a class="kpi" href="#i18n"><small>영문 미입력</small><b style="color:var(--warn)">38</b><span>실적 31 · 문구 7</span></a></div>' +
       '<div class="row2">' +
       '<section class="panel"><div class="panel-hd"><h2>오늘 처리할 일</h2></div><ul class="todo">' +
       '<li><a href="#inquiry">' + tag('신규') + ' 사업 문의 3건 — 담당 본부 배정 완료, 회신 필요</a></li>' +
       '<li><a href="#certreq">' + tag('신규') + ' 실적증명 요청 1건 — ○○도시공사</a></li>' +
-      '<li><a href="#page">' + tag('임시저장') + ' 페이지 "회사소개 › 인사말" 게시 전</a></li>' +
+      '<li><a href="#works">' + tag('임시저장') + ' 실적 "○○ 데이터센터" 게시 전</a></li>' +
       '<li><a href="#popup">' + tag('예약') + ' 팝업 "연말연시 휴무 안내" 12.24 자동 시작</a></li>' +
       '<li><a href="#certs">' + tag('만료 임박') + ' 인증 "ISO 9001" 유효기간 12.31 — 갱신본 올리기</a></li>' +
       '<li><a href="#i18n">' + tag('확인 필요') + ' 영문 미입력 38건</a></li></ul></section>' +
-      '<section class="panel"><div class="panel-hd"><h2>방문자 추이 (30일)</h2><a class="btn sm" href="#stats">통계 자세히</a></div><div class="panel-bd"><div data-chart=\'' + JSON.stringify({ name: '일별 방문자', x: days30, v: visits30, unit: '명' }) + '\' data-h="200"></div></div></section></div>' +
+      '<section class="panel"><div class="panel-hd"><h2>지금 홈페이지에 떠 있는 것</h2></div><ul class="todo">' +
+      '<li><a href="#banner">' + tag('노출 중') + ' 메인 배너 2개 — 6초마다 넘김</a></li>' +
+      '<li><a href="#popup">' + tag('노출 중') + ' 팝업 "2026 국제소방안전박람회 참가" ~12.05</a></li>' +
+      '<li><a href="#popup">' + tag('예약') + ' 팝업 "연말연시 휴무 안내" 12.24 ~ 01.02</a></li>' +
+      '<li><a href="#main">' + tag('노출 중') + ' 메인 수행 사례 3건 — 롯데월드타워 · 인천국제공항 · GBC</a></li>' +
+      '<li><a href="#jobs">' + tag('모집 중') + ' 채용공고 2건</a></li></ul></section></div>' +
       '<div class="row2">' +
       '<section class="panel"><div class="panel-hd"><h2>최근 문의</h2><a class="btn sm" href="#inquiry">전체 보기</a></div><div class="tbl"><table><thead><tr><th>기관 / 분야</th><th>상태</th><th class="hide-m">담당</th></tr></thead><tbody>' +
       INQ.slice(0, 5).map(function (q) { return '<tr onclick="location.hash=\'inquiry\'"><td><b>' + E(q.org) + '</b><div class="sub">' + E(q.field) + ' · ' + q.at + '</div></td><td>' + tag(q.st) + '</td><td class="hide-m">' + E(q.dept) + '</td></tr>'; }).join('') + '</tbody></table></div></section>' +
-      '<section class="panel"><div class="panel-hd"><h2>최근 변경</h2><a class="btn sm" href="#history">변경 이력</a></div><ul class="todo">' +
-      HIST.slice(0, 5).map(function (h) { return '<li><span class="sub" style="min-width:86px">' + h.at.slice(5) + '</span><span><b>' + E(h.who) + '</b> — ' + E(h.where) + ' · ' + E(h.what) + '</span></li>'; }).join('') + '</ul></section></div>';
+      '<section class="panel"><div class="panel-hd"><h2>최근 게시한 글</h2><a class="btn sm" href="#news">소식 관리</a></div><ul class="todo">' +
+      '<li><span class="sub" style="min-width:86px">11.20</span><span><b>소식</b> — 기후에너지환경부 장관 표창 수상</span></li>' +
+      '<li><span class="sub" style="min-width:86px">11.18</span><span><b>실적</b> — 인천국제공항 제2여객터미널 영문 정보 추가</span></li>' +
+      '<li><span class="sub" style="min-width:86px">11.10</span><span><b>채용</b> — 소방감리 경력직 채용</span></li>' +
+      '<li><span class="sub" style="min-width:86px">10.02</span><span><b>소식</b> — 중소벤처기업부 장관 표창 수상</span></li></ul></section></div>';
   };
 
   /* ───────────── 메인 화면 구성 ───────────── */
@@ -187,27 +198,27 @@
   var BOARDS = {
     works: { title: '실적 관리', desc: '홈페이지 "실적"과 메인 "수행 사례"에 보이는 내용입니다. 사례(과제·수행·결과)를 채운 실적만 사례로 보입니다.', cats: ['공공·국가기간', '초고층·복합', '산업·플랜트'], catKey: 'type', rows: WORKS,
       cols: [['연도', 'year'], ['프로젝트', 'name'], ['유형', 'type', 'm'], ['범위', 'scope', 'm']], badges: function (r) { return (r.main ? '<span class="tag t-pub">메인</span> ' : '') + (r.en ? '' : '<span class="tag t-wait">영문 없음</span>'); },
-      fields: [['type', '시설 유형', 'sel', ['공공·국가기간', '초고층·복합', '산업·플랜트']], ['scope', '수행 범위', 'sel', ['설계', '감리', '설계+감리', '성능위주설계']], ['client', '발주처명', 'txt'], ['year', '수행 연도', 'txt'], ['name', '프로젝트명 (국문)', 'txt', 0, 1], ['en', '프로젝트명 (영문)', 'txt', 0, 1], ['task', '사례 — 과제', 'txt', 0, 1], ['work', '사례 — 수행', 'txt', 0, 1], ['res', '사례 — 결과', 'txt', 0, 1], ['img', '대표 사진', 'img'], ['main', '메인 "수행 사례"에 보이기', 'bool'], ['hide', '발주처명 숨기기 (비공개 실적)', 'bool']] },
+      fields: [['type', '시설 유형', 'sel', ['공공·국가기간', '초고층·복합', '산업·플랜트']], ['scope', '수행 범위', 'sel', ['설계', '감리', '설계+감리', '성능위주설계']], ['client', '발주처명', 'txt'], ['year', '수행 연도', 'year'], ['name', '프로젝트명 (국문)', 'txt', 0, 1], ['en', '프로젝트명 (영문)', 'txt', 0, 1], ['task', '사례 — 과제', 'txt', 0, 1], ['work', '사례 — 수행', 'txt', 0, 1], ['res', '사례 — 결과', 'txt', 0, 1], ['img', '대표 사진', 'img'], ['main', '메인 "수행 사례"에 보이기', 'bool'], ['hide', '발주처명 숨기기 (비공개 실적)', 'bool']] },
     news: { title: '소식·보도자료', desc: '새소식·보도자료·수상 소식을 올립니다. 예약 게시를 걸면 그 시각에 자동으로 올라갑니다.', cats: ['새소식', '보도자료', '수상'], catKey: 'cat',
       rows: [{ name: '기후에너지환경부 장관 표창 수상', cat: '수상', date: '2025.11.20', st: '게시', pin: true, en: 'Minister\'s Commendation', img: 'img/cert_ai.jpg' }, { name: '중소벤처기업부 장관 표창 수상', cat: '수상', date: '2025.10.02', st: '게시', en: '' }, { name: '전통시장 AI 전기화재 예방 시스템 국가 R&D 선정', cat: '보도자료', date: '2025.06.12', st: '게시', en: 'National R&D selected', img: 'img/p_data.jpg' }, { name: '2026 국제소방안전박람회 참가 안내', cat: '새소식', date: '2026.12.01', st: '예약', en: '' }],
       cols: [['구분', 'cat'], ['제목', 'name'], ['게시일', 'date', 'm']], badges: function (r) { return (r.pin ? '<span class="tag t-pub">상단 고정</span> ' : '') + (r.en ? '' : '<span class="tag t-wait">영문 없음</span>'); },
-      fields: [['cat', '구분', 'sel', ['새소식', '보도자료', '수상']], ['date', '게시일 (미래면 예약)', 'txt'], ['name', '제목 (국문)', 'txt', 0, 1], ['en', '제목 (영문)', 'txt', 0, 1], ['body', '본문', 'editor'], ['img', '대표 사진', 'img'], ['file', '첨부 파일', 'file'], ['pin', '목록 맨 위에 고정', 'bool']] },
+      fields: [['cat', '구분', 'sel', ['새소식', '보도자료', '수상']], ['date', '게시일 (미래 날짜면 그날 자동 게시)', 'date'], ['name', '제목 (국문)', 'txt', 0, 1], ['en', '제목 (영문)', 'txt', 0, 1], ['body', '본문', 'editor'], ['img', '대표 사진', 'img'], ['file', '첨부 파일', 'file'], ['pin', '목록 맨 위에 고정', 'bool']] },
     rnd: { title: 'R&D 과제', desc: '연구개발 페이지의 수행 과제 목록입니다.', cats: ['수행 중', '완료'], catKey: 'st2',
-      rows: [{ name: '전통시장 특성을 반영한 AI 기반 실시간 전기화재 예방 시스템', st2: '수행 중', org: '행정안전부', period: '2025~2027', st: '게시', en: 'AI electrical fire prevention for markets' }, { name: '전선 단락흔 정량 판별 및 AI 기반 원격 감식·감정 기술', st2: '수행 중', org: '소방청', period: '2025~2028', st: '게시', en: '' }, { name: '리튬배터리 제조사업장 전주기 화재안전관리시스템', st2: '수행 중', org: '산업통상자원부', period: '2024~2026', st: '게시', en: '' }, { name: '원전 광역화재를 고려한 정량적 화재영향평가 기술개발', st2: '완료', org: '—', period: '2015', st: '게시', en: '' }],
+      rows: [{ name: '전통시장 특성을 반영한 AI 기반 실시간 전기화재 예방 시스템', st2: '수행 중', org: '행정안전부', pf: '2025.04', pt: '2027.12', period: '2025.04 ~ 2027.12', st: '게시', en: 'AI electrical fire prevention for markets' }, { name: '전선 단락흔 정량 판별 및 AI 기반 원격 감식·감정 기술', st2: '수행 중', org: '소방청', pf: '2025.04', pt: '2028.12', period: '2025.04 ~ 2028.12', st: '게시', en: '' }, { name: '리튬배터리 제조사업장 전주기 화재안전관리시스템', st2: '수행 중', org: '산업통상자원부', pf: '2024.05', pt: '2026.12', period: '2024.05 ~ 2026.12', st: '게시', en: '' }, { name: '원전 광역화재를 고려한 정량적 화재영향평가 기술개발', st2: '완료', org: '—', pf: '2015.06', pt: '2015.12', period: '2015.06 ~ 2015.12', st: '게시', en: '' }],
       cols: [['상태', 'st2'], ['과제명', 'name'], ['기간', 'period', 'm']], badges: function (r) { return r.en ? '' : '<span class="tag t-wait">영문 없음</span>'; },
-      fields: [['st2', '상태', 'sel', ['수행 중', '완료']], ['org', '발주 기관', 'txt'], ['period', '수행 기간', 'txt'], ['name', '과제명 (국문)', 'txt', 0, 1], ['en', '과제명 (영문)', 'txt', 0, 1], ['sum', '요약', 'area'], ['img', '대표 사진', 'img']] },
+      fields: [['st2', '상태', 'sel', ['수행 중', '완료']], ['org', '발주 기관', 'txt'], ['pf', '수행 기간', 'mrange'], ['name', '과제명 (국문)', 'txt', 0, 1], ['en', '과제명 (영문)', 'txt', 0, 1], ['sum', '요약', 'area'], ['img', '대표 사진', 'img']] },
     certs: { title: '인증·수상·특허', desc: '회사소개 "인증·수상"과 메인 숫자에 쓰입니다. 유효기간을 넣으면 끝나기 30일 전에 대시보드에 알려 줍니다.', cats: ['인증', '수상', '특허', '면허'], catKey: 'cat',
-      rows: [{ name: 'ISO 9001 / 14001', cat: '인증', org: '한국능률협회인증원', no: 'QSC81206', date: '2003', exp: '2026.12.31', st: '게시', en: 'ISO 9001/14001' }, { name: '인공지능기술 인증', cat: '인증', org: '한국인공지능협회', no: 'CT8222-I0098', date: '2022', exp: '', st: '게시', en: 'AI Technology Certification', img: 'img/cert_ai.jpg' }, { name: '대통령 표창', cat: '수상', org: '대한민국 정부', no: '240504', date: '2023', st: '게시', en: 'Presidential Citation' }, { name: '1급 소방시설 설계 및 공사감리업', cat: '면허', org: '서울특별시', no: '서울강남 제95-6호', date: '1995', st: '게시', en: '' }],
+      rows: [{ name: 'ISO 9001 / 14001', cat: '인증', org: '한국능률협회인증원', no: 'QSC81206', date: '2003.06.02', exp: '2026.12.31', st: '게시', en: 'ISO 9001/14001' }, { name: '인공지능기술 인증', cat: '인증', org: '한국인공지능협회', no: 'CT8222-I0098', date: '2022.11.28', exp: '', st: '게시', en: 'AI Technology Certification', img: 'img/cert_ai.jpg' }, { name: '대통령 표창', cat: '수상', org: '대한민국 정부', no: '240504', date: '2023.11.09', exp: '', st: '게시', en: 'Presidential Citation' }, { name: '1급 소방시설 설계 및 공사감리업', cat: '면허', org: '서울특별시', no: '서울강남 제95-6호', date: '1995.03.20', exp: '', st: '게시', en: '' }],
       cols: [['구분', 'cat'], ['이름', 'name'], ['일자', 'date', 'm']], badges: function (r) { return r.exp === '2026.12.31' ? tag('만료 임박') : (r.en ? '' : '<span class="tag t-wait">영문 없음</span>'); },
-      fields: [['cat', '구분', 'sel', ['인증', '수상', '특허', '면허']], ['org', '발급 기관', 'txt'], ['no', '번호', 'txt'], ['date', '받은 날', 'txt'], ['exp', '유효기간 (있으면)', 'txt'], ['name', '이름 (국문)', 'txt', 0, 1], ['en', '이름 (영문)', 'txt', 0, 1], ['img', '증서 이미지', 'img']] },
+      fields: [['cat', '구분', 'sel', ['인증', '수상', '특허', '면허']], ['org', '발급 기관', 'txt'], ['no', '번호', 'txt'], ['date', '받은 날', 'date'], ['exp', '유효기간 끝나는 날 (있으면)', 'date'], ['name', '이름 (국문)', 'txt', 0, 1], ['en', '이름 (영문)', 'txt', 0, 1], ['img', '증서 이미지', 'img']] },
     files: { title: '자료실', desc: '회사소개서·면허 사본 등 내려받는 자료입니다. "요청 후 발송"으로 두면 이름·회사명을 받고 메일로 보냅니다.', cats: ['회사소개서', '면허·등록증', '인증서', '카탈로그'], catKey: 'cat',
       rows: [{ name: '회사소개서 2025 (국문)', cat: '회사소개서', open: '누구나', dl: 214, st: '게시', en: 'Company Profile 2025' }, { name: '회사소개서 2025 (영문)', cat: '회사소개서', open: '누구나', dl: 61, st: '게시', en: 'Company Profile 2025 (EN)' }, { name: '소방시설 설계·감리업 등록증 사본', cat: '면허·등록증', open: '요청 후 발송', dl: 18, st: '게시', en: '' }, { name: 'CADDY 내진제품 카탈로그', cat: '카탈로그', open: '누구나', dl: 97, st: '게시', en: 'CADDY catalog' }],
       cols: [['구분', 'cat'], ['자료명', 'name'], ['공개', 'open', 'm'], ['내려받기', 'dl', 'm']], badges: function () { return ''; },
       fields: [['cat', '구분', 'sel', ['회사소개서', '면허·등록증', '인증서', '카탈로그']], ['open', '공개 방식', 'sel', ['누구나', '요청 후 발송', '숨김']], ['name', '자료명 (국문)', 'txt', 0, 1], ['en', '자료명 (영문)', 'txt', 0, 1], ['file', '파일 (국문판)', 'file'], ['file2', '파일 (영문판)', 'file']] },
     jobs: { title: '채용공고', desc: '인재채용 페이지 공고입니다. 마감일이 지나면 자동으로 "마감"으로 바뀝니다.', cats: ['모집 중', '마감'], catKey: 'st2',
-      rows: [{ name: '소방설계 경력직 채용', st2: '모집 중', part: '설계사업본부', career: '경력 3년 이상', due: '채용 시 마감', st: '게시', apps: 4 }, { name: '소방감리 경력직 채용', st2: '모집 중', part: '감리사업본부', career: '경력 5년 이상', due: '2026.12.15', st: '게시', apps: 2 }, { name: '2025 하반기 신입 공채', st2: '마감', part: '전 부문', career: '신입', due: '2025.10.31', st: '게시', apps: 37 }],
-      cols: [['상태', 'st2'], ['공고명', 'name'], ['마감', 'due', 'm'], ['지원자', 'apps', 'm']], badges: function () { return ''; },
-      fields: [['part', '모집 부문', 'txt'], ['career', '경력', 'sel', ['신입', '경력 3년 이상', '경력 5년 이상', '무관']], ['due', '마감일', 'txt'], ['st2', '상태', 'sel', ['모집 중', '마감']], ['name', '공고명', 'txt', 0, 1], ['body', '공고 내용', 'editor'], ['online', '홈페이지에서 온라인 지원 받기', 'bool']] }
+      rows: [{ name: '소방설계 경력직 채용', st2: '모집 중', part: '설계사업본부', career: '경력 3년 이상', due: '', until: true, st: '게시', apps: 4 }, { name: '소방감리 경력직 채용', st2: '모집 중', part: '감리사업본부', career: '경력 5년 이상', due: '2026.12.15', st: '게시', apps: 2 }, { name: '2025 하반기 신입 공채', st2: '마감', part: '전 부문', career: '신입', due: '2025.10.31', st: '게시', apps: 37 }],
+      cols: [['상태', 'st2'], ['공고명', 'name'], ['마감', 'dueTxt', 'm'], ['지원자', 'apps', 'm']], badges: function () { return ''; },
+      fields: [['part', '모집 부문', 'txt'], ['career', '경력', 'sel', ['신입', '경력 3년 이상', '경력 5년 이상', '무관']], ['due', '마감일', 'date'], ['until', '마감일 없이 채용 시 마감', 'bool'], ['st2', '상태', 'sel', ['모집 중', '마감']], ['name', '공고명', 'txt', 0, 1], ['body', '공고 내용', 'editor'], ['online', '홈페이지에서 온라인 지원 받기', 'bool']] }
   };
   /* 편집 팝업 (게시판 공통) */
   var modal = document.createElement('div'); modal.className = 'modal'; modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true');
@@ -218,6 +229,13 @@
   $('.m-x', modal).onclick = closeModal; $('[data-mclose]', modal).onclick = closeModal;
   modal.addEventListener('mousedown', function (e) { if (e.target === modal) closeModal(); });
   addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('on')) closeModal(); });
+
+  /* 표에 보일 기간·마감 글자 만들기 */
+  function derive(r) {
+    if (r.pf !== undefined || r.pt !== undefined) r.period = (r.pf || '') + (r.pt ? ' ~ ' + r.pt : '');
+    if (r.due !== undefined || r.until !== undefined) r.dueTxt = r.until ? '채용 시 마감' : (r.due || '—');
+  }
+  Object.keys(BOARDS).forEach(function (k) { BOARDS[k].rows.forEach(derive); });
 
   function boardView(key) {
     return function (el) {
@@ -252,20 +270,24 @@
             else if (t === 'editor') h += '<div class="rte"><div class="rte-b"><button><b>B</b></button><button><i>I</i></button><button>제목</button><button>목록</button><button>링크</button><button>사진</button><button>표</button></div><div class="rte-a" contenteditable="true">' + (v ? E(v) : '본문을 입력하세요. 한글·워드에서 복사해 붙여도 서식이 정리되어 들어갑니다.') + '</div></div>';
             else if (t === 'img') h += '<div class="lib lib8">' + IMGS.slice(0, 8).map(function (s) { return '<img data-img="' + k + '" data-s="' + s + '" src="' + s + '" class="' + (s === v ? 'on' : '') + '" alt="">'; }).join('') + '</div><span class="help">사진 보관함에서 고르거나 끌어 놓아 새로 올림</span>';
             else if (t === 'file') h += '<div class="drop">파일을 끌어 놓거나 눌러서 선택 · PDF·HWP·ZIP 50MB까지</div>';
+            else if (t === 'date') h += '<input type="date" data-k="' + k + '" data-dot="1" value="' + E((v || '').replace(/\./g, '-')) + '">';
+            else if (t === 'mrange') h += '<div class="dpair"><input type="month" data-k="pf" data-dot="1" value="' + E((r.pf || '').replace(/\./g, '-')) + '"><span class="sub">~</span><input type="month" data-k="pt" data-dot="1" value="' + E((r.pt || '').replace(/\./g, '-')) + '"></div>';
+            else if (t === 'year') { var ys = ''; for (var y = 2027; y >= 1947; y--) ys += '<option' + (String(y) === String(v) ? ' selected' : '') + '>' + y + '</option>'; h += '<select data-k="' + k + '"><option value="">연도 선택</option>' + ys + '</select>'; }
             else h += '<input data-k="' + k + '" value="' + E(v) + '"' + (k === 'en' && !v ? ' placeholder="비워 두면 영문 사이트에서 숨김"' : '') + '>';
           }
           h += '</div>';
         });
-        return h + '</div><p class="help" style="margin-top:14px">[게시]를 눌러야 홈페이지에 반영되고, 이전 내용은 변경 이력에 남습니다.</p>';
+        return h + '</div><p class="help" style="margin-top:14px">[게시]를 눌러야 홈페이지에 반영됩니다. 임시저장한 내용은 홈페이지에 보이지 않습니다.</p>';
       }
       function open(i, isNew) {
         var r = C.rows[i], bd = $('.m-bd', modal);
         $('.m-hd h2', modal).textContent = (isNew ? C.title + ' — 새로 쓰기' : C.title + ' — 수정');
         bd.innerHTML = form(r);
-        $$('[data-k]', bd).forEach(function (inp) { inp.oninput = inp.onchange = function () { r[inp.dataset.k] = inp.type === 'checkbox' ? inp.checked : inp.value; rows(); }; });
+        $$('[data-k]', bd).forEach(function (inp) { inp.oninput = inp.onchange = function () { r[inp.dataset.k] = inp.type === 'checkbox' ? inp.checked : (inp.dataset.dot ? inp.value.replace(/-/g, '.') : inp.value); derive(r); if (inp.dataset.k === 'until') { var d = $('input[data-k="due"]', bd); if (d) d.disabled = r.until; } rows(); }; });
+        var dd = $('input[data-k="due"]', bd); if (dd) dd.disabled = !!r.until;
         $$('[data-img]', bd).forEach(function (im) { im.onclick = function () { r[im.dataset.img] = im.dataset.s; $$('[data-img]', bd).forEach(function (x) { x.classList.toggle('on', x === im); }); }; });
         $('[data-mdel]', modal).style.display = isNew ? 'none' : '';
-        $('[data-mdel]', modal).onclick = function () { if (confirm('삭제할까요? 변경 이력에서 되살릴 수 있습니다.')) { C.rows.splice(C.rows.indexOf(r), 1); mOnClose = null; closeModal(); rows(); toast('삭제했습니다'); } };
+        $('[data-mdel]', modal).onclick = function () { if (confirm('삭제할까요?')) { C.rows.splice(C.rows.indexOf(r), 1); mOnClose = null; closeModal(); rows(); toast('삭제했습니다'); } };
         $('[data-mtmp]', modal).onclick = function () { r.st = '임시저장'; mOnClose = null; closeModal(); rows(); toast('임시저장했습니다 — 홈페이지에는 아직 안 보입니다'); };
         $('[data-mpub]', modal).onclick = function () { if (!r.name) { toast('제목을 입력하세요'); return; } r.st = '게시'; mOnClose = null; closeModal(); rows(); toast('게시했습니다 — 홈페이지에 반영되었습니다 (시안)'); };
         mOnClose = isNew ? function () { if (!r.name) { C.rows.splice(C.rows.indexOf(r), 1); rows(); } } : null;
@@ -289,7 +311,7 @@
     { org: '○○전자', who: '최○○ 책임', tel: '031-000-0000', mail: 'choi@○○.com', type: '대기업·건설사', field: 'AI 솔루션', at: '11.22 14:05', st: '완료', dept: 'R&D센터', src: '구글 검색(검색어는 구글이 알려 주지 않음) → 메인 → 사업 문의', msg: 'AI 설계 검토(ATC+) 데모를 요청합니다.', file: '' }];
   var INBOX = {
     inquiry: { title: '문의 관리', desc: '홈페이지 사업 문의입니다. 문의 분야에 따라 담당 본부가 자동으로 정해지고 담당자에게 메일이 갑니다. 1영업일이 지나면 관리자에게 다시 알립니다.', rows: INQ, line: function (q) { return q.field + (q.en ? ' · 영문' : ''); },
-      info: function (q) { return [['기관 유형', q.type], ['담당자', q.who], ['연락처', q.tel], ['메일', q.mail], ['문의 분야', q.field], ['받은 시각', '2026.' + q.at], ['들어온 경로', q.src || '—']]; }, tpl: ['기본 회신 (담당자 연결 안내)', 'RFP 접수 확인', '견적 회신', 'English — general reply'] },
+      info: function (q) { return [['기관 유형', q.type], ['담당자', q.who], ['연락처', q.tel], ['메일', q.mail], ['문의 분야', q.field], ['받은 시각', '2026.' + q.at]]; }, tpl: ['기본 회신 (담당자 연결 안내)', 'RFP 접수 확인', '견적 회신', 'English — general reply'] },
     certreq: { title: '실적증명 요청', desc: '발주처가 입찰·등록용 실적증명서를 요청한 건입니다. 발급 파일을 올리고 [보내기]를 누르면 요청자에게 메일로 갑니다.', rows: [
       { org: '○○도시공사', who: '정○○ 주무관', tel: '02-000-0000', mail: 'jung@○○.go.kr', field: '인천국제공항 제2여객터미널 확장 — 설계', at: '11.26 09:30', st: '신규', dept: '경영지원팀', msg: '○○ 입찰 참가자격 심사용으로 실적증명서 1부 요청드립니다. 용도: 입찰 제출', file: '' },
       { org: '○○공사', who: '오○○ 대리', tel: '02-000-0000', mail: 'oh@○○.or.kr', field: '잠실 롯데월드타워 — 감리', at: '11.18 13:10', st: '발급 완료', dept: '경영지원팀', msg: '협력업체 등록용', file: '실적증명서_롯데월드타워.pdf' }],
@@ -340,7 +362,7 @@
       [['name', '회사명 (국문)'], ['nameEn', '회사명 (영문)'], ['ceo', '대표자'], ['biz', '사업자등록번호'], ['tel', '대표 전화'], ['fax', '팩스'], ['mail', '대표 메일'], ['addr', '주소 (국문)', 1], ['addrEn', '주소 (영문)', 1]].map(function (f) { return '<div class="f' + (f[2] ? ' full' : '') + '"><label>' + f[1] + '</label><input data-c="' + f[0] + '" value="' + E(C[f[0]]) + '"></div>'; }).join('') +
       '</div><div class="grid2" style="margin-top:14px"><div class="f"><label>로고 (밝은 바탕용)</label><div class="logo-up"><img src="img/logo_a.png" alt=""><button class="btn sm">바꾸기</button></div></div><div class="f"><label>로고 (어두운 바탕용)</label><div class="logo-up dk"><img src="img/logo_b.png" alt=""><button class="btn sm">바꾸기</button></div></div><div class="f"><label>파비콘 (브라우저 탭 아이콘)</label><div class="drop">PNG 512×512</div></div><div class="f"><label>회사소개서 기본 파일</label><select><option>회사소개서 2025 (국문)</option></select></div></div></div></section>' +
       '<section class="panel"><div class="panel-hd"><h2>하단 링크 · 관련 사이트 · SNS</h2></div><div class="panel-bd">' +
-      '<div class="f"><label>하단 링크</label><ul class="mini-l"><li>개인정보처리방침 <a href="#page" class="help">페이지 편집 ›</a></li><li>이메일무단수집거부 <a href="#page" class="help">페이지 편집 ›</a></li><li>사이트맵 <span class="help">자동</span></li></ul></div>' +
+      '<div class="f"><label>하단 링크</label><ul class="mini-l"><li>개인정보처리방침 <span class="help">오픈 전 함께 작성</span></li><li>이메일무단수집거부 <span class="help">기본 문구</span></li><li>사이트맵 <span class="help">자동</span></li></ul></div>' +
       '<div class="f"><label>관련 사이트 (Family Site)</label><ul class="mini-l"><li>한방 — hanbang1947.co.kr <button class="btn sm ghost">×</button></li><li>그룹웨어 — 직원용 <button class="btn sm ghost">×</button></li></ul><button class="btn sm">+ 추가</button></div>' +
       '<div class="grid2"><div class="f"><label>YouTube</label><input placeholder="채널 주소"></div><div class="f"><label>블로그</label><input placeholder="블로그 주소"></div></div>' +
       '<b style="font-size:13px;display:block;margin:16px 0 6px">하단 미리보기</b><div class="foot-prev" id="fp"></div></div></section></div>';
@@ -385,34 +407,114 @@
     tb(); fm();
   };
 
-  /* ───────────── 관리자 계정·권한 ───────────── */
+  /* ───────────── 관리자: 계정 / 역할·권한 / 로그인 기록 (메뉴 셋으로 분리) ───────────── */
+  var ROLES = ['최고 관리자', '홍보 담당', '본부 담당', '채용 담당'];
+  var ROLE_D = { '최고 관리자': '모든 메뉴를 보고 고치고 게시. 권한 변경 불가', '홍보 담당': '홈페이지 내용·배너·팝업·게시판 담당', '본부 담당': '자기 본부 문의 처리, 실적·R&D 수정', '채용 담당': '채용공고 게시, 입사 지원 처리' };
+  var USERS = [
+    { name: '김○○', id: 'kim.hb', dept: '홍보팀', role: '최고 관리자', last: '오늘 09:12', otp: true, st: '사용', tel: '02-2023-0000' },
+    { name: '이○○', id: 'lee.hb', dept: '홍보팀', role: '홍보 담당', last: '11.25 17:40', otp: true, st: '사용', tel: '02-2023-0000' },
+    { name: '박○○', id: 'park.sv', dept: '감리사업본부', role: '본부 담당', last: '11.24 10:03', otp: false, st: '사용', tel: '02-2023-0000' },
+    { name: '정○○', id: 'jung.hr', dept: '경영지원팀', role: '채용 담당', last: '11.20 15:22', otp: true, st: '사용', tel: '02-2023-0000' },
+    { name: '최○○', id: 'choi.old', dept: '홍보팀', role: '홍보 담당', last: '2026.06.30', otp: false, st: '중지', tel: '' }];
+  /* 메뉴별 권한 — 종류: c 콘텐츠(없음·보기·수정·게시), q 접수(없음·보기·처리), v 보기만, h 이력(없음·보기·되돌리기) */
+  var LVS = { c: ['없음', '보기', '수정', '게시'], q: ['없음', '보기', '처리'], v: ['없음', '보기'], h: ['없음', '보기', '되돌리기'] };
+  var MEN = [
+    ['대시보드', '대시보드', 'v'],
+    ['사이트 구성', '메인 화면 구성', 'c'], ['사이트 구성', '메인 배너', 'c'], ['사이트 구성', '메뉴 관리', 'c'], ['사이트 구성', '페이지 편집', 'c'], ['사이트 구성', '팝업', 'c'],
+    ['게시판·콘텐츠', '실적 관리', 'c'], ['게시판·콘텐츠', '소식·보도자료', 'c'], ['게시판·콘텐츠', 'R&D 과제', 'c'], ['게시판·콘텐츠', '인증·수상·특허', 'c'], ['게시판·콘텐츠', '자료실', 'c'], ['게시판·콘텐츠', '채용공고', 'c'],
+    ['고객', '문의 관리', 'q'], ['고객', '실적증명 요청', 'q'], ['고객', '입사 지원', 'q'],
+    ['설정', '회사 정보·하단 문구', 'c'], ['설정', '다국어 문구', 'c'], ['설정', '검색 노출 (SEO)', 'c'], ['설정', '접속 통계', 'v'], ['설정', '변경 이력·되돌리기', 'h'],
+    ['관리자', '관리자 계정', 'c'], ['관리자', '역할·권한', 'c'], ['관리자', '로그인 기록', 'v']];
+  var PERM = {
+    '최고 관리자': MEN.map(function (m) { return LVS[m[2]].length - 1; }),
+    '홍보 담당': [1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 2, 0, 2, 3, 2, 1, 1, 0, 0, 0],
+    '본부 담당': [1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    '채용 담당': [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0] };
+  var HIDE_M = ['페이지 편집', '검색 노출 (SEO)', '접속 통계', '변경 이력·되돌리기'];
+  Object.keys(PERM).forEach(function (r) { PERM[r] = PERM[r].filter(function (_, i) { return HIDE_M.indexOf(MEN[i][1]) < 0; }); });
+  MEN = MEN.filter(function (m) { return HIDE_M.indexOf(m[1]) < 0; });
+  var lvClass = function (t, v) { return t === 'c' ? v : v === 0 ? 0 : v === LVS[t].length - 1 ? 3 : 1; };
+
+  /* 관리자 계정 */
   R.users = function (el) {
-    var U = [['김○○', 'kim.hb', '홍보팀', '최고 관리자', '오늘 09:12', true, '사용'], ['이○○', 'lee.hb', '홍보팀', '홍보 담당', '11.25 17:40', true, '사용'], ['박○○', 'park.sv', '감리사업본부', '본부 담당', '11.24 10:03', false, '사용'], ['정○○', 'jung.hr', '경영지원팀', '채용 담당', '11.20 15:22', true, '사용'], ['최○○', 'choi.old', '홍보팀', '홍보 담당', '2026.06.30', false, '중지']];
-    var ROLES = ['최고 관리자', '홍보 담당', '본부 담당', '채용 담당'];
-    /* 메뉴별 권한 — 종류: c 콘텐츠(없음·보기·수정·게시), q 접수(없음·보기·처리), v 보기만, h 이력(없음·보기·되돌리기) */
-    var LVS = { c: ['없음', '보기', '수정', '게시'], q: ['없음', '보기', '처리'], v: ['없음', '보기'], h: ['없음', '보기', '되돌리기'] };
-    var MEN = [
-      ['대시보드', '대시보드', 'v'],
-      ['사이트 구성', '메인 화면 구성', 'c'], ['사이트 구성', '메인 배너', 'c'], ['사이트 구성', '메뉴 관리', 'c'], ['사이트 구성', '페이지 편집', 'c'], ['사이트 구성', '팝업', 'c'],
-      ['게시판·콘텐츠', '실적 관리', 'c'], ['게시판·콘텐츠', '소식·보도자료', 'c'], ['게시판·콘텐츠', 'R&D 과제', 'c'], ['게시판·콘텐츠', '인증·수상·특허', 'c'], ['게시판·콘텐츠', '자료실', 'c'], ['게시판·콘텐츠', '채용공고', 'c'],
-      ['고객', '문의 관리', 'q'], ['고객', '실적증명 요청', 'q'], ['고객', '입사 지원', 'q'],
-      ['설정', '회사 정보·하단 문구', 'c'], ['설정', '다국어 문구', 'c'], ['설정', '검색 노출 (SEO)', 'c'], ['설정', '관리자 계정·권한', 'c'], ['설정', '접속 통계', 'v'], ['설정', '변경 이력·되돌리기', 'h']];
-    var M = {
-      '최고 관리자': MEN.map(function (m) { return LVS[m[2]].length - 1; }),
-      '홍보 담당': [1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 2, 0, 2, 3, 2, 0, 1, 1],
-      '본부 담당': [1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
-      '채용 담당': [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0] };
-    el.innerHTML = head('관리자 계정·권한', '관리자 화면을 쓰는 직원 계정입니다. 역할마다 고칠 수 있는 메뉴가 다르고, 퇴사자는 [중지]로 바로 막습니다.', '<button class="btn navy" id="inv">+ 관리자 초대</button>') +
-      '<section class="panel"><div class="tbl"><table><thead><tr><th>이름</th><th class="hide-m">아이디</th><th class="hide-m">부서</th><th>역할</th><th class="hide-m">마지막 접속</th><th class="hide-m">2단계 인증</th><th>상태</th></tr></thead><tbody>' +
-      U.map(function (u) { return '<tr><td><b>' + u[0] + '</b></td><td class="hide-m sub">' + u[1] + '</td><td class="hide-m">' + u[2] + '</td><td><select style="width:auto">' + ROLES.map(function (r) { return '<option' + (r === u[3] ? ' selected' : '') + '>' + r + '</option>'; }).join('') + '</select></td><td class="hide-m sub">' + u[4] + '</td><td class="hide-m">' + (u[5] ? tag('사용') : '<span class="tag t-wait">안 씀</span>') + '</td><td>' + tag(u[6]) + '</td></tr>'; }).join('') + '</tbody></table></div></section>' +
-      '<section class="panel"><div class="panel-hd"><h2>역할별 권한</h2><div style="display:flex;gap:8px"><button class="btn sm">+ 역할 추가</button><button class="btn sm navy" data-save>저장</button></div></div><div class="tbl"><table class="mx"><thead><tr><th>메뉴</th>' + ROLES.map(function (r) { return '<th>' + r + '</th>'; }).join('') + '</tr></thead><tbody>' +
-      (function () { var g = '', h = ''; MEN.forEach(function (m, i) {
-        if (m[0] !== g) { g = m[0]; h += '<tr class="mx-g"><td colspan="' + (ROLES.length + 1) + '">' + g + '</td></tr>'; }
-        h += '<tr><td><b>' + m[1] + '</b> <span class="sub">' + LVS[m[2]].slice(1).join(' · ') + '</span></td>' + ROLES.map(function (r) { var v = M[r][i]; return '<td><button class="lv lv' + (m[2] === 'c' ? v : v === 0 ? 0 : v === LVS[m[2]].length - 1 ? 3 : 1) + '" data-r="' + r + '" data-i="' + i + '"' + (r === '최고 관리자' ? ' disabled' : '') + '>' + LVS[m[2]][v] + '</button></td>'; }).join('') + '</tr>';
-      }); return h; })() + '</tbody></table></div><div class="panel-bd help">칸을 누르면 단계가 바뀝니다. "수정"은 임시저장까지, "게시"는 홈페이지 반영까지, "처리"는 상태 변경·답장까지입니다. 본부 담당은 자기 본부로 배정된 문의만 봅니다. 최고 관리자는 항상 모든 권한을 가집니다.</div></section>' +
-      '<section class="panel"><div class="panel-hd"><h2>로그인 기록</h2><span class="help">최근 30일 · 실패 5회면 계정 잠금</span></div><div class="tbl"><table><tbody><tr><td class="sub">11.26 09:12</td><td>김○○</td><td class="hide-m sub">사무실 (내부망)</td><td>' + tag('완료') + '</td></tr><tr><td class="sub">11.25 22:41</td><td>(알 수 없음) admin</td><td class="hide-m sub">해외 IP</td><td><span class="tag t-new">실패 · 차단</span></td></tr><tr><td class="sub">11.25 17:40</td><td>이○○</td><td class="hide-m sub">사무실 (내부망)</td><td>' + tag('완료') + '</td></tr></tbody></table></div></section>';
-    $$('.lv', el).forEach(function (b) { b.onclick = function () { var r = b.dataset.r, i = +b.dataset.i, t = MEN[i][2], L = LVS[t], v = (M[r][i] + 1) % L.length; M[r][i] = v; b.className = 'lv lv' + (t === 'c' ? v : v === 0 ? 0 : v === L.length - 1 ? 3 : 1); b.textContent = L[v]; }; });
-    $('#inv').onclick = function () { toast('초대 메일을 보내면 직원이 직접 비밀번호를 정합니다 (시안)'); };
+    el.innerHTML = head('관리자 계정', '관리자 화면을 쓰는 직원 계정입니다. 줄을 누르면 계정을 고치고, 퇴사자는 [중지]로 바로 막습니다.', '<button class="btn navy" id="inv">+ 관리자 초대</button>') +
+      '<section class="panel"><div class="panel-hd"><div class="flt"><button class="on">전체</button><button>사용</button><button>중지</button></div><input class="srch" placeholder="이름·아이디 검색"></div><div class="tbl"><table class="blist-t"><thead><tr><th>이름</th><th class="hide-m">아이디</th><th class="hide-m">부서</th><th>역할</th><th class="hide-m">마지막 접속</th><th class="hide-m">2단계 인증</th><th>상태</th><th class="hide-m"></th></tr></thead><tbody></tbody></table></div><div class="foot"><span class="cnt"></span><a class="help" href="#roles" style="text-decoration:underline">역할별로 볼 수 있는 메뉴는 "역할·권한"에서 정합니다</a></div></section>';
+    var f = '전체', q = '';
+    function rows() {
+      var tb = $('tbody', el), n = 0; tb.innerHTML = '';
+      USERS.forEach(function (u, i) {
+        if (f !== '전체' && u.st !== f) return; if (q && (u.name + u.id).indexOf(q) < 0) return; n++;
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><b>' + E(u.name) + '</b></td><td class="hide-m sub">' + E(u.id) + '</td><td class="hide-m">' + E(u.dept) + '</td><td>' + E(u.role) + '</td><td class="hide-m sub">' + E(u.last) + '</td><td class="hide-m">' + (u.otp ? tag('사용') : '<span class="tag t-wait">안 씀</span>') + '</td><td>' + tag(u.st) + '</td><td class="hide-m"><button class="btn sm">수정</button></td>';
+        tr.onclick = function () { open(i); }; tb.appendChild(tr);
+      });
+      $('.cnt', el).textContent = '총 ' + n + '명';
+    }
+    function open(i, isNew) {
+      var u = USERS[i], bd = $('.m-bd', modal);
+      $('.m-hd h2', modal).textContent = isNew ? '관리자 초대' : '관리자 계정 — ' + u.name;
+      bd.innerHTML = '<div class="grid2">' +
+        '<div class="f"><label>이름</label><input data-u="name" value="' + E(u.name) + '"></div><div class="f"><label>아이디' + (isNew ? '' : ' (바꿀 수 없음)') + '</label><input data-u="id" value="' + E(u.id) + '"' + (isNew ? '' : ' disabled') + '></div>' +
+        '<div class="f"><label>부서</label><select data-u="dept">' + ['홍보팀', '설계사업본부', '감리사업본부', '방재연구소', 'R&D센터', '경영지원팀'].map(function (d) { return '<option' + (d === u.dept ? ' selected' : '') + '>' + d + '</option>'; }).join('') + '</select></div>' +
+        '<div class="f"><label>역할</label><select data-u="role">' + ROLES.map(function (r) { return '<option' + (r === u.role ? ' selected' : '') + '>' + r + '</option>'; }).join('') + '</select><span class="help" id="rd">' + ROLE_D[u.role] + '</span></div>' +
+        '<div class="f"><label>' + (isNew ? '초대 메일 주소' : '회사 메일') + '</label><input placeholder="name@kfubis.com"></div><div class="f"><label>연락처</label><input data-u="tel" value="' + E(u.tel) + '"></div>' +
+        (isNew ? '<div class="f full help">초대 메일을 받은 직원이 직접 비밀번호를 정합니다. 관리자는 비밀번호를 알 수 없습니다.</div>' :
+        '<div class="f full"><label>보안</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" data-act="pw">비밀번호 재설정 메일 보내기</button><button class="btn sm" data-act="otp">2단계 인증 다시 등록</button><button class="btn sm" data-act="out">모든 기기에서 로그아웃</button></div></div>' +
+        '<div class="f full"><label class="ck"><input type="checkbox" data-u="stop"' + (u.st === '중지' ? ' checked' : '') + '> 계정 중지 (퇴사·휴직 — 로그인 즉시 차단, 기록은 남김)</label></div>') + '</div>';
+      $$('[data-u]', bd).forEach(function (x) { x.oninput = x.onchange = function () { var k = x.dataset.u; if (k === 'stop') u.st = x.checked ? '중지' : '사용'; else u[k] = x.value; if (k === 'role') $('#rd').textContent = ROLE_D[u.role]; rows(); }; });
+      $$('[data-act]', bd).forEach(function (x) { x.onclick = function () { toast({ pw: '비밀번호 재설정 메일을 보냈습니다', otp: '다음 로그인 때 2단계 인증을 다시 등록합니다', out: '모든 기기에서 로그아웃시켰습니다' }[x.dataset.act] + ' (시안)'); }; });
+      $('[data-mdel]', modal).style.display = 'none'; $('[data-mtmp]', modal).style.display = 'none';
+      $('[data-mpub]', modal).textContent = isNew ? '초대 메일 보내기' : '저장';
+      $('[data-mpub]', modal).onclick = function () { if (!u.name || !u.id) { toast('이름과 아이디를 입력하세요'); return; } mOnClose = null; closeModal(); rows(); toast(isNew ? '초대 메일을 보냈습니다 (시안)' : '저장했습니다'); };
+      mOnClose = isNew ? function () { if (!u.name) { USERS.splice(USERS.indexOf(u), 1); rows(); } } : null;
+      modal.classList.add('on'); document.body.style.overflow = 'hidden';
+    }
+    $$('.flt button', el).forEach(function (b) { b.onclick = function () { f = b.textContent; $$('.flt button', el).forEach(function (x) { x.classList.toggle('on', x === b); }); rows(); }; });
+    $('.srch', el).oninput = function (e) { q = e.target.value; rows(); };
+    $('#inv').onclick = function () { USERS.unshift({ name: '', id: '', dept: '홍보팀', role: '홍보 담당', last: '—', otp: false, st: '초대 중', tel: '' }); rows(); open(0, true); };
+    rows();
+  };
+  /* 모달을 다른 화면이 쓴 뒤 버튼 모양을 원래대로 */
+  var _close = closeModal; closeModal = function () { _close(); $('[data-mdel]', modal).style.display = ''; $('[data-mtmp]', modal).style.display = ''; $('[data-mpub]', modal).textContent = '게시'; };
+  $('.m-x', modal).onclick = closeModal; $('[data-mclose]', modal).onclick = closeModal;
+
+  /* 역할·권한 */
+  R.roles = function (el) {
+    var cur = '홍보 담당';
+    el.innerHTML = head('역할·권한', '역할을 고르고 메뉴마다 할 수 있는 일을 정합니다. 계정에는 역할 하나를 붙입니다.', '<button class="btn" id="radd">+ 역할 추가</button><button class="btn navy" data-save>저장</button>') +
+      '<div class="rl"><section class="panel"><div class="panel-hd"><h2>역할</h2></div><ul class="rlist" id="rlist"></ul></section><section class="panel" id="rpan"></section></div>';
+    function list() {
+      $('#rlist').innerHTML = ROLES.map(function (r) { var n = USERS.filter(function (u) { return u.role === r && u.st !== '중지'; }).length; return '<li class="' + (r === cur ? 'sel' : '') + '" data-r="' + E(r) + '"><b>' + E(r) + '</b><span class="sub">' + E(ROLE_D[r] || '') + '</span><span class="sub">' + n + '명</span></li>'; }).join('');
+      $$('#rlist li').forEach(function (li) { li.onclick = function () { cur = li.dataset.r; list(); pan(); }; });
+    }
+    function pan() {
+      var fixed = cur === '최고 관리자', g = '', h = '';
+      MEN.forEach(function (m, i) {
+        if (m[0] !== g) { g = m[0]; h += '<li class="pg">' + g + '</li>'; }
+        var v = PERM[cur][i];
+        h += '<li class="pr"><span><b>' + m[1] + '</b></span><span class="seg">' + LVS[m[2]].map(function (L, j) { return '<button data-i="' + i + '" data-v="' + j + '" class="' + (j === v ? 'on lvs' + lvClass(m[2], j) : '') + '"' + (fixed ? ' disabled' : '') + '>' + L + '</button>'; }).join('') + '</span></li>';
+      });
+      $('#rpan').innerHTML = '<div class="panel-hd"><h2>' + E(cur) + ' — 메뉴별 권한</h2>' + (fixed ? '<span class="help">최고 관리자는 바꿀 수 없음</span>' : '<div style="display:flex;gap:6px"><button class="btn sm" data-all="0">모두 없음</button><button class="btn sm" data-all="1">모두 보기</button></div>') + '</div>' +
+        (cur === '본부 담당' ? '<div class="panel-bd" style="border-bottom:1px solid var(--line)"><div class="f"><label>문의 볼 범위</label><select style="width:auto"><option>자기 본부로 배정된 것만</option><option>전체</option></select></div></div>' : '') +
+        '<ul class="plist">' + h + '</ul><div class="panel-bd help">"수정"은 임시저장까지, "게시"는 홈페이지 반영까지, "처리"는 상태 변경·답장까지입니다.</div>';
+      $$('#rpan .seg button').forEach(function (b) { b.onclick = function () { PERM[cur][+b.dataset.i] = +b.dataset.v; pan(); }; });
+      $$('#rpan [data-all]').forEach(function (b) { b.onclick = function () { PERM[cur] = MEN.map(function () { return +b.dataset.all; }); pan(); }; });
+    }
+    $('#radd').onclick = function () { var n = '새 역할 ' + (ROLES.length - 3); ROLES.push(n); ROLE_D[n] = '설명을 입력하세요'; PERM[n] = MEN.map(function () { return 0; }); cur = n; list(); pan(); toast('권한이 모두 "없음"인 새 역할을 만들었습니다'); };
+    list(); pan();
+  };
+
+  /* 로그인 기록 */
+  R.logins = function (el) {
+    var LG = [['11.26 09:12', '김○○', 'kim.hb', '사무실 (내부망)', 'PC · Chrome', '성공'], ['11.25 22:41', '(없는 계정)', 'admin', '해외 (미국)', '알 수 없음', '실패 · 차단'], ['11.25 22:40', '(없는 계정)', 'admin', '해외 (미국)', '알 수 없음', '실패'], ['11.25 17:40', '이○○', 'lee.hb', '사무실 (내부망)', 'PC · Edge', '성공'], ['11.25 08:55', '이○○', 'lee.hb', '외부 (국내)', '휴대폰 · Safari', '성공 · 2단계 인증'], ['11.24 10:03', '박○○', 'park.sv', '사무실 (내부망)', 'PC · Chrome', '성공'], ['11.21 19:30', '박○○', 'park.sv', '외부 (국내)', 'PC · Chrome', '실패 · 비밀번호'], ['11.20 15:22', '정○○', 'jung.hr', '사무실 (내부망)', 'PC · Chrome', '성공']];
+    var f = '전체';
+    el.innerHTML = head('로그인 기록', '최근 90일 관리자 로그인입니다. 5번 연속 틀리면 계정이 잠기고, 해외에서 오는 시도는 막습니다.', '<button class="btn">엑셀로 내려받기</button>') +
+      '<div class="kpis"><div class="kpi"><small>오늘 로그인</small><b>3</b><span>모두 정상</span></div><div class="kpi"><small>실패 (7일)</small><b style="color:var(--pri)">3</b><span>해외 차단 2 · 비밀번호 1</span></div><div class="kpi"><small>잠긴 계정</small><b>0</b><span>잠기면 여기서 풀기</span></div><div class="kpi"><small>2단계 인증 안 씀</small><b style="color:var(--warn)">1</b><span><a href="#users" style="text-decoration:underline">관리자 계정에서 확인</a></span></div></div>' +
+      '<section class="panel"><div class="panel-hd"><div class="flt"><button class="on">전체</button><button>성공</button><button>실패</button></div><div style="display:flex;gap:8px"><select style="width:auto"><option>모든 사람</option>' + USERS.map(function (u) { return '<option>' + E(u.name) + '</option>'; }).join('') + '</select><input type="date" style="width:auto" value="2026-11-20"></div></div><div class="tbl"><table><thead><tr><th>시각</th><th>이름</th><th class="hide-m">아이디</th><th class="hide-m">접속 위치</th><th class="hide-m">기기</th><th>결과</th></tr></thead><tbody id="lgt"></tbody></table></div></section>' +
+      '<section class="panel"><div class="panel-hd"><h2>로그인 규칙</h2><button class="btn sm navy" data-save>저장</button></div><div class="panel-bd"><div class="grid2"><div class="f"><label>연속 실패 시 잠금</label><select><option>5회</option><option>3회</option><option>10회</option></select></div><div class="f"><label>자동 로그아웃</label><select><option>30분 동안 사용 안 하면</option><option>1시간</option><option>4시간</option></select></div><div class="f"><label>해외 접속</label><select><option>막기</option><option>허용</option></select></div><div class="f"><label>2단계 인증</label><select><option>최고 관리자는 필수, 나머지는 선택</option><option>모두 필수</option><option>모두 선택</option></select></div></div></div></section>';
+    function rows() { $('#lgt').innerHTML = LG.filter(function (l) { return f === '전체' || l[5].indexOf(f) === 0; }).map(function (l) { return '<tr><td class="sub">' + l[0] + '</td><td><b>' + E(l[1]) + '</b></td><td class="hide-m sub">' + l[2] + '</td><td class="hide-m">' + l[3] + '</td><td class="hide-m sub">' + l[4] + '</td><td>' + (l[5].indexOf('실패') === 0 ? '<span class="tag t-new">' + l[5] + '</span>' : tag('완료').replace('완료', l[5])) + '</td></tr>'; }).join(''); }
+    $$('.flt button', el).forEach(function (b) { b.onclick = function () { f = b.textContent; $$('.flt button', el).forEach(function (x) { x.classList.toggle('on', x === b); }); rows(); }; });
+    rows();
   };
 
   /* ───────────── 접속 통계 ───────────── */
