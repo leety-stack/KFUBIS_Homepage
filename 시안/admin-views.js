@@ -209,28 +209,38 @@
       cols: [['상태', 'st2'], ['공고명', 'name'], ['마감', 'due', 'm'], ['지원자', 'apps', 'm']], badges: function () { return ''; },
       fields: [['part', '모집 부문', 'txt'], ['career', '경력', 'sel', ['신입', '경력 3년 이상', '경력 5년 이상', '무관']], ['due', '마감일', 'txt'], ['st2', '상태', 'sel', ['모집 중', '마감']], ['name', '공고명', 'txt', 0, 1], ['body', '공고 내용', 'editor'], ['online', '홈페이지에서 온라인 지원 받기', 'bool']] }
   };
+  /* 편집 팝업 (게시판 공통) */
+  var modal = document.createElement('div'); modal.className = 'modal'; modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true');
+  modal.innerHTML = '<div class="m-box"><div class="m-hd"><h2></h2><button class="m-x" aria-label="닫기">×</button></div><div class="m-bd"></div><div class="m-ft"><button class="btn" data-mdel style="color:var(--pri);margin-right:auto">삭제</button><button class="btn" data-mclose>취소</button><button class="btn" data-mtmp>임시저장</button><button class="btn navy" data-mpub>게시</button></div></div>';
+  document.body.appendChild(modal);
+  var mOnClose = null;
+  function closeModal() { modal.classList.remove('on'); document.body.style.overflow = ''; if (mOnClose) mOnClose(); }
+  $('.m-x', modal).onclick = closeModal; $('[data-mclose]', modal).onclick = closeModal;
+  modal.addEventListener('mousedown', function (e) { if (e.target === modal) closeModal(); });
+  addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('on')) closeModal(); });
+
   function boardView(key) {
     return function (el) {
-      var C = BOARDS[key], cat = '전체', q = '', cur = 0;
-      el.innerHTML = head(C.title, C.desc, '<button class="btn" data-new>+ 새로 쓰기</button>') +
-        '<div class="bd"><section class="panel"><div class="panel-hd"><div class="flt">' + ['전체'].concat(C.cats).map(function (c) { return '<button class="' + (c === '전체' ? 'on' : '') + '">' + c + '</button>'; }).join('') + '</div><input class="srch" placeholder="검색"></div><div class="tbl"><table><thead><tr>' + C.cols.map(function (c) { return '<th' + (c[2] ? ' class="hide-m"' : '') + '>' + c[0] + '</th>'; }).join('') + '<th>상태</th><th>노출</th></tr></thead><tbody></tbody></table></div><div class="foot"><span class="cnt"></span><span class="help">줄을 누르면 오른쪽에서 고칩니다</span></div></section>' +
-        '<section class="panel"><div class="panel-hd"><h2 class="ed-t">편집</h2><div style="display:flex;gap:6px"><button class="btn sm" style="color:var(--pri)" data-del>삭제</button><button class="btn sm">임시저장</button><button class="btn sm navy" data-save>게시</button></div></div><div class="panel-bd ed"></div></section></div>';
+      var C = BOARDS[key], cat = '전체', q = '';
+      el.innerHTML = head(C.title, C.desc, '<button class="btn navy" data-new>+ 새로 쓰기</button>') +
+        '<section class="panel"><div class="panel-hd"><div class="flt">' + ['전체'].concat(C.cats).map(function (c) { return '<button class="' + (c === '전체' ? 'on' : '') + '">' + c + '</button>'; }).join('') + '</div><input class="srch" placeholder="제목 검색"></div>' +
+        '<div class="tbl"><table class="blist-t"><thead><tr><th style="width:56px">번호</th>' + C.cols.map(function (c) { return '<th' + (c[2] ? ' class="hide-m"' : '') + '>' + c[0] + '</th>'; }).join('') + '<th style="width:90px">상태</th><th style="width:70px">노출</th><th style="width:70px" class="hide-m"></th></tr></thead><tbody></tbody></table></div>' +
+        '<div class="foot"><span class="cnt"></span><span class="pager"><button class="btn sm" disabled>‹</button><b>1</b><button class="btn sm" disabled>›</button></span></div></section>';
       function rows() {
-        var tb = $('tbody', el), n = 0; tb.innerHTML = '';
+        var tb = $('tbody', el), n = 0, total = C.rows.length; tb.innerHTML = '';
         C.rows.forEach(function (r, i) {
-          if (cat !== '전체' && r[C.catKey] !== cat) return; if (q && (r.name + (r.en || '')).indexOf(q) < 0) return; n++;
-          var tr = document.createElement('tr'); if (i === cur) tr.className = 'sel';
-          tr.innerHTML = C.cols.map(function (c, j) { return '<td' + (c[2] ? ' class="hide-m"' : '') + '>' + (j === 1 ? '<b>' + E(r[c[1]]) + '</b><div>' + C.badges(r) + '</div>' : E(r[c[1]])) + '</td>'; }).join('') + '<td>' + tag(r.st) + '</td><td>' + sw(r.st !== '숨김') + '</td>';
-          tr.onclick = function (e) { if (e.target.closest('.sw')) return; cur = i; rows(); edit(); };
-          $('.sw input', tr).onchange = function (e) { r.st = e.target.checked ? '게시' : '숨김'; rows(); };
+          if (cat !== '전체' && r[C.catKey] !== cat) return; if (q && ((r.name || '') + (r.en || '')).indexOf(q) < 0) return; n++;
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td class="sub">' + (total - i) + '</td>' + C.cols.map(function (c, j) { return '<td' + (c[2] ? ' class="hide-m"' : '') + '>' + (j === 1 ? '<b>' + E(r[c[1]] || '(제목 없음)') + '</b> ' + C.badges(r) : E(r[c[1]])) + '</td>'; }).join('') + '<td>' + tag(r.st) + '</td><td>' + sw(r.st !== '숨김') + '</td><td class="hide-m"><button class="btn sm">수정</button></td>';
+          tr.onclick = function (e) { if (e.target.closest('.sw')) return; open(i); };
+          $('.sw input', tr).onchange = function (e) { r.st = e.target.checked ? '게시' : '숨김'; rows(); toast(e.target.checked ? '홈페이지에 보이게 했습니다' : '홈페이지에서 숨겼습니다'); };
           tb.appendChild(tr);
         });
+        if (!n) tb.innerHTML = '<tr><td colspan="9" class="empty">조건에 맞는 글이 없습니다</td></tr>';
         $('.cnt', el).textContent = '총 ' + n + '건';
       }
-      function edit() {
-        var r = C.rows[cur], h = '<div class="grid2">';
-        if (!r) { $('.ed', el).innerHTML = '<p class="help">왼쪽에서 고를 글을 누르세요</p>'; return; }
-        $('.ed-t', el).textContent = r.name ? '편집 — ' + r.name.slice(0, 22) : '새 글';
+      function form(r) {
+        var h = '<div class="grid2">';
         C.fields.forEach(function (f) {
           var k = f[0], lab = f[1], t = f[2], full = f[4] || t === 'img' || t === 'editor' || t === 'area' || t === 'file' || t === 'bool', v = r[k];
           h += '<div class="f' + (full ? ' full' : '') + '">';
@@ -240,22 +250,32 @@
             if (t === 'sel') h += '<select data-k="' + k + '">' + f[3].map(function (o) { return '<option' + (o === v ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>';
             else if (t === 'area') h += '<textarea data-k="' + k + '">' + E(v) + '</textarea>';
             else if (t === 'editor') h += '<div class="rte"><div class="rte-b"><button><b>B</b></button><button><i>I</i></button><button>제목</button><button>목록</button><button>링크</button><button>사진</button><button>표</button></div><div class="rte-a" contenteditable="true">' + (v ? E(v) : '본문을 입력하세요. 한글·워드에서 복사해 붙여도 서식이 정리되어 들어갑니다.') + '</div></div>';
-            else if (t === 'img') h += '<div class="lib">' + IMGS.slice(0, 8).map(function (s) { return '<img data-img="' + k + '" data-s="' + s + '" src="' + s + '" class="' + (s === v ? 'on' : '') + '" alt="">'; }).join('') + '</div><span class="help">사진 보관함에서 고르거나 끌어 놓아 새로 올림</span>';
+            else if (t === 'img') h += '<div class="lib lib8">' + IMGS.slice(0, 8).map(function (s) { return '<img data-img="' + k + '" data-s="' + s + '" src="' + s + '" class="' + (s === v ? 'on' : '') + '" alt="">'; }).join('') + '</div><span class="help">사진 보관함에서 고르거나 끌어 놓아 새로 올림</span>';
             else if (t === 'file') h += '<div class="drop">파일을 끌어 놓거나 눌러서 선택 · PDF·HWP·ZIP 50MB까지</div>';
             else h += '<input data-k="' + k + '" value="' + E(v) + '"' + (k === 'en' && !v ? ' placeholder="비워 두면 영문 사이트에서 숨김"' : '') + '>';
           }
           h += '</div>';
         });
-        h += '</div><p class="help" style="margin-top:12px">고친 내용은 [게시]를 눌러야 홈페이지에 반영되고, 이전 내용은 변경 이력에 남습니다.</p>';
-        $('.ed', el).innerHTML = h;
-        $$('[data-k]', $('.ed', el)).forEach(function (inp) { inp.oninput = inp.onchange = function () { r[inp.dataset.k] = inp.type === 'checkbox' ? inp.checked : inp.value; if (inp.dataset.k === 'name' || inp.dataset.k === 'en' || inp.dataset.k === C.catKey || inp.type === 'checkbox') rows(); }; });
-        $$('[data-img]', $('.ed', el)).forEach(function (im) { im.onclick = function () { r[im.dataset.img] = im.dataset.s; edit(); }; });
+        return h + '</div><p class="help" style="margin-top:14px">[게시]를 눌러야 홈페이지에 반영되고, 이전 내용은 변경 이력에 남습니다.</p>';
+      }
+      function open(i, isNew) {
+        var r = C.rows[i], bd = $('.m-bd', modal);
+        $('.m-hd h2', modal).textContent = (isNew ? C.title + ' — 새로 쓰기' : C.title + ' — 수정');
+        bd.innerHTML = form(r);
+        $$('[data-k]', bd).forEach(function (inp) { inp.oninput = inp.onchange = function () { r[inp.dataset.k] = inp.type === 'checkbox' ? inp.checked : inp.value; rows(); }; });
+        $$('[data-img]', bd).forEach(function (im) { im.onclick = function () { r[im.dataset.img] = im.dataset.s; $$('[data-img]', bd).forEach(function (x) { x.classList.toggle('on', x === im); }); }; });
+        $('[data-mdel]', modal).style.display = isNew ? 'none' : '';
+        $('[data-mdel]', modal).onclick = function () { if (confirm('삭제할까요? 변경 이력에서 되살릴 수 있습니다.')) { C.rows.splice(C.rows.indexOf(r), 1); mOnClose = null; closeModal(); rows(); toast('삭제했습니다'); } };
+        $('[data-mtmp]', modal).onclick = function () { r.st = '임시저장'; mOnClose = null; closeModal(); rows(); toast('임시저장했습니다 — 홈페이지에는 아직 안 보입니다'); };
+        $('[data-mpub]', modal).onclick = function () { if (!r.name) { toast('제목을 입력하세요'); return; } r.st = '게시'; mOnClose = null; closeModal(); rows(); toast('게시했습니다 — 홈페이지에 반영되었습니다 (시안)'); };
+        mOnClose = isNew ? function () { if (!r.name) { C.rows.splice(C.rows.indexOf(r), 1); rows(); } } : null;
+        modal.classList.add('on'); document.body.style.overflow = 'hidden';
+        var first = $('input[data-k="name"]', bd) || $('input,select,textarea', bd); if (first) setTimeout(function () { first.focus(); }, 50);
       }
       $$('.flt button', el).forEach(function (b) { b.onclick = function () { cat = b.textContent; $$('.flt button', el).forEach(function (x) { x.classList.toggle('on', x === b); }); rows(); }; });
       $('.srch', el).oninput = function (e) { q = e.target.value; rows(); };
-      $('[data-new]', el).onclick = function () { var n = { name: '', en: '', st: '임시저장' }; n[C.catKey] = C.cats[0]; C.rows.unshift(n); cur = 0; rows(); edit(); $('.ed input[data-k="name"]', el) && $('.ed input[data-k="name"]', el).focus(); };
-      $('[data-del]', el).onclick = function () { if (confirm('삭제할까요? 변경 이력에서 되살릴 수 있습니다.')) { C.rows.splice(cur, 1); cur = 0; rows(); edit(); } };
-      rows(); edit();
+      $('[data-new]', el).onclick = function () { var n = { name: '', en: '', st: '임시저장' }; n[C.catKey] = cat !== '전체' ? cat : C.cats[0]; C.rows.unshift(n); rows(); open(0, true); };
+      rows();
     };
   }
   Object.keys(BOARDS).forEach(function (k) { R[k] = boardView(k); });

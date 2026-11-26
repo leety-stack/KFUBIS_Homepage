@@ -25,9 +25,12 @@ with sync_playwright() as p:
         pg.evaluate('y=>scrollTo(0,y)', y - 120); pg.wait_for_timeout(700)
         pg.screenshot(path=str(OUT / f'{name}.png'))
     # 관리자 화면
-    for v in ['page', 'menu', 'popup', 'inquiry', 'main', 'works', 'users']:
+    for v in ['dash', 'page', 'menu', 'popup', 'inquiry', 'main', 'works', 'users']:
         pg.goto((S / '관리자.html').as_uri() + '#' + v); pg.wait_for_timeout(900)
         pg.screenshot(path=str(OUT / f'adm_{v}.png'))
+    pg.goto((S / '관리자.html').as_uri() + '#works'); pg.wait_for_timeout(600)
+    pg.click('#v-works tbody tr >> nth=0'); pg.wait_for_timeout(500)
+    pg.screenshot(path=str(OUT / 'adm_board.png'))
     # 휴대폰 (시안 C·D·A 첫 화면)
     m = b.new_page(viewport={'width': 390, 'height': 844}, device_scale_factor=2)
     for k, f in [('A', 'A_기업정통형.html'), ('C', 'C_다크프리미엄형.html'), ('D', 'D_화이트모던형.html')]:
