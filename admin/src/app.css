@@ -35,3 +35,6 @@ aside a em.soon{background:none;min-width:0;height:auto;font-style:normal;font-s
 .famrow{display:grid;grid-template-columns:150px 1fr auto;gap:6px;margin-bottom:6px}
 .ilist{max-height:calc(100vh - 260px);overflow:auto}
 a.kpi{color:inherit}
+.ibar{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.ibar label{display:flex;gap:8px;align-items:center;font-weight:600;font-size:13px}
+.ibar select{width:auto}

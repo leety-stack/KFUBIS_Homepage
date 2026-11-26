@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { Tag, useToast } from "../components/ui";
+import { Modal, Tag, useToast } from "../components/ui";
 import { useAuth } from "../lib/auth";
 import { errText, pb, showDate, showTime, type Rec } from "../lib/pb";
 import type { MenuKey } from "../menu";
@@ -78,8 +78,7 @@ export default function Inbox({ inboxKey }: { inboxKey: string }) {
       const c: Record<string, number> = {};
       for (const s of D.states) c[s] = (await pb.collection(D.col).getList(1, 1, { filter: pb.filter("status = {:s}", { s }), fields: "id" })).totalItems;
       setCounts(c);
-      const next = r.find((x) => x.id === (keep ?? cur?.id)) || r[0] || null;
-      select(next);
+      if (keep) { const n = r.find((x) => x.id === keep) || ((await pb.collection(D.col).getOne(keep, { expand: D.expand })) as Rec); setCur(n); }
     } catch (e) { toast("목록을 불러오지 못했습니다 — " + errText(e)); }
   }, [D, filter]); // eslint-disable-line
   useEffect(() => { load(); }, [load]);
@@ -97,8 +96,8 @@ export default function Inbox({ inboxKey }: { inboxKey: string }) {
     catch (e) { toast("저장하지 못했습니다 — " + errText(e)); }
   };
   const setStatus = (s: string) => patch({ status: s, log: [...readArr(cur!.log), logEntry(`상태를 "${s}"(으)로 변경`)] }, `상태를 "${s}"(으)로 바꿨습니다`);
-  const setDept = (d: string) => patch({ dept: d, log: [...readArr(cur!.log), logEntry(`담당 본부를 ${d}(으)로 변경`)] }, `${d}(으)로 넘겼습니다`);
-  const addMemo = () => { if (!memo.trim()) return; patch({ memos: [...readArr(cur!.memos), logEntry(memo.trim())] }, "메모를 남겼습니다"); };
+  const setDept = (d: string) => { setBody(D.tpl[tpl].body({ ...cur!, dept: d } as Rec, me)); patch({ dept: d, log: [...readArr(cur!.log), logEntry(`담당 본부를 ${d}(으)로 변경`)] }, `${d}(으)로 넘겼습니다`); };
+  const addMemo = () => { if (!memo.trim()) return; patch({ memos: [...readArr(cur!.memos), logEntry(memo.trim())] }, "메모를 남겼습니다").then(() => setMemo("")); };
   const upload = async (f?: File) => {
     if (!cur || !f) return;
     try { await pb.collection(D.col).update(cur.id, { issued_file: f, log: [...readArr(cur.log), logEntry(`실적증명서 올림 (${f.name})`)] }); toast("실적증명서를 올렸습니다"); await load(cur.id); }
@@ -130,46 +129,51 @@ export default function Inbox({ inboxKey }: { inboxKey: string }) {
   return (
     <section className="view on">
       <div className="ph"><div><h1>{D.title}</h1><p>{D.desc}</p></div><button className="btn" onClick={exportCsv}>엑셀로 내려받기</button></div>
-      <div className="ib">
-        <section className="panel">
-          <div className="panel-hd"><div className="flt">{["전체", ...D.states].map((s) => <button key={s} className={s === st ? "on" : ""} onClick={() => setSt(s)}>{s}{s !== "전체" && counts[s] ? ` ${counts[s]}` : ""}</button>)}</div>
-            <input className="srch" placeholder="검색" value={q} onChange={(e) => setQ(e.target.value)} /></div>
-          <ul className="ilist">{list.map((r) => (
-            <li key={r.id} className={cur?.id === r.id ? "sel" : ""} onClick={() => select(r)}>
-              <div><b>{r.org || r.name}</b> <Tag t={r.status} /></div><div className="sub">{D.line(r)}</div><div className="sub">{showTime(r.created, true)}{r.dept ? " · " + r.dept : ""}</div>
-            </li>))}
-            {!list.length && <li className="sub" style={{ cursor: "default" }}>접수된 건이 없습니다</li>}</ul>
-        </section>
-        <section className="panel det">{cur ? <>
-          <div className="panel-hd"><h2>{cur.org || cur.name}</h2>
-            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-              <select value={cur.status} disabled={lv < 2} onChange={(e) => setStatus(e.target.value)} style={{ width: "auto" }}>{D.states.map((s) => <option key={s}>{s}</option>)}</select>
-              {D.key === "inquiry" && <select value={cur.dept} disabled={lv < 2} onChange={(e) => setDept(e.target.value)} style={{ width: "auto" }}>{DEPTS.map((d) => <option key={d}>{d}</option>)}</select>}
-              {(top || (D.key === "apply" && lv >= 3)) && <button className="btn sm" style={{ color: "var(--pri)" }} onClick={del}>삭제</button>}
-            </div></div>
-          <div className="panel-bd">
-            <dl className="info">{D.info(cur).map(([k, v]) => <Fragment key={k}><dt>{k}</dt><dd>{v || "—"}</dd></Fragment>)}</dl>
-            {cur.message && <div className="msg">{cur.message}</div>}
-            {D.files.flatMap((f) => readArr(Array.isArray(cur[f]) ? cur[f] : cur[f] ? [cur[f]] : []).map((n: string) => <a key={n} className="att" href={fileLink(cur, f, n)} target="_blank" rel="noreferrer">📎 {n.replace(/_[a-z0-9]{10}(\.\w+)$/i, "$1")}</a>))}
-            {D.key === "certreq" && <div className="f" style={{ marginTop: 14 }}><label>발급한 실적증명서</label>
-              {cur.issued_file ? <a className="att" href={fileLink(cur, "issued_file", cur.issued_file)} target="_blank" rel="noreferrer">📎 {cur.issued_file.replace(/_[a-z0-9]{10}(\.\w+)$/i, "$1")}</a> : <span className="help">아직 없음</span>}
-              {lv >= 2 && <label className="drop" style={{ cursor: "pointer" }}>PDF를 눌러서 올리기<input type="file" accept="application/pdf" hidden onChange={(e) => upload(e.target.files?.[0])} /></label>}</div>}
-            <div className="tl"><b>처리 기록</b><ul>{readArr(cur.log).map((l, i) => <li key={i}><span>{showTime(l.at, true)}</span>{l.by} — {l.text}</li>)}</ul></div>
-            <div className="f" style={{ marginTop: 14 }}><label>내부 메모 (홈페이지·고객에게 안 보임)</label>
-              {readArr(cur.memos).map((m, i) => <div key={i} className="memo"><b>{m.by}</b> <span className="sub">{showTime(m.at, true)}</span><div>{m.text}</div></div>)}
-              {lv >= 2 && <div style={{ display: "flex", gap: 6 }}><input value={memo} onChange={(e) => setMemo(e.target.value)} placeholder="예: 12/2 현장설명회 참석 — 감리본부 이○○" onKeyDown={(e) => e.key === "Enter" && addMemo()} /><button className="btn" onClick={addMemo}>남기기</button></div>}</div>
-            {lv >= 2 && <div className="reply">
-              <div className="f"><label>답장 메일 — 받는 사람 {cur.email || "(메일 없음)"}</label>
-                <select value={tpl} onChange={(e) => { const i = Number(e.target.value); setTpl(i); setSubject(D.tpl[i].subject); setBody(D.tpl[i].body(cur, me)); }}>{D.tpl.map((t, i) => <option key={i} value={i}>{t.name}</option>)}</select></div>
-              <input value={subject} onChange={(e) => setSubject(e.target.value)} aria-label="제목" />
-              <textarea value={body} onChange={(e) => setBody(e.target.value)} aria-label="내용" />
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-                {D.key === "certreq" && <button className="btn" disabled={busy || !cur.issued_file} onClick={() => send(true)} title={cur.issued_file ? "" : "실적증명서를 먼저 올리세요"}>첨부해서 보내기</button>}
-                <button className="btn navy" disabled={busy || !cur.email} onClick={() => send(false)}>{busy ? "보내는 중…" : "보내기"}</button></div>
-            </div>}
-          </div></> : <div className="panel-bd help">왼쪽에서 접수 건을 고르세요</div>}
-        </section>
-      </div>
+      <section className="panel">
+        <div className="panel-hd"><div className="flt">{["전체", ...D.states].map((s) => <button key={s} className={s === st ? "on" : ""} onClick={() => setSt(s)}>{s}{s !== "전체" && counts[s] ? ` ${counts[s]}` : ""}</button>)}</div>
+          <input className="srch" placeholder="검색" value={q} onChange={(e) => setQ(e.target.value)} /></div>
+        <div className="tbl"><table className="blist-t">
+          <thead><tr><th style={{ width: 56 }}>번호</th><th style={{ width: 120 }}>받은 시각</th><th>{D.key === "apply" ? "지원자" : "기관"}</th><th className="hide-m">{D.key === "inquiry" ? "분야" : D.key === "certreq" ? "요청 실적" : "공고"}</th>{D.key === "inquiry" && <th className="hide-m">담당 본부</th>}<th style={{ width: 96 }}>상태</th><th className="hide-m" style={{ width: 70 }} /></tr></thead>
+          <tbody>{list.map((r, i) => (
+            <tr key={r.id} onClick={() => select(r)}>
+              <td className="sub">{list.length - i}</td><td className="sub">{showTime(r.created, true)}</td>
+              <td><b>{r.org || r.name}</b>{r.org && r.name ? <span className="sub"> · {r.name}</span> : null}{readArr(r.memos).length > 0 && <span className="tag t-wait" style={{ marginLeft: 6 }}>메모 {readArr(r.memos).length}</span>}</td>
+              <td className="hide-m">{D.line(r)}</td>{D.key === "inquiry" && <td className="hide-m">{r.dept}</td>}
+              <td><Tag t={r.status} /></td><td className="hide-m"><button className="btn sm">{lv >= 2 ? "처리" : "보기"}</button></td>
+            </tr>))}
+            {!list.length && <tr><td colSpan={7} className="empty">접수된 건이 없습니다</td></tr>}</tbody>
+        </table></div>
+        <div className="foot"><span className="cnt">총 {list.length}건</span><span className="help">줄을 누르면 팝업에서 처리합니다</span></div>
+      </section>
+      {cur && <Modal title={`${D.title} — ${cur.org || cur.name}`} onClose={() => setCur(null)}
+        footer={<>
+          {(top || (D.key === "apply" && lv >= 3)) && <button className="btn" style={{ color: "var(--pri)", marginRight: "auto" }} onClick={del}>삭제</button>}
+          <button className="btn" style={!(top || (D.key === "apply" && lv >= 3)) ? { marginLeft: "auto" } : undefined} onClick={() => setCur(null)}>닫기</button>
+        </>}>
+        <div className="ibar">
+          <label>상태 <select value={cur.status} disabled={lv < 2} onChange={(e) => setStatus(e.target.value)}>{D.states.map((s) => <option key={s}>{s}</option>)}</select></label>
+          {D.key === "inquiry" && <label>담당 본부 <select value={cur.dept} disabled={lv < 2} onChange={(e) => setDept(e.target.value)}>{DEPTS.map((d) => <option key={d}>{d}</option>)}</select></label>}
+        </div>
+        <dl className="info">{D.info(cur).map(([k, v]) => <Fragment key={k}><dt>{k}</dt><dd>{v || "—"}</dd></Fragment>)}</dl>
+        {cur.message && <div className="msg">{cur.message}</div>}
+        {D.files.flatMap((f) => readArr(Array.isArray(cur[f]) ? cur[f] : cur[f] ? [cur[f]] : []).map((n: string) => <a key={n} className="att" href={fileLink(cur, f, n)} target="_blank" rel="noreferrer">📎 {n.replace(/_[a-z0-9]{10}(\.\w+)$/i, "$1")}</a>))}
+        {D.key === "certreq" && <div className="f" style={{ marginTop: 14 }}><label>발급한 실적증명서</label>
+          {cur.issued_file ? <a className="att" href={fileLink(cur, "issued_file", cur.issued_file)} target="_blank" rel="noreferrer">📎 {cur.issued_file.replace(/_[a-z0-9]{10}(\.\w+)$/i, "$1")}</a> : <span className="help">아직 없음</span>}
+          {lv >= 2 && <label className="drop" style={{ cursor: "pointer" }}>PDF를 눌러서 올리기<input type="file" accept="application/pdf" hidden onChange={(e) => upload(e.target.files?.[0])} /></label>}</div>}
+        <div className="tl"><b>처리 기록</b><ul>{readArr(cur.log).map((l, i) => <li key={i}><span>{showTime(l.at, true)}</span>{l.by} — {l.text}</li>)}</ul></div>
+        <div className="f" style={{ marginTop: 14 }}><label>내부 메모 (홈페이지·고객에게 안 보임)</label>
+          {readArr(cur.memos).map((m, i) => <div key={i} className="memo"><b>{m.by}</b> <span className="sub">{showTime(m.at, true)}</span><div>{m.text}</div></div>)}
+          {lv >= 2 && <div style={{ display: "flex", gap: 6 }}><input value={memo} onChange={(e) => setMemo(e.target.value)} placeholder="예: 12/2 현장설명회 참석 — 감리본부 이○○" onKeyDown={(e) => e.key === "Enter" && addMemo()} /><button className="btn" onClick={addMemo}>남기기</button></div>}</div>
+        {lv >= 2 && <div className="reply">
+          <div className="f"><label>답장 메일 — 받는 사람 {cur.email || "(메일 없음)"}</label>
+            <select value={tpl} onChange={(e) => { const i = Number(e.target.value); setTpl(i); setSubject(D.tpl[i].subject); setBody(D.tpl[i].body(cur, me)); }}>{D.tpl.map((t, i) => <option key={i} value={i}>{t.name}</option>)}</select></div>
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} aria-label="제목" />
+          <textarea value={body} onChange={(e) => setBody(e.target.value)} aria-label="내용" />
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+            {D.key === "certreq" && <button className="btn" disabled={busy || !cur.issued_file} onClick={() => send(true)} title={cur.issued_file ? "" : "실적증명서를 먼저 올리세요"}>첨부해서 보내기</button>}
+            <button className="btn navy" disabled={busy || !cur.email} onClick={() => send(false)}>{busy ? "보내는 중…" : "보내기"}</button></div>
+        </div>}
+      </Modal>}
     </section>
   );
 }
