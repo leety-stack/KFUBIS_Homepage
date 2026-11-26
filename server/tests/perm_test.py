@@ -69,6 +69,22 @@ s, _ = req("GET", f"/api/collections/news/records/{nid}"); check(f"예약 게시
 req("PATCH", f"/api/collections/users/records/{hr_id}", {"status": "중지"}, token=top)
 check("중지된 계정 로그인 차단", login("hr@test.local", "test-12345") is None)
 
+# ── 2단계: 사이트 구성 ──
+s, d = req("GET", "/api/collections/banners/records?perPage=50"); check(f"비로그인 배너 = 보이게 켠 것만 {d.get('totalItems')}건", s == 200 and all(i["visible"] for i in d["items"]))
+s, d = req("GET", "/api/collections/popups/records?perPage=50"); check(f"비로그인 팝업 = 기간 안·켠 것만 ({d.get('totalItems')}건)", s == 200)
+s, _ = req("POST", "/api/collections/menus/records", {"name_ko": "x", "visible": False}, token=bonbu); check(f"본부 담당 메뉴 추가 차단 ({s})", s in (400, 403))
+s, _ = req("POST", "/api/collections/popups/records", {"title": "x"}, token=hr); check(f"채용 담당 팝업 추가 차단 ({s})", s in (400, 403))
+# 배너 수정(2)만 있는 역할: 저장은 되고 보이게 켜기는 막힘
+s, d = req("POST", "/api/collections/roles/records", {"name": "시험 배너 수정", "perms": {"banner": 2}, "sort": 99}, token=top); tr = d.get("id")
+tu = mkuser("bn2@test.local", "시험 배너 수정") if tr and roles.update({"시험 배너 수정": tr}) is None else None
+bn2 = login("bn2@test.local", "test-12345")
+s, d = req("POST", "/api/collections/banners/records", {"title_ko": "시험 배너", "visible": False}, token=bn2); check(f"배너 수정 권한 — 숨김으로 만들기 ({s})", s == 200); bid = d.get("id")
+s, _ = req("PATCH", f"/api/collections/banners/records/{bid}", {"visible": True}, token=bn2); check(f"배너 수정 권한 — 보이게 켜기 차단 ({s})", s in (400, 403, 404))
+s, _ = req("PATCH", f"/api/collections/banners/records/{bid}", {"title_ko": "시험 배너(고침)"}, token=bn2); check(f"배너 수정 권한 — 글 고치기 ({s})", s == 200)
+req("DELETE", f"/api/collections/banners/records/{bid}", token=top)
+if tu: req("DELETE", f"/api/collections/users/records/{tu}", token=top)
+if tr: req("DELETE", f"/api/collections/roles/records/{tr}", token=top)
+
 # 정리
 for c, i in [("works", wid), ("jobs", jid), ("news", nid)]:
     if i: req("DELETE", f"/api/collections/{c}/records/{i}", token=top)

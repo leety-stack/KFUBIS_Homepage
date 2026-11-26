@@ -6,6 +6,7 @@ RUN unzip /tmp/pb.zip -d /pb && rm /tmp/pb.zip && chmod +x /pb/pocketbase
 WORKDIR /pb
 COPY pb_migrations ./pb_migrations
 COPY pb_hooks ./pb_hooks
+COPY pb_seed ./pb_seed
 COPY entrypoint.sh ./entrypoint.sh
 RUN dos2unix ./entrypoint.sh && chmod +x ./entrypoint.sh
 EXPOSE 8090

@@ -45,7 +45,10 @@ cd admin && npm install && npm run dev
 ```
 - 개발용 첫 계정: `admin@kfubis.local` / `kfubis-dev-1234` (운영은 `.env`의 `CMS_ADMIN_EMAIL`·`CMS_ADMIN_PASSWORD`로 처음 한 번 생성 — 반드시 바꿀 것)
 - 권한은 서버에서도 확인: 역할(`roles.perms`)의 메뉴별 단계 0 없음 · 1 보기 · 2 수정(임시저장까지) · 3 게시. 최고 관리자는 전부.
-- 점검: `py -3.10 server/tests/perm_test.py`(서버 권한 16개), `py -3.10 admin/tests/ui_test.py`(화면 13개)
+- 점검: `py -3.10 server/tests/perm_test.py`(서버 권한 23개), `py -3.10 admin/tests/ui_test.py`(1단계 화면 13개), `py -3.10 admin/tests/ui_test2.py`(2단계 화면 24개)
 
-**1단계에서 동작하는 것:** 로그인, 대시보드, 게시판 6종(실적·소식·R&D·인증·자료실·채용 — 목록·필터·검색·노출 스위치·편집 팝업·국문/영문·사진·첨부·달력·예약 게시). 나머지 메뉴는 "준비" 표시.
+**동작하는 것**
+- 1단계: 로그인, 대시보드, 게시판 6종(실적·소식·R&D·인증·자료실·채용 — 목록·필터·검색·노출 스위치·편집 팝업·국문/영문·사진·첨부·달력·예약 게시)
+- 2단계: 메뉴 관리(2단 구조·끌어서 순서·노출·연결할 곳), 메인 배너(PC·모바일 사진·국/영문·기간·순서·미리보기), 팝업(기간·위치 9칸·크기·기기·페이지·닫기 옵션·미리보기), 메인 화면 구성(첫 화면 계열사 선택 회사 목록, 영역 순서·노출·설정)
+- 나머지 메뉴는 "준비" 표시. 초기 배너·팝업 사진은 `server/pb_seed/`
 **운영 배포:** `docker compose up -d --build` (PocketBase), `admin/` 은 `npm run build` 결과를 웹서버에 올리고 `/api` 를 PocketBase로 넘김.

@@ -13,8 +13,8 @@ export interface MenuGroup { group?: string; items: MenuItem[] }
 export const MENU: MenuGroup[] = [
   { items: [{ key: "dash", label: "대시보드", ready: true }] },
   { group: "사이트 구성", items: [
-    { key: "main", label: "메인 화면 구성" }, { key: "banner", label: "메인 배너" }, { key: "menu", label: "메뉴 관리" },
-    { key: "page", label: "페이지 편집", option: true }, { key: "popup", label: "팝업" }] },
+    { key: "main", label: "메인 화면 구성", ready: true }, { key: "banner", label: "메인 배너", ready: true }, { key: "menu", label: "메뉴 관리", ready: true },
+    { key: "page", label: "페이지 편집", option: true }, { key: "popup", label: "팝업", ready: true }] },
   { group: "게시판·콘텐츠", items: [
     { key: "works", label: "실적 관리", ready: true }, { key: "news", label: "소식·보도자료", ready: true }, { key: "rnd", label: "R&D 과제", ready: true },
     { key: "certs", label: "인증·수상·특허", ready: true }, { key: "downloads", label: "자료실", ready: true }, { key: "jobs", label: "채용공고", ready: true }] },

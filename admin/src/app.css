@@ -23,3 +23,10 @@ aside a em.soon{background:none;min-width:0;height:auto;font-style:normal;font-s
 .rte-a h3{font-size:17px;margin:8px 0}
 .rte-a ul{padding-left:20px}
 .rte-a p{margin:4px 0}
+
+.numrow{display:grid;grid-template-columns:90px 1fr 1fr auto;gap:6px;margin-bottom:6px}
+.pop-off{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:rgba(0,0,0,.35);font-weight:700}
+.bn .noimg{display:grid;place-items:center;color:var(--sub);background:#f3f4f6;font-size:12px}
+.pop .noimg{display:grid;place-items:center;color:var(--sub);background:#f3f4f6}
+.seg button:disabled{cursor:default}
+.secs li{user-select:none}

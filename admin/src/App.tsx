@@ -3,6 +3,10 @@ import Shell from "./layout/Shell";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Board from "./pages/Board";
+import Menus from "./pages/Menus";
+import Banners from "./pages/Banners";
+import Popups from "./pages/Popups";
+import MainSections from "./pages/MainSections";
 import { AuthProvider, useAuth } from "./lib/auth";
 import { ToastProvider, Opt } from "./components/ui";
 import { BOARDS } from "./boards";
@@ -16,6 +20,8 @@ function Page() {
   if (level(item.key as MenuKey) <= 0) return <section className="view on"><div className="ph"><div><h1>{item.label}</h1><p>이 메뉴를 볼 권한이 없습니다. 최고 관리자에게 요청하세요.</p></div></div></section>;
   if (key === "dash") return <Dashboard />;
   if (BOARDS[key]) return <Board boardKey={key} />;
+  const P: Record<string, () => React.ReactElement> = { menu: Menus, banner: Banners, popup: Popups, main: MainSections };
+  if (P[key]) { const C = P[key]; return <C />; }
   return (
     <section className="view on">
       <div className="ph"><div><h1>{item.label}{item.option && <Opt />}</h1><p>다음 단계에서 만듭니다. 화면 구성은 시안(시안/관리자.html#{key})을 따릅니다.</p></div></div>

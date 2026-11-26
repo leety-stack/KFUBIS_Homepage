@@ -107,3 +107,23 @@ function Editor({ value, onChange, disabled }: { value: string; onChange: (h: st
     </div>
   );
 }
+
+/** 폼 값 → PocketBase 저장 형식 (사진 교체·삭제, 첨부 추가·삭제, 날짜 변환) */
+export function buildBody(fields: FieldDef[], vals: FormVals, rec?: Rec): Record<string, any> {
+  const body: Record<string, any> = {};
+  for (const f of fields) {
+    const v = vals[f.name];
+    if (f.type === "image") {
+      if (vals[f.name + "__new"]) body[f.name] = vals[f.name + "__new"];
+      else if (v === "" && rec?.[f.name]) body[f.name] = null;
+    } else if (f.type === "files") {
+      const added: File[] = vals[f.name + "__new"] || []; const del: string[] = vals[f.name + "__del"] || [];
+      if (f.multiple) { if (added.length) body[f.name + "+"] = added; if (del.length) body[f.name + "-"] = del; }
+      else { if (added.length) body[f.name] = added[0]; else if (del.length) body[f.name] = null; }
+    } else if (f.type === "date") body[f.name] = v && v.length === 10 ? `${v} 00:00:00.000Z` : v || "";
+    else body[f.name] = v ?? "";
+  }
+  return body;
+}
+export const initVals = (fields: FieldDef[], rec?: Rec): FormVals =>
+  Object.fromEntries(fields.map((f) => [f.name, rec ? rec[f.name] : f.type === "bool" ? false : f.type === "select" && f.required ? f.options![0] : ""]));
