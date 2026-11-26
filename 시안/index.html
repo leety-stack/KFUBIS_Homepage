@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한방유비스 대표홈페이지 개편 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Pretendard,"Malgun Gothic",sans-serif;background:#0e0f12;color:#e9eaee;word-break:keep-all;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.top{max-width:1320px;margin:0 auto;padding:80px 32px 40px}
+.top small{color:#8b8f98;letter-spacing:.12em;font-size:13px}
+.top h1{font-size:clamp(30px,4vw,52px);font-weight:700;letter-spacing:-.02em;margin-top:10px;line-height:1.2}
+.top p{color:#9aa0aa;margin-top:14px;max-width:760px}
+.top ul{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.top li{list-style:none;border:1px solid #2c2f36;border-radius:999px;padding:6px 14px;font-size:13px;color:#c3c7cf}
+
+.show{max-width:1320px;margin:0 auto;padding:60px 32px 100px;display:grid;grid-template-columns:1fr 1.7fr;gap:50px;align-items:center;border-top:1px solid #23252b}
+.show .no{font-size:13px;color:#8b8f98;letter-spacing:.1em}
+.show h2{font-size:34px;font-weight:700;margin:6px 0 14px;letter-spacing:-.02em}
+.show p{color:#a7acb5;font-size:15.5px}
+.show dl{margin-top:22px;display:grid;grid-template-columns:86px 1fr;gap:8px 14px;font-size:14px}
+.show dt{color:#6f7480}
+.show dd{color:#cfd3da}
+.show .lk{display:flex;gap:8px;margin-top:28px;flex-wrap:wrap}
+.show .lk a{padding:11px 18px;border:1px solid #3a3d45;font-size:14px;font-weight:600}
+.show .lk a.p{background:#fff;color:#111;border-color:#fff}
+.show .lk a:hover{border-color:#fff}
+
+/* 기기 목업 */
+.stage{position:relative;aspect-ratio:16/10.2;border-radius:6px;overflow:hidden;background:radial-gradient(80% 90% at 70% 10%,var(--g1,#2b3440),transparent 70%),linear-gradient(180deg,#1a1c21,#0b0c0f)}
+.stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(180deg,#15171b,#0a0b0d);border-top:1px solid #2a2d33}
+.dev{position:absolute;z-index:2}
+.dev img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.lap{left:13%;width:66%;bottom:14%}
+.lap .scr{background:#0a0a0a;border:2px solid #3b3e44;border-radius:12px 12px 0 0;padding:2.2% 2.2% 2.6%}
+.lap .scr div{width:100%;aspect-ratio:1440/900;overflow:hidden;background:#fff}
+.lap .base{height:14px;margin:0 -7%;background:linear-gradient(180deg,#c9ccd2,#8d9097);border-radius:0 0 14px 14px;position:relative}
+.lap .base::before{content:"";position:absolute;left:42%;right:42%;top:0;height:5px;background:#7b7e85;border-radius:0 0 6px 6px}
+.tab{right:4%;width:22%;bottom:12%;background:#111;border:2px solid #45484f;border-radius:16px;padding:9px}
+.tab div{width:100%;aspect-ratio:834/1112;overflow:hidden;border-radius:6px;background:#fff}
+.pho{left:4%;width:12.5%;bottom:10%;background:#111;border:2px solid #4a4d54;border-radius:22px;padding:7px}
+.pho div{width:100%;aspect-ratio:390/844;overflow:hidden;border-radius:12px;background:#fff}
+.dev{filter:drop-shadow(0 30px 40px rgba(0,0,0,.55))}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.stage .dev{transition:transform 1.2s cubic-bezier(.2,.7,.2,1),opacity 1.2s;opacity:0;transform:translateY(40px)}
+.in .dev{opacity:1;transform:none}
+.in .tab{transition-delay:.15s}.in .pho{transition-delay:.3s}
+
+.notes{max-width:1320px;margin:0 auto;padding:30px 32px 80px;color:#7c818b;font-size:13.5px;border-top:1px solid #23252b;line-height:1.9}
+@media (max-width:960px){.show{grid-template-columns:1fr;gap:30px;padding:50px 22px 70px}.top{padding:56px 22px 30px}}
+@media (prefers-reduced-motion:reduce){.reveal,.stage .dev{opacity:1!important;transform:none!important;transition:none!important}}
+</style></head><body>
+<header class="top">
+ <small>HANBANG UBIS · WEBSITE RENEWAL · DRAFT</small>
+ <h1>한방유비스 대표홈페이지<br>개편 방향 시안</h1>
+ <p>대기업·공공기관 발주처가 홈페이지에서 확인하는 것 — 무엇을 하는 회사인지, 믿을 수 있는지, 비슷한 실적이 있는지, 어떻게 문의하는지 — 에 바로 답하도록 구성했습니다.</p>
+ <ul><li>반응형 PC·태블릿·모바일</li><li>국문 / 영문</li><li>공통 관리자</li><li>스크롤 애니메이션</li><li>3필드 간편 문의</li><li>관리자에서 전부 직접 수정</li></ul>
+</header>
+
+<section class="show reveal">
+ <div>
+  <div class="no">DRAFT A</div><h2>기업 정통형</h2>
+  <p>전체 화면 사진 위에 큰 영문 타이포와 한 줄 가치 제안. 첫 화면 아래쪽에서 사업분야로 바로 이동합니다. 국내 대기업·건설사 홈페이지의 익숙한 구조.</p>
+  <dl><dt>첫 화면</dt><dd>FIRE PROTECTION SINCE 1947 · 공항·초고층·플랜트의 소방설계와 감리</dd><dt>신뢰</dt><dd>발주처 이름 띠, 특허·인증 숫자 올라가기</dd><dt>사례</dt><dd>과제 · 수행 · 결과 3단 카드</dd><dt>문의</dt><dd>이름·회사명·연락처 3칸, 모바일 하단 고정 버튼</dd></dl>
+  <div class="lk"><a class="p" href="A_기업정통형.html">국문 보기</a><a href="A_기업정통형.html?lang=en">English</a></div>
+ </div>
+ <div class="stage" id="sA" style="--g1:#33465f">
+  <div class="dev lap"><div class="scr"><div><img src="mock/A_pc.jpg" alt="시안 A PC 화면"></div></div><div class="base"></div></div>
+  <div class="dev tab"><div><img src="mock/A_tab.jpg" alt="시안 A 태블릿 화면"></div></div>
+  <div class="dev pho"><div><img src="mock/A_mo.jpg" alt="시안 A 모바일 화면"></div></div>
+ </div>
+</section>
+
+<section class="show reveal">
+ <div>
+  <div class="no">DRAFT B</div><h2>프로젝트 중심형</h2>
+  <p>흰 바탕, 큰 사진, 가는 선. 설계사무소 포트폴리오처럼 실적 목록이 중심이고, 줄을 누르면 사례(과제·수행·결과)가 펼쳐집니다.</p>
+  <dl><dt>첫 화면</dt><dd>한 줄 가치 제안 + 대표 실적 사진</dd><dt>신뢰</dt><dd>1947 · 76 · 20 · 1급 숫자, 발주처 이름 띠</dd><dt>사례</dt><dd>실적 줄 펼침, 마우스 올리면 사진</dd><dt>문의</dt><dd>검은 바탕 밑줄 입력 3칸</dd></dl>
+  <div class="lk"><a class="p" href="B_프로젝트형.html">국문 보기</a><a href="B_프로젝트형.html?lang=en">English</a></div>
+ </div>
+ <div class="stage" id="sB" style="--g1:#4a4a4a">
+  <div class="dev lap"><div class="scr"><div><img src="mock/B_pc.jpg" alt="시안 B PC 화면"></div></div><div class="base"></div></div>
+  <div class="dev tab"><div><img src="mock/B_tab.jpg" alt="시안 B 태블릿 화면"></div></div>
+  <div class="dev pho"><div><img src="mock/B_mo.jpg" alt="시안 B 모바일 화면"></div></div>
+ </div>
+</section>
+
+<section class="show reveal">
+ <div>
+  <div class="no">DRAFT C</div><h2>다크 프리미엄형</h2>
+  <p>어두운 바탕의 고급 기업형. 첫 화면은 슬라이드마다 큰 영문 단어(DESIGN · SUPERVISION · RESEARCH)가 바뀌고, 스크롤하면 회사 소개 문장이 한 단어씩 밝아집니다.</p>
+  <dl><dt>첫 화면</dt><dd>큰 영문 단어 슬라이드 + 사업별 한 줄 설명, 화살표·진행 막대</dd><dt>신뢰</dt><dd>숫자 올라가기, 발주처 이름 흐름</dd><dt>사업분야</dt><dd>목록에 마우스를 올리면 사진이 배경으로 펼쳐짐</dd><dt>사례</dt><dd>옆으로 넘기는 사례 카드(과제·수행·결과)</dd><dt>메뉴</dt><dd>전체 화면 메뉴(사진 + 전체 하위 메뉴)</dd></dl>
+  <div class="lk"><a class="p" href="C_다크프리미엄형.html">국문 보기</a><a href="C_다크프리미엄형.html?lang=en">English</a></div>
+ </div>
+ <div class="stage" id="sC" style="--g1:#3a1c1a">
+  <div class="dev lap"><div class="scr"><div><img src="mock/C_pc.jpg" alt="시안 C PC 화면"></div></div><div class="base"></div></div>
+  <div class="dev tab"><div><img src="mock/C_tab.jpg" alt="시안 C 태블릿 화면"></div></div>
+  <div class="dev pho"><div><img src="mock/C_mo.jpg" alt="시안 C 모바일 화면"></div></div>
+ </div>
+</section>
+
+<section class="show reveal">
+ <div>
+  <div class="no">DRAFT D</div><h2>화이트 모던형</h2>
+  <p>흰 바탕에 큰 영문 글자 "SAFETY, ENGINEERED"가 사진과 겹치는 첫 화면. 사업분야·발주처 유형을 탭으로 골라 보고, 홍보영상 띠와 새소식으로 마무리합니다.</p>
+  <dl><dt>첫 화면</dt><dd>영문 타이포 + 사진 겹침, 사진 전환 버튼(진행 막대)</dd><dt>신뢰</dt><dd>숫자 카드 4개 + 발주처 로고 자리 6칸</dd><dt>타겟</dt><dd>발주처 유형 탭 — 고르면 확인할 내용·자료가 바뀜</dd><dt>사례</dt><dd>유형 필터 + 과제·수행·결과 카드</dd><dt>홍보</dt><dd>홍보영상 띠(배경 시차 이동), 새소식 3건</dd></dl>
+  <div class="lk"><a class="p" href="D_화이트모던형.html">국문 보기</a><a href="D_화이트모던형.html?lang=en">English</a></div>
+ </div>
+ <div class="stage" id="sD" style="--g1:#44556b">
+  <div class="dev lap"><div class="scr"><div><img src="mock/D_pc.jpg" alt="시안 D PC 화면"></div></div><div class="base"></div></div>
+  <div class="dev tab"><div><img src="mock/D_tab.jpg" alt="시안 D 태블릿 화면"></div></div>
+  <div class="dev pho"><div><img src="mock/D_mo.jpg" alt="시안 D 모바일 화면"></div></div>
+ </div>
+</section>
+
+<section class="show reveal">
+ <div>
+  <div class="no">COMMON</div><h2>관리자 화면</h2>
+  <p>어느 시안을 골라도 같이 씁니다. 오픈 뒤 글·사진을 고치느라 개발자를 부를 일이 없도록, 홈페이지의 모든 내용을 담당자가 직접 고칩니다.</p>
+  <dl><dt>사이트 구성</dt><dd>메뉴 순서·노출·추가, 페이지 글·사진 블록 편집, 메인 화면 구성, 배너, 팝업(기간·위치)</dd><dt>콘텐츠</dt><dd>실적·소식·R&amp;D·인증·자료실·채용 — 국문/영문 한 화면 입력</dd><dt>고객</dt><dd>문의·실적증명 요청 관리, 담당 본부 자동 배정</dd><dt>설정</dt><dd>회사 정보·하단 문구, SEO, 관리자 계정·권한, 통계, 변경 이력·되돌리기</dd></dl>
+  <div class="lk"><a class="p" href="관리자.html#dash">대시보드</a><a href="관리자.html#menu">메뉴 관리</a><a href="관리자.html#page">페이지 편집</a><a href="관리자.html#popup">팝업</a></div>
+ </div>
+ <div class="stage" id="sM" style="--g1:#3b2a2a">
+  <div class="dev lap" style="left:16%;width:70%"><div class="scr"><div><img src="mock/M_pc.jpg" alt="관리자 PC 화면"></div></div><div class="base"></div></div>
+  <div class="dev pho" style="left:6%"><div><img src="mock/M_mo.jpg" alt="관리자 모바일 화면"></div></div>
+ </div>
+</section>
+
+<div class="notes">※ 사진·로고는 현재 홈페이지(kfubis.co.kr)에서 가져왔으며, 사진과 실적 이름의 짝은 확인 전입니다.<br>※ 게시판 제목·날짜, 관리자 화면 숫자는 화면 구성을 보여 주기 위한 예시입니다. 사례의 "결과" 중 비어 있는 것은 자료를 받아 채웁니다.<br>※ 발주처 이름 띠는 실제 로고 이미지(사용 허락 후)로 바꿉니다.</div>
+
+<script>
+(function(){var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(function(s){io.observe(s)});
+if(location.hash==='#static')document.querySelectorAll('.reveal').forEach(function(s){s.classList.add('in')});})();
+</script>
+</body></html>

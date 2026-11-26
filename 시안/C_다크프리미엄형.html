@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한방유비스 — 시안 C (다크 프리미엄형)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--bg:#0b0d11;--bg2:#12151b;--line:#262a33;--txt:#eceef2;--sub:#8f96a3;--red:#d42a1f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Pretendard,"Malgun Gothic",sans-serif;background:var(--bg);color:var(--txt);line-height:1.6;word-break:keep-all;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+img{display:block;max-width:100%}
+.wrap{max-width:1360px;margin:0 auto;padding:0 40px}
+
+header{position:fixed;inset:0 0 auto;z-index:50;transition:background .3s}
+header.solid{background:rgba(11,13,17,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;justify-content:space-between;height:88px}
+.logo img{height:38px}
+.gnb{display:flex;gap:46px;font-size:16px;font-weight:500}
+.gnb a{opacity:.85}.gnb a:hover{opacity:1;color:#fff}
+.r{display:flex;align-items:center;gap:18px;font-size:13px}
+.r .lg button{background:none;border:0;color:var(--sub);font:inherit;cursor:pointer;padding:2px 4px}
+.r .lg button.on{color:#fff;font-weight:700}
+.r .cta{border:1px solid rgba(255,255,255,.5);padding:10px 18px;font-weight:700;font-size:14px}
+.r .cta:hover{background:var(--red);border-color:var(--red)}
+.ham{width:30px;height:18px;position:relative;background:none;border:0;cursor:pointer;color:#fff}
+.ham::before,.ham::after,.ham span{content:"";position:absolute;left:0;right:0;height:2px;background:currentColor;transition:.3s}
+.ham::before{top:0}.ham span{top:8px}.ham::after{bottom:0}
+
+/* 전체 메뉴 */
+.full{position:fixed;inset:0;z-index:60;background:#07080b;display:grid;grid-template-columns:1fr 1fr;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+.full.open{opacity:1;visibility:visible}
+.full .l{background:url(img/hero_complex.jpg) center/cover;position:relative}
+.full .l::after{content:"";position:absolute;inset:0;background:rgba(7,8,11,.55)}
+.full .rr{padding:110px 70px;overflow:auto}
+.full .x{position:absolute;right:40px;top:30px;background:none;border:0;color:#fff;font-size:40px;cursor:pointer;z-index:2}
+.full dl{display:grid;grid-template-columns:160px 1fr;gap:26px 20px;border-top:1px solid var(--line);padding-top:30px}
+.full dt{font-size:22px;font-weight:700;transform:translateY(20px);opacity:0;transition:.5s}
+.full dd{display:flex;flex-wrap:wrap;gap:6px 22px;color:var(--sub);padding-top:6px;transform:translateY(20px);opacity:0;transition:.5s .05s}
+.full dd a:hover{color:#fff}
+.full.open dt,.full.open dd{transform:none;opacity:1}
+
+/* 첫 화면 */
+.vis{position:relative;height:100vh;min-height:640px;overflow:hidden}
+.vis .s{position:absolute;inset:0;opacity:0;transition:opacity 1.1s}
+.vis .s.on{opacity:1}
+.vis .s img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 7s ease-out}
+.vis .s.on img{transform:scale(1)}
+.vis .s::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,6,9,.82) 0%,rgba(5,6,9,.35) 60%,rgba(5,6,9,.2)),linear-gradient(0deg,rgba(5,6,9,.75),transparent 40%)}
+.vis .t{position:absolute;z-index:2;left:0;right:0;top:50%;transform:translateY(-48%)}
+.vis .top{font-size:14px;color:#c7ccd5;display:flex;gap:16px;flex-wrap:wrap}
+.vis .top span::before{content:"";display:inline-block;width:6px;height:6px;background:var(--red);margin-right:8px;vertical-align:2px}
+.vis .word{position:relative;height:clamp(70px,11vw,170px);margin:22px 0 10px;overflow:hidden}
+.vis .word b{position:absolute;left:0;top:0;font-size:clamp(64px,11vw,170px);line-height:1;font-weight:800;letter-spacing:-.045em;text-transform:uppercase;transform:translateY(105%);transition:transform .9s cubic-bezier(.7,0,.2,1)}
+.vis .word b.on{transform:none}
+.vis .word b.out{transform:translateY(-105%)}
+.vis .ko{font-size:clamp(20px,2.2vw,30px);font-weight:600;min-height:1.5em}
+.vis .desc{color:#b9bfca;max-width:560px;margin-top:10px;min-height:3.2em}
+.vis .btns{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap}
+.vis .btns a{padding:15px 26px;font-weight:700;font-size:15px;border:1px solid rgba(255,255,255,.55)}
+.vis .btns a.p{background:var(--red);border-color:var(--red)}
+.vis .btns a:hover{background:#fff;color:#111;border-color:#fff}
+.vis .ctl{position:absolute;z-index:2;left:0;right:0;bottom:48px}
+.vis .ctl .wrap{display:flex;align-items:center;gap:20px}
+.vis .ctl button{width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:none;color:#fff;font-size:18px;cursor:pointer}
+.vis .ctl button:hover{background:#fff;color:#111}
+.vis .dots{display:flex;gap:10px;margin-left:10px}
+.vis .dots i{width:46px;height:2px;background:rgba(255,255,255,.25);position:relative;overflow:hidden}
+.vis .dots i.on::after{content:"";position:absolute;inset:0;background:#fff;animation:pg 6s linear forwards}
+@keyframes pg{from{transform:translateX(-100%)}}
+.vis .scroll{margin-left:auto;font-size:12px;letter-spacing:.2em;color:#aab0bb;writing-mode:vertical-rl;position:relative;padding-bottom:50px}
+.vis .scroll::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:40px;background:#fff;animation:sc 1.8s infinite}
+@keyframes sc{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* 문장 강조 */
+.state{padding:170px 0 120px}
+.state p{font-size:clamp(28px,3.6vw,54px);font-weight:700;line-height:1.4;letter-spacing:-.03em;max-width:1150px}
+.state p span{color:#30343d;transition:color .4s}
+.state p span.lit{color:#fff}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);margin-top:90px;border-top:1px solid var(--line)}
+.nums div{padding:30px 0 0;border-right:1px solid var(--line);padding-left:30px}
+.nums div:first-child{padding-left:0}.nums div:last-child{border-right:0}
+.nums b{font-size:clamp(40px,4.4vw,66px);font-weight:800;letter-spacing:-.04em;line-height:1}
+.nums b small{font-size:.36em;font-weight:600;margin-left:4px;color:var(--red)}
+.nums>div>span{display:block;color:var(--sub);font-size:14px;margin-top:8px}
+.mq{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:30px 0;margin-top:110px}
+.mq span{font-size:24px;font-weight:700;color:#4a4f5a;margin-right:80px;letter-spacing:-.02em}
+.mq span:hover{color:#fff}
+
+/* 사업분야 */
+.sec{padding:140px 0}
+.lab{font-size:13px;color:var(--red);font-weight:700;letter-spacing:.2em}
+.sec h2{font-size:clamp(30px,3.4vw,50px);font-weight:700;line-height:1.25;letter-spacing:-.03em;margin-top:12px}
+.sec .sd{color:var(--sub);margin-top:14px;max-width:560px}
+.biz{display:grid;grid-template-columns:1fr 1.6fr;gap:60px}
+.biz .stk{position:sticky;top:140px;align-self:start}
+.biz ul li a{position:relative;display:grid;grid-template-columns:70px 1fr 40px;align-items:center;padding:38px 30px;border-bottom:1px solid var(--line);overflow:hidden}
+.biz ul li:first-child a{border-top:1px solid var(--line)}
+.biz ul li a::before{content:"";position:absolute;inset:0;background:var(--img) center/cover;opacity:0;transform:scale(1.08);transition:opacity .5s,transform .8s}
+.biz ul li a::after{content:"";position:absolute;inset:0;background:rgba(8,10,14,.62);opacity:0;transition:opacity .5s}
+.biz ul li a:hover::before{opacity:1;transform:scale(1)}
+.biz ul li a:hover::after{opacity:1}
+.biz ul li a>*{position:relative;z-index:1}
+.biz small{color:var(--sub);font-size:14px}
+.biz h3{font-size:clamp(22px,2.2vw,32px);font-weight:700;letter-spacing:-.02em}
+.biz p{color:#a8aeb9;font-size:15px;margin-top:4px}
+.biz i{font-style:normal;font-size:24px;transition:transform .3s}
+.biz li a:hover i{transform:translateX(8px);color:var(--red)}
+
+/* 발주처 */
+.who{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:60px}
+.who div{background:var(--bg);padding:38px 30px 44px;transition:background .3s}
+.who div:hover{background:var(--bg2)}
+.who em{font-style:normal;color:var(--sub);font-size:13px}
+.who h3{font-size:21px;margin:10px 0 6px}
+.who .q{color:var(--red);font-weight:600;font-size:14.5px;margin-bottom:18px}
+.who li{color:#b3b9c4;font-size:14.5px;padding:4px 0;border-bottom:1px dashed #23262d}
+
+/* 사례 가로 스크롤 */
+.cases{display:flex;gap:26px;overflow-x:auto;scroll-snap-type:x mandatory;padding:60px 40px 30px max(40px,calc((100vw - 1360px)/2 + 40px));scroll-padding-left:max(40px,calc((100vw - 1360px)/2 + 40px));scrollbar-width:thin;scrollbar-color:#444 transparent}
+.case{flex:0 0 min(520px,82vw);scroll-snap-align:start}
+.case .ph{aspect-ratio:4/3;overflow:hidden;position:relative}
+.case .ph img{width:100%;height:100%;object-fit:cover;transition:transform .8s}
+.case:hover .ph img{transform:scale(1.06)}
+.case .ph span{position:absolute;left:18px;top:18px;background:rgba(0,0,0,.55);padding:5px 12px;font-size:12.5px}
+.case h3{font-size:22px;margin:22px 0 14px}
+.case dl{display:grid;grid-template-columns:50px 1fr;gap:8px 12px;font-size:15px;color:#c2c7d0;border-top:1px solid var(--line);padding-top:16px}
+.case dt{color:var(--sub)}
+.cnav{display:flex;gap:10px}
+.cnav button{width:52px;height:52px;border-radius:50%;border:1px solid #3a3f49;background:none;color:#fff;font-size:20px;cursor:pointer}
+.cnav button:hover{background:#fff;color:#111}
+
+/* 문의 */
+.inq{background:url(img/hero_airport.jpg) center/cover;position:relative}
+.inq::before{content:"";position:absolute;inset:0;background:rgba(8,10,14,.88)}
+.inq .wrap{position:relative;display:grid;grid-template-columns:1fr 1.2fr;gap:70px}
+.inq .tel{font-size:36px;font-weight:800;margin-top:28px;letter-spacing:-.02em}
+.inq form{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 20px}
+.inq input,.inq textarea{background:none;border:0;border-bottom:1px solid #4a4f59;color:#fff;font:inherit;font-size:16px;padding:16px 0}
+.inq input::placeholder,.inq textarea::placeholder{color:#7d8390}
+.inq textarea{grid-column:1/-1;min-height:70px;resize:vertical}
+.inq .ag{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:16px;flex-wrap:wrap;color:#aab0bb;font-size:14px}
+.inq .ag input{width:auto}
+.inq button{background:var(--red);color:#fff;border:0;padding:16px 44px;font:inherit;font-weight:700;cursor:pointer}
+.inq button:hover{background:#fff;color:#111}
+
+footer{padding:56px 0;color:#727986;font-size:13.5px;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+footer img{height:32px;margin-bottom:16px;opacity:.85}
+footer .lk a{margin-left:20px;color:#b0b6c0}
+.mcta{display:none}
+
+@media (max-width:1100px){
+ .gnb,.r .cta{display:none}
+ .biz{grid-template-columns:1fr;gap:30px}.biz .stk{position:static}
+ .who{grid-template-columns:1fr 1fr}
+ .nums{grid-template-columns:1fr 1fr}.nums div:nth-child(3){padding-left:0}.nums div{padding-bottom:24px;border-bottom:1px solid var(--line)}.nums div:nth-child(2){border-right:0}
+ .inq .wrap{grid-template-columns:1fr;gap:30px}
+ .cases{padding-left:40px;scroll-padding-left:40px}
+ .full{grid-template-columns:1fr}.full .l{display:none}.full .rr{padding:100px 30px}
+}
+@media (max-width:640px){
+ .wrap{padding:0 22px}
+ .hd{height:70px}.logo img{height:30px}
+ .vis .scroll{display:none}.vis .ctl{bottom:30px}.vis .dots i{width:28px}
+ .vis .btns a{flex:1;text-align:center;padding:14px 8px}
+ .state{padding:100px 0 70px}
+ .sec{padding:90px 0}
+ .biz ul li a{grid-template-columns:44px 1fr 24px;padding:26px 6px}
+ .who{grid-template-columns:1fr}
+ .cases{padding-left:22px;scroll-padding-left:22px}
+ .inq form{grid-template-columns:1fr}
+ .full dl{grid-template-columns:1fr;gap:6px}.full dd{padding-bottom:16px}
+ .mcta{display:grid;grid-template-columns:1fr 1fr;position:fixed;left:0;right:0;bottom:0;z-index:45}
+ .mcta a{text-align:center;padding:16px;font-weight:700;background:#1a1d24}
+ .mcta a.p{background:var(--red)}
+ body{padding-bottom:54px}
+}
+</style>
+</head>
+<body data-reveal=".nums>div,.lab,.sec h2,.sec .sd,.biz li,.who>div,.case,.inq .wrap>*">
+<header id="hd">
+ <div class="wrap hd">
+  <a class="logo" href="#"><img src="img/logo_b.png" alt="한방유비스(주)"></a>
+  <nav class="gnb"><a href="#" data-en="Company">회사소개</a><a href="#biz" data-en="Business">사업분야</a><a href="#cs" data-en="Projects">수행실적</a><a href="#" data-en="R&amp;D">연구개발</a><a href="#" data-en="PR">홍보센터</a><a href="#" data-en="Careers">인재채용</a></nav>
+  <div class="r"><span class="lg"><button data-l="ko" onclick="setLang('ko')">KOR</button><button data-l="en" onclick="setLang('en')">ENG</button></span><a class="cta" href="#inq" data-en="Contact">사업 문의</a><button class="ham" aria-label="전체 메뉴" onclick="fm(1)"><span></span></button></div>
+ </div>
+</header>
+
+<div class="full" id="full" aria-hidden="true">
+ <div class="l"></div>
+ <div class="rr"><button class="x" onclick="fm(0)" aria-label="닫기">×</button>
+  <dl>
+   <dt data-en="Company">회사소개</dt><dd><a href="#" data-en="CEO Message">인사말</a><a href="#" data-en="Vision">경영이념</a><a href="#" data-en="History">연혁</a><a href="#" data-en="Organization">조직도</a><a href="#" data-en="Certifications">인증·수상</a><a href="#" data-en="Location">오시는 길</a></dd>
+   <dt data-en="Business">사업분야</dt><dd><a href="#" data-en="Design">설계</a><a href="#" data-en="Supervision">감리</a><a href="#" data-en="PBD">성능위주설계</a><a href="#" data-en="R&amp;D">연구개발</a><a href="#" data-en="Products">방재제품</a></dd>
+   <dt data-en="Projects">수행실적</dt><dd><a href="#" data-en="Public">공공·국가기간</a><a href="#" data-en="High-rise">초고층·복합</a><a href="#" data-en="Industrial">산업·플랜트</a></dd>
+   <dt data-en="R&amp;D">연구개발</dt><dd><a href="#">R&amp;D Center</a><a href="#" data-en="Projects">수행과제</a><a href="#" data-en="Patents">특허</a></dd>
+   <dt data-en="PR">홍보센터</dt><dd><a href="#" data-en="News">새소식</a><a href="#" data-en="Brochure">회사소개서</a><a href="#" data-en="Video">홍보영상</a></dd>
+   <dt data-en="Careers">인재채용</dt><dd><a href="#" data-en="Jobs">채용공고</a><a href="#" data-en="Apply">입사지원</a></dd>
+  </dl>
+ </div>
+</div>
+
+<section class="vis" id="vis">
+ <div class="s on"><img src="img/hero_coast.jpg" alt=""></div>
+ <div class="s"><img src="img/hero_airport.jpg" alt=""></div>
+ <div class="s"><img src="img/p_data.jpg" alt=""></div>
+ <div class="t"><div class="wrap">
+  <div class="top" data-intro><span data-en="Founded 1947">1947년 설립</span><span data-en="Class 1 fire design &amp; supervision">1급 소방시설 설계·감리업</span><span data-en="76 patents">특허 76건</span></div>
+  <div class="word" data-intro><b class="on">Design</b><b>Supervision</b><b>Research</b></div>
+  <div class="ko" id="vko" data-intro></div>
+  <p class="desc" id="vdesc" data-intro></p>
+  <div class="btns" data-intro><a class="p" href="#inq" data-en="Request a consultation">사업 문의하기</a><a href="#" data-en="Company profile (PDF)">회사소개서 받기</a></div>
+ </div></div>
+ <div class="ctl"><div class="wrap"><button onclick="go(-1)" aria-label="이전">&#8592;</button><button onclick="go(1)" aria-label="다음">&#8594;</button><div class="dots"><i class="on"></i><i></i><i></i></div><span class="scroll">SCROLL</span></div></div>
+</section>
+
+<section class="wrap state">
+ <p id="stmt" data-en="Since 1947, we have protected Korea's airports, supertall towers and plants from fire — from the first drawing to the final inspection.">1947년부터 대한민국의 공항, 초고층 건축물, 산업시설을 화재로부터 지켜 왔습니다. 첫 도면부터 마지막 감리까지 한 회사가 책임집니다.</p>
+ <div class="nums">
+  <div><b><span data-count="1947">1947</span></b><span data-en="Founded">설립</span></div>
+  <div><b><span data-count="76">76</span><small data-en="">건</small></b><span data-en="Patents">특허</span></div>
+  <div><b><span data-count="20">20</span><small data-en="">건</small></b><span data-en="Government awards &amp; certifications">정부 포상·인증</span></div>
+  <div><b>1<small data-en="st">급</small></b><span data-en="Fire design &amp; supervision license">소방시설 설계·감리업</span></div>
+ </div>
+</section>
+<div class="mq marquee"><div><span data-en="Incheon International Airport Corp.">인천국제공항공사</span><span data-en="Lotte">롯데</span><span data-en="Hyundai Motor">현대자동차</span><span data-en="Hyundai Steel">현대제철</span><span data-en="Government Complex">정부종합청사</span><span data-en="USFK">주한미군</span></div></div>
+
+<section class="sec" id="biz"><div class="wrap biz">
+ <div class="stk"><div class="lab">BUSINESS</div><h2 data-en="Five divisions,<br>one accountable partner">다섯 개 본부가<br>한 회사로 움직입니다</h2><p class="sd" data-en="Design, supervision, research and products — handled in-house so nothing falls between contractors.">설계·감리·연구·제품을 모두 직접 수행해, 업체가 바뀌는 사이에 빠지는 일이 없습니다.</p></div>
+ <ul>
+  <li><a href="#" style="--img:url(img/p_tower1.jpg)"><small>01</small><div><h3 data-en="Design">설계</h3><p data-en="Fire strategy and systems under Korean and international codes">건축물 용도에 맞춘 방재계획, 국내외 기준 적용 설계</p></div><i>&#8594;</i></a></li>
+  <li><a href="#" style="--img:url(img/p_tower4.jpg)"><small>02</small><div><h3 data-en="Supervision">감리</h3><p data-en="Fire, electrical, telecom and mechanical">소방·전기·통신·기계 공사감리</p></div><i>&#8594;</i></a></li>
+  <li><a href="#" style="--img:url(img/p_tower3.jpg)"><small>03</small><div><h3 data-en="Performance-Based Design">성능위주설계</h3><p data-en="Fire and evacuation simulation">화재·피난 시뮬레이션 기반 안전성 검토</p></div><i>&#8594;</i></a></li>
+  <li><a href="#" style="--img:url(img/p_data.jpg)"><small>04</small><div><h3 data-en="R&amp;D &middot; AI">연구개발 · AI</h3><p data-en="AI design tools; Fire Safety Big Data Center">AI 소방설계, 소방안전 빅데이터센터</p></div><i>&#8594;</i></a></li>
+  <li><a href="#" style="--img:url(img/p_night.jpg)"><small>05</small><div><h3 data-en="Products">방재제품</h3><p data-en="Exclusive distributor of CADDY seismic products">CADDY 내진제품 국내 총판, 조립식 소화수조</p></div><i>&#8594;</i></a></li>
+ </ul>
+</div></section>
+
+<section class="sec" style="padding-top:0"><div class="wrap">
+ <div class="lab">CLIENTS</div><h2 data-en="Who we work with">이런 발주처와 일합니다</h2>
+ <div class="who">
+  <div><em>01</em><h3 data-en="Public agencies">공공기관 · 공기업</h3><p class="q" data-en="&ldquo;Can they handle national facilities?&rdquo;">"국가시설을 맡겨도 되나?"</p><ul><li data-en="Airport &amp; government building record">공항·정부청사 수행 실적</li><li data-en="Class 1 license, ISO">1급 면허, ISO 인증</li><li data-en="Project certificates">실적증명서 발급</li></ul></div>
+  <div><em>02</em><h3 data-en="Enterprises &amp; developers">대기업 · 시행사</h3><p class="q" data-en="&ldquo;Have they done buildings like ours?&rdquo;">"우리 같은 건물을 해 봤나?"</p><ul><li data-en="Supertall &amp; HQ design">초고층·사옥 설계</li><li data-en="PBD reviews">성능위주설계 심의 대응</li><li data-en="AI design review">AI 설계 검토</li></ul></div>
+  <div><em>03</em><h3 data-en="Builders &amp; architects">건설사 · 설계사무소</h3><p class="q" data-en="&ldquo;Can they keep pace?&rdquo;">"공정에 맞춰 대응하나?"</p><ul><li data-en="Subconsultant fire design">소방 분야 협력 설계</li><li data-en="Integrated supervision">통합 감리</li><li data-en="NFPA codes">해외 기준(NFPA) 적용</li></ul></div>
+  <div><em>04</em><h3 data-en="Industrial &amp; plants">산업시설 · 플랜트</h3><p class="q" data-en="&ldquo;Do they know special hazards?&rdquo;">"특수 위험을 아나?"</p><ul><li data-en="Steel, battery, power">제철·배터리·발전 시설</li><li data-en="Seismic products">내진 제품 공급</li><li data-en="Fire risk assessment">화재 위험성 평가</li></ul></div>
+ </div>
+</div></section>
+
+<section class="sec" id="cs" style="padding-top:0">
+ <div class="wrap" style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
+  <div><div class="lab">PROJECTS</div><h2 data-en="Case studies">수행 사례</h2></div>
+  <div class="cnav"><button onclick="cs(-1)" aria-label="이전">&#8592;</button><button onclick="cs(1)" aria-label="다음">&#8594;</button></div>
+ </div>
+ <div class="cases" id="cases">
+  <article class="case"><div class="ph"><img src="img/p_lotte.jpg" alt=""><span data-en="Supertall">초고층</span></div><h3 data-en="Lotte World Tower">잠실 롯데월드타워</h3><dl><dt data-en="Task">과제</dt><dd data-en="Fire safety for a 123-storey tower">123층 초고층 화재·피난 안전</dd><dt data-en="Work">수행</dt><dd data-en="Podium supervision, tower design, supervision (2009&ndash;2010)">저층부 감리 → 고층부 설계 → 초고층 감리 (2009~2010)</dd><dt data-en="Result">결과</dt><dd data-en="Continuous from design to supervision">설계부터 감리까지 연속 수행</dd></dl></article>
+  <article class="case"><div class="ph"><img src="img/hero_airport.jpg" alt=""><span data-en="National infrastructure">국가기간시설</span></div><h3 data-en="Incheon International Airport">인천국제공항</h3><dl><dt data-en="Task">과제</dt><dd data-en="Phased fire protection for the gateway airport">국가 관문 공항의 단계별 소방시설</dd><dt data-en="Work">수행</dt><dd data-en="Design 1993, supervision 2004, T2 design 2018">1단계 설계(1993), 1·2단계 감리(2004), 제2여객터미널 확장 설계(2018)</dd><dt data-en="Result">결과</dt><dd data-en="25 years across phases">25년간 단계마다 참여</dd></dl></article>
+  <article class="case"><div class="ph"><img src="img/p_tower3.jpg" alt=""><span data-en="Supertall">초고층</span></div><h3 data-en="Hyundai Motor GBC">현대자동차 신사옥(GBC)</h3><dl><dt data-en="Task">과제</dt><dd data-en="Fire safety for a supertall HQ">초고층 신사옥의 화재·피난 안전</dd><dt data-en="Work">수행</dt><dd data-en="Fire protection design (2015)">소방설계 (2015)</dd><dt data-en="Result">결과</dt><dd data-en="To be filled with client data">성과 내용은 자료 받아 작성</dd></dl></article>
+  <article class="case"><div class="ph"><img src="img/hero_complex.jpg" alt=""><span data-en="Industrial">산업·플랜트</span></div><h3 data-en="Hyundai Steel Dangjin Works">현대제철 당진공장</h3><dl><dt data-en="Task">과제</dt><dd data-en="Fire protection for a steel mill">대형 제철소 생산시설 소방</dd><dt data-en="Work">수행</dt><dd data-en="Phase 1 design (2007)">1기 소방설계 (2007)</dd><dt data-en="Result">결과</dt><dd data-en="To be filled with client data">성과 내용은 자료 받아 작성</dd></dl></article>
+ </div>
+</section>
+
+<section class="sec inq" id="inq"><div class="wrap">
+ <div><div class="lab">CONTACT</div><h2 data-en="Tell us about<br>your project">프로젝트를<br>알려 주세요</h2><p class="sd" data-en="Three fields are enough. The responsible division calls back within one business day.">세 칸만 적어 주시면 담당 본부가 1영업일 안에 연락드립니다.</p><div class="tel">02-2023-5000</div></div>
+ <form onsubmit="event.preventDefault();alert('시안 화면입니다')">
+  <input required placeholder="이름 *" data-ph-en="Name *"><input required placeholder="회사·기관명 *" data-ph-en="Company *"><input required placeholder="연락처 *" data-ph-en="Phone *">
+  <textarea placeholder="문의 내용 (선택)" data-ph-en="Message (optional)"></textarea>
+  <div class="ag"><label><input type="checkbox" required> <span data-en="I agree to the collection of personal information">개인정보 수집·이용 동의</span></label><button data-en="Send">문의 보내기</button></div>
+ </form>
+</div></section>
+
+<footer><div class="wrap">
+ <div><img src="img/logo_b.png" alt="한방유비스(주)"><p data-en="Hanbang UBIS Co., Ltd. · 9F Seoul Forest IT Valley, 77 Seongsuil-ro, Seongdong-gu, Seoul<br>TEL +82-2-2023-5000 · FAX +82-2-2023-5007 · Business Reg. 220-81-15635">한방유비스(주) · 서울특별시 성동구 성수일로 77 서울숲IT밸리 9층<br>TEL 02-2023-5000 · FAX 02-2023-5007 · 사업자등록번호 220-81-15635</p></div>
+ <div class="lk"><a href="#" data-en="Privacy Policy">개인정보처리방침</a><a href="#" data-en="Sitemap">사이트맵</a></div>
+</div></footer>
+<div class="mcta"><a href="tel:0220235000" data-en="Call">전화 문의</a><a class="p" href="#inq" data-en="Inquiry">사업 문의</a></div>
+
+<script>
+var lang='ko';
+var SL=[
+ {ko:'공항·초고층·플랜트의 소방설계',en:'Fire protection design for airports, towers and plants',dko:'건축물 용도와 공간에 맞춘 방재계획. 국내 법규와 NFPA 등 해외 기준을 함께 적용합니다.',den:'Fire strategies tailored to each building, applying Korean and international codes.'},
+ {ko:'국가기간시설 소방·전기·통신 감리',en:'Integrated supervision for national infrastructure',dko:'인천국제공항 1·2단계부터 제2여객터미널까지, 단계마다 현장을 지켜 왔습니다.',den:'From Incheon Airport Phase 1 to Terminal 2, we have supervised every phase.'},
+ {ko:'AI와 데이터로 여는 소방 엔지니어링',en:'Fire engineering powered by AI and data',dko:'과학기술정보통신부 지정 소방안전 빅데이터센터, AI 설계 검토 솔루션.',den:'Designated Fire Safety Big Data Center; AI design review solutions.'}];
+var ss=[].slice.call(document.querySelectorAll('.vis .s')),ws=[].slice.call(document.querySelectorAll('.vis .word b')),ds=[].slice.call(document.querySelectorAll('.vis .dots i')),k=0,tm;
+function paint(){document.getElementById('vko').textContent=lang==='en'?SL[k].en:SL[k].ko;document.getElementById('vdesc').textContent=lang==='en'?SL[k].den:SL[k].dko;}
+function go(d){var n=(k+d+ss.length)%ss.length;ss[k].classList.remove('on');ws[k].classList.remove('on');ws[k].classList.add('out');ds[k].classList.remove('on');
+ var o=ws[k];setTimeout(function(){o.classList.remove('out')},900);k=n;ss[k].classList.add('on');ws[k].classList.add('on');void ds[k].offsetWidth;ds[k].classList.add('on');paint();clearInterval(tm);tm=setInterval(function(){go(1)},6000);}
+paint();tm=setInterval(function(){go(1)},6000);
+function fm(o){var f=document.getElementById('full');f.classList.toggle('open',!!o);f.setAttribute('aria-hidden',!o);}
+var hd=document.getElementById('hd');addEventListener('scroll',function(){hd.classList.toggle('solid',scrollY>80)});
+function cs(d){var c=document.getElementById('cases');c.scrollBy({left:d*(c.querySelector('.case').offsetWidth+26),behavior:'smooth'});}
+/* 스크롤하면 문장이 한 단어씩 밝아짐 */
+function splitStmt(){var p=document.getElementById('stmt');p.innerHTML=p.textContent.split(' ').map(function(w){return '<span>'+w+'</span> '}).join('');}
+function litStmt(){var p=document.getElementById('stmt'),r=p.getBoundingClientRect(),sp=p.querySelectorAll('span');var t=Math.min(Math.max((innerHeight*.85-r.top)/(r.height+innerHeight*.35),0),1);sp.forEach(function(s,i){s.classList.toggle('lit',i/sp.length<t)});}
+addEventListener('scroll',litStmt);
+function setLang(l){lang=l;document.documentElement.lang=l;
+ document.querySelectorAll('[data-en]').forEach(function(e){if(e.dataset.ko===undefined)e.dataset.ko=e.innerHTML;e.innerHTML=l==='en'?e.dataset.en:e.dataset.ko;});
+ document.querySelectorAll('.lg button').forEach(function(b){b.classList.toggle('on',b.dataset.l===l)});
+ document.querySelectorAll('[data-ph-en]').forEach(function(e){if(e.dataset.phKo===undefined)e.dataset.phKo=e.placeholder;e.placeholder=l==='en'?e.dataset.phEn:e.dataset.phKo;});
+ paint();splitStmt();litStmt();}
+setLang(new URLSearchParams(location.search).get('lang')==='en'?'en':'ko');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.querySelectorAll('#stmt span').forEach(function(s){s.classList.add('lit')});}
+</script>
+<script src="motion.js"></script>
+</body>
+</html>

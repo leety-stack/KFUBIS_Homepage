@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한방유비스 — 시안 A (기업 정통형)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--navy:#1d395e;--red:#bc1616;--ink:#222;--sub:#666;--line:#ddd}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Pretendard,"Malgun Gothic",sans-serif;color:var(--ink);line-height:1.6;word-break:keep-all;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+img{display:block;max-width:100%}
+.wrap{max-width:1320px;margin:0 auto;padding:0 30px}
+
+/* header */
+header{position:fixed;inset:0 0 auto;z-index:50;transition:background .25s,color .25s;color:#fff}
+header.solid,header:hover{background:#fff;color:var(--ink);box-shadow:0 1px 0 var(--line)}
+.hd{display:flex;align-items:center;height:90px}
+.logo{width:190px;flex:none}
+.logo .w{display:none}
+header.solid .logo .d,header:hover .logo .d{display:none}
+header.solid .logo .w,header:hover .logo .w{display:block}
+.gnb{flex:1;display:flex;justify-content:center}
+.gnb>li{width:150px;text-align:center}
+.gnb>li>a{display:block;line-height:90px;font-size:17px;font-weight:600}
+.gnb>li>a:hover{color:var(--red)}
+.mega{position:absolute;left:0;right:0;top:90px;background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--ink);display:none}
+header:hover .mega{display:block}
+.mega .in{display:flex;justify-content:center;padding:22px 0 30px;margin-left:190px}
+.mega ul{width:150px;text-align:center;font-size:14.5px;color:#555}
+.mega li{padding:5px 0}.mega a:hover{color:var(--red);text-decoration:underline}
+.util{width:190px;display:flex;justify-content:flex-end;gap:14px;font-size:13px;align-items:center}
+.util button{background:none;border:0;color:inherit;font:inherit;cursor:pointer;opacity:.6}
+.util button.on{opacity:1;font-weight:700}
+.allmenu{display:none;background:none;border:0;color:inherit;cursor:pointer;width:28px;height:20px;position:relative}
+.allmenu span,.allmenu::before,.allmenu::after{content:"";position:absolute;left:0;right:0;height:2px;background:currentColor}
+.allmenu::before{top:0}.allmenu span{top:9px}.allmenu::after{bottom:0}
+
+/* visual */
+.visual{position:relative;height:100vh;min-height:620px;overflow:hidden;background:#000}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity 1.2s}
+.slide.on{opacity:1}
+.slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);transition:transform 7s linear}
+.slide.on img{transform:scale(1)}
+.slide::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.1) 70%)}
+.vtxt{position:absolute;z-index:2;left:0;right:0;top:50%;transform:translateY(-40%);color:#fff}
+.vtxt h2{font-size:clamp(32px,4.6vw,62px);font-weight:700;line-height:1.25}
+.vtxt p{font-size:clamp(15px,1.4vw,19px);margin-top:18px;opacity:.9}
+.vbar{position:absolute;z-index:2;left:0;right:0;bottom:50px;color:#fff}
+.vbar .wrap{display:flex;align-items:center;gap:22px;font-size:14px}
+.vbar .cap{opacity:.85}
+.vbar .num b{font-weight:700}
+.vbar .prog{width:160px;height:2px;background:rgba(255,255,255,.3);position:relative}
+.vbar .prog i{position:absolute;left:0;top:0;bottom:0;background:#fff;width:0}
+.vbar .prog i.run{width:100%;transition:width 6s linear}
+
+/* sections */
+.sec{padding:120px 0}
+.tit{font-size:clamp(26px,2.8vw,40px);font-weight:700;line-height:1.35}
+.tit-s{color:var(--sub);margin-top:12px;font-size:17px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:50px;gap:20px;flex-wrap:wrap}
+.more{font-size:15px;border-bottom:1px solid var(--ink);padding-bottom:2px}
+
+/* business tiles */
+.biz{display:flex;height:560px;gap:0}
+.biz a{position:relative;flex:1;overflow:hidden;color:#fff;transition:flex .5s}
+.biz a:hover{flex:1.8}
+.biz img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.biz a::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7),rgba(0,0,0,.05) 60%)}
+.biz .t{position:absolute;z-index:1;left:30px;right:30px;bottom:34px}
+.biz h3{font-size:22px;font-weight:700}
+.biz p{font-size:14.5px;opacity:.85;margin-top:8px;max-height:0;overflow:hidden;transition:max-height .5s}
+.biz a:hover p{max-height:90px}
+
+/* company band */
+.about{display:grid;grid-template-columns:1fr 1fr;min-height:520px}
+.about .img{background:url(img/p_lotte.jpg) center/cover}
+.about .txt{background:var(--navy);color:#fff;padding:80px 70px;display:flex;flex-direction:column;justify-content:center}
+.about .txt p{opacity:.8;margin-top:18px;max-width:520px}
+.about dl{display:grid;grid-template-columns:repeat(3,auto);gap:30px;margin-top:44px;justify-content:start}
+.about dt{font-size:13px;opacity:.65}.about dd{font-size:34px;font-weight:700}
+.about dd small{font-size:15px;font-weight:500;margin-left:2px}
+
+/* projects */
+.pjs{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.pj .ph{aspect-ratio:4/5;overflow:hidden}
+.pj img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.pj:hover img{transform:scale(1.04)}
+.pj .k{font-size:13px;color:var(--red);margin-top:16px;font-weight:600}
+.pj h4{font-size:18px;margin-top:4px}
+.pj .d{font-size:14px;color:var(--sub)}
+
+/* news + links */
+.bottom{background:#f4f5f7}
+.bt{display:grid;grid-template-columns:1.4fr 1fr;gap:60px}
+.news li{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding:18px 0;font-size:16px}
+.news li:first-child{border-top:2px solid var(--ink)}
+.news li span{color:#999;font-size:14px;flex:none}
+.news a:hover{text-decoration:underline}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.quick a{background:#fff;padding:28px 24px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.quick a:hover{color:var(--red)}
+.quick a::after{content:"";width:9px;height:9px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg)}
+
+footer{background:#1b1f26;color:#9a9fa8;font-size:13.5px;padding:50px 0 60px}
+footer .top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:22px;margin-bottom:24px;gap:20px;flex-wrap:wrap}
+footer .top a{color:#ddd;margin-right:20px}
+footer select{background:#1b1f26;color:#ccc;border:1px solid #444;padding:9px 12px;font:inherit;min-width:190px}
+footer img{width:150px;margin-bottom:16px;opacity:.85}
+
+/* mobile menu */
+.mmenu{position:fixed;inset:0;background:#fff;z-index:60;padding:24px 26px;overflow:auto;display:none}
+.mmenu.open{display:block}
+.mmenu .x{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.mmenu .x button{background:none;border:0;font-size:30px;line-height:1}
+.mmenu details{border-bottom:1px solid var(--line)}
+.mmenu summary{padding:18px 0;font-size:18px;font-weight:700;list-style:none}
+.mmenu details ul{padding:0 0 16px 4px;color:#555}
+.mmenu details li{padding:6px 0}
+
+@media (max-width:1180px){.gnb>li{width:120px}.mega .in{margin-left:0}.mega ul{width:120px}}
+@media (max-width:1000px){
+ .gnb,.mega{display:none!important}.allmenu{display:block}
+ .hd{justify-content:space-between;height:70px}.logo{width:150px}.util{width:auto}
+ .biz{flex-direction:column;height:auto}.biz a{height:220px;flex:none!important}.biz p{max-height:none}
+ .about{grid-template-columns:1fr}.about .img{min-height:300px}.about .txt{padding:56px 30px}
+ .pjs{grid-template-columns:repeat(2,1fr)}
+ .bt{grid-template-columns:1fr}
+ .sec{padding:80px 0}
+}
+@media (max-width:560px){
+ .wrap{padding:0 20px}
+ .visual{height:88vh;min-height:520px}
+ .about dl{grid-template-columns:repeat(2,auto)}
+ .pjs{gap:16px}.pj h4{font-size:16px}
+ .vbar .prog{width:80px}.vbar .cap{display:none}
+ .news li{flex-direction:column;gap:2px}
+}
+/* 참고 포트폴리오 반영: 큰 영문 타이포, 첫 화면 하단 사업 바로가기, 흐린 배경 글자 */
+.vtxt{top:44%}
+.vtxt .big{display:block;font-size:clamp(44px,8.2vw,128px);font-weight:800;line-height:.95;letter-spacing:-.035em;text-transform:uppercase;margin-bottom:26px}
+.vtxt .big em{font-style:normal;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.85)}
+.vtxt h2{font-size:clamp(22px,2.4vw,34px)!important;font-weight:600!important}
+.vbar{bottom:132px!important}
+.vcat{position:absolute;z-index:2;left:0;right:0;bottom:0;border-top:1px solid rgba(255,255,255,.3);background:rgba(10,20,35,.35);backdrop-filter:blur(6px);color:#fff}
+.vcat ul{display:grid;grid-template-columns:repeat(5,1fr)}
+.vcat a{display:flex;flex-direction:column;gap:4px;padding:24px 26px;border-left:1px solid rgba(255,255,255,.2);transition:background .3s}
+.vcat li:first-child a{border-left:0}
+.vcat a:hover{background:var(--red)}
+.vcat small{font-size:12px;opacity:.7;letter-spacing:.08em}
+.vcat b{font-size:17px;display:flex;justify-content:space-between}
+.vcat b::after{content:"\2192";transition:transform .3s}
+.vcat a:hover b::after{transform:translateX(6px)}
+.head{position:relative}
+.head .bgw{position:absolute;left:-6px;top:-62px;font-size:clamp(60px,9vw,140px);font-weight:800;color:#f0f2f5;letter-spacing:-.04em;line-height:1;z-index:-1;white-space:nowrap;pointer-events:none;text-transform:uppercase}
+.sec{position:relative;z-index:0;overflow:hidden}
+.bottom .head .bgw{color:#e6e9ee}
+.about .txt{position:relative;overflow:hidden}
+.about .txt::before{content:"SINCE 1947";position:absolute;right:-20px;bottom:-30px;font-size:clamp(70px,8vw,130px);font-weight:800;color:rgba(255,255,255,.06);letter-spacing:-.04em;white-space:nowrap}
+@media (max-width:1000px){.vcat{display:none}.vbar{bottom:40px!important}.vtxt{top:50%}}
+/* 추가: B2B 요소 */
+.hcta{background:var(--red);color:#fff!important;opacity:1!important;padding:9px 16px!important;font-weight:700!important;border-radius:2px}
+.vtxt .ey{font-size:15px;letter-spacing:.04em;opacity:.85;margin-bottom:14px;display:block}
+.vtxt .facts{display:flex;gap:10px 22px;flex-wrap:wrap;margin-top:20px;font-size:15px}
+.vtxt .facts span{border-left:2px solid var(--red);padding-left:10px}
+.vtxt .btns{display:flex;gap:10px;margin-top:34px;flex-wrap:wrap}
+.vtxt .btns a{padding:15px 28px;font-weight:700;font-size:15px;border:1px solid rgba(255,255,255,.7)}
+.vtxt .btns a.p{background:var(--red);border-color:var(--red)}
+.vtxt .btns a:hover{background:#fff;color:var(--ink);border-color:#fff}
+.clients{border-bottom:1px solid var(--line);padding:26px 0;display:flex;align-items:center;gap:30px}
+.clients .lb{flex:none;font-size:14px;color:var(--sub);padding-left:30px;max-width:150px}
+.clients .marquee{flex:1}
+.clients .marquee span{font-size:19px;font-weight:700;color:#9aa0a8;margin-right:70px;letter-spacing:-.02em}
+.target{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink)}
+.target div{padding:30px 26px 34px 0;border-right:1px solid var(--line)}
+.target div+div{padding-left:26px}.target div:last-child{border-right:0}
+.target h3{font-size:19px;margin-bottom:6px}
+.target .q{color:var(--red);font-size:14px;font-weight:600;margin-bottom:14px}
+.target li{font-size:14.5px;color:#444;padding:3px 0 3px 12px;position:relative}
+.target li::before{content:"";position:absolute;left:0;top:12px;width:4px;height:1px;background:#888}
+.case{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.case .ph{aspect-ratio:3/2;overflow:hidden}
+.case img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.case a:hover img{transform:scale(1.05)}
+.case .k{font-size:13px;color:var(--red);margin-top:18px;font-weight:600}
+.case h4{font-size:20px;margin:4px 0 14px}
+.case dl{display:grid;grid-template-columns:44px 1fr;gap:6px 10px;font-size:14.5px;border-top:1px solid var(--line);padding-top:14px}
+.case dt{color:#999}
+.inq{background:var(--navy);color:#fff}
+.inq .wrap{display:grid;grid-template-columns:1fr 1.3fr;gap:60px;align-items:start}
+.inq p{opacity:.8;margin-top:14px}
+.inq .tel{font-size:30px;font-weight:700;margin-top:30px}
+.inq form{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.inq input,.inq select,.inq textarea{font:inherit;font-size:15px;padding:14px;border:0;width:100%;background:#fff;color:var(--ink)}
+.inq textarea{grid-column:1/-1;min-height:90px;resize:vertical}
+.inq .full{grid-column:1/-1}
+.inq .agree{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:14px;opacity:.9}
+.inq .agree input{width:auto}
+.inq button{background:var(--red);color:#fff;border:0;padding:15px 40px;font:inherit;font-weight:700;cursor:pointer}
+.mcta{display:none}
+@media (max-width:1000px){
+ .hcta{display:none}
+ .target{grid-template-columns:1fr 1fr}.target div{padding-left:0!important;border-right:0;border-bottom:1px solid var(--line)}
+ .case{grid-template-columns:1fr 1fr}
+ .inq .wrap{grid-template-columns:1fr;gap:30px}
+ .mcta{display:grid;grid-template-columns:1fr 1fr;position:fixed;left:0;right:0;bottom:0;z-index:45;box-shadow:0 -4px 16px rgba(0,0,0,.12)}
+ .mcta a{text-align:center;padding:16px;font-weight:700;background:#fff}
+ .mcta a.p{background:var(--red);color:#fff}
+ body{padding-bottom:54px}
+}
+@media (max-width:560px){
+ .target,.case{grid-template-columns:1fr}
+ .inq form{grid-template-columns:1fr}
+ .clients .lb{display:none}
+ .vtxt .btns a{flex:1;text-align:center;padding:14px 10px}
+}
+</style>
+</head>
+<body data-reveal=".head,.biz a,.target>div,.about .txt>*,.case>a,.news li,.quick a,.inq .wrap>*" data-reveal-img=".about .img">
+<header id="hd">
+ <div class="wrap hd">
+  <a class="logo" href="#"><img class="d" src="img/logo_b.png" alt="한방유비스(주)"><img class="w" src="img/logo_a.png" alt="한방유비스(주)"></a>
+  <ul class="gnb">
+   <li><a href="#" data-en="Company">회사소개</a></li>
+   <li><a href="#" data-en="Business">사업분야</a></li>
+   <li><a href="#" data-en="Projects">주요실적</a></li>
+   <li><a href="#" data-en="R&amp;D">연구개발</a></li>
+   <li><a href="#" data-en="PR">홍보센터</a></li>
+   <li><a href="#" data-en="Careers">인재채용</a></li>
+  </ul>
+  <div class="util"><button data-l="ko" onclick="setLang('ko')">KOR</button><button data-l="en" onclick="setLang('en')">ENG</button><a class="hcta" href="#inq" data-en="Contact">사업 문의</a><button class="allmenu" aria-label="전체메뉴" onclick="mm(1)"><span></span></button></div>
+ </div>
+ <div class="mega"><div class="in">
+  <ul><li><a href="#" data-en="CEO Message">인사말</a></li><li><a href="#" data-en="Vision">경영이념</a></li><li><a href="#" data-en="History">연혁</a></li><li><a href="#" data-en="Organization">조직도</a></li><li><a href="#" data-en="Certifications">인증·수상</a></li><li><a href="#" data-en="Location">오시는 길</a></li></ul>
+  <ul><li><a href="#" data-en="Design">설계</a></li><li><a href="#" data-en="Supervision">감리</a></li><li><a href="#" data-en="Fire Research">방재연구</a></li><li><a href="#" data-en="Products">방재제품</a></li></ul>
+  <ul><li><a href="#" data-en="Public">공공·국가기간시설</a></li><li><a href="#" data-en="High-rise">초고층·복합시설</a></li><li><a href="#" data-en="Industrial">산업·플랜트</a></li></ul>
+  <ul><li><a href="#" data-en="R&amp;D Center">R&amp;D Center</a></li><li><a href="#" data-en="Projects">수행과제</a></li><li><a href="#" data-en="Patents">특허</a></li></ul>
+  <ul><li><a href="#" data-en="News">새소식</a></li><li><a href="#" data-en="Press">보도자료</a></li><li><a href="#" data-en="Brochure">회사소개서</a></li><li><a href="#" data-en="Video">홍보영상</a></li></ul>
+  <ul><li><a href="#" data-en="Jobs">채용공고</a></li><li><a href="#" data-en="Apply">입사지원</a></li></ul>
+ </div></div>
+</header>
+
+<section class="visual">
+ <div class="slide on" data-cap="초고층 복합시설" data-cap-en="High-rise mixed-use complex"><img src="img/hero_coast.jpg" alt=""></div>
+ <div class="slide" data-cap="공항 여객터미널" data-cap-en="Airport passenger terminal"><img src="img/hero_airport.jpg" alt=""></div>
+ <div class="slide" data-cap="대형 복합시설" data-cap-en="Large mixed-use facility"><img src="img/hero_complex.jpg" alt=""></div>
+ <div class="vtxt"><div class="wrap">
+  <span class="big" data-intro>Fire Protection<br><em>Since 1947</em></span>
+  <h2 data-intro data-en="Fire protection design &amp; supervision<br>for airports, supertall towers and plants">공항·초고층·플랜트의<br>소방설계와 감리</h2>
+  <div class="facts" data-intro><span data-en="Founded 1947">1947년 설립</span><span data-en="Class 1 design &amp; supervision license">1급 소방시설 설계·감리업</span><span data-en="76 patents">특허 76건</span></div>
+  <div class="btns" data-intro><a class="p" href="#inq" data-en="Request a consultation">사업 문의하기</a><a href="#" data-en="Company profile (PDF)">회사소개서 받기</a></div>
+ </div></div>
+ <nav class="vcat" aria-label="사업분야 바로가기"><div class="wrap" style="padding:0"><ul>
+  <li><a href="#"><small>01</small><b data-en="Design">설계</b></a></li>
+  <li><a href="#"><small>02</small><b data-en="Supervision">감리</b></a></li>
+  <li><a href="#"><small>03</small><b data-en="Performance-based design">성능위주설계</b></a></li>
+  <li><a href="#"><small>04</small><b data-en="R&amp;D &middot; AI">연구개발·AI</b></a></li>
+  <li><a href="#"><small>05</small><b data-en="Products">방재제품</b></a></li>
+ </ul></div></nav>
+ <div class="vbar"><div class="wrap"><span class="num"><b id="cur">01</b> / 03</span><span class="prog"><i id="prog"></i></span><span class="cap" id="cap"></span></div></div>
+</section>
+
+<div class="clients"><span class="lb" data-en="Clients we have worked with">함께한 발주처</span>
+ <div class="marquee"><div><span data-en="Incheon International Airport Corp.">인천국제공항공사</span><span data-en="Lotte">롯데</span><span data-en="Hyundai Motor">현대자동차</span><span data-en="Hyundai Steel">현대제철</span><span data-en="Government Complex">정부종합청사</span><span data-en="USFK">주한미군</span></div></div>
+</div>
+
+<section class="sec"><div class="wrap">
+ <div class="head"><div><span class="bgw" aria-hidden="true">Business</span><h2 class="tit" data-en="Business">사업분야</h2><p class="tit-s" data-en="Five divisions covering design, supervision, research and products">설계부터 감리, 연구, 제품까지 다섯 개 본부가 맡고 있습니다</p></div></div>
+</div>
+ <div class="biz">
+  <a href="#"><img src="img/p_tower1.jpg" alt=""><div class="t"><h3 data-en="Design">설계사업본부</h3><p data-en="Fire strategy and system design under Korean and international codes">건축물 용도와 공간 특성에 맞춘 종합 방재계획, 국내외 기준 적용 설계</p></div></a>
+  <a href="#"><img src="img/p_tower4.jpg" alt=""><div class="t"><h3 data-en="Supervision">감리사업본부</h3><p data-en="Fire, electrical, telecom and mechanical supervision">소방·전기·통신·기계 감리 — 초고층, 국가기간시설, 대형 건축물</p></div></a>
+  <a href="#"><img src="img/p_tower3.jpg" alt=""><div class="t"><h3 data-en="Fire Research">방재연구소</h3><p data-en="Performance-based design and fire safety research">성능위주설계, 화재·피난 시뮬레이션, 국내외 방재기준 연구</p></div></a>
+  <a href="#"><img src="img/p_data.jpg" alt=""><div class="t"><h3>R&amp;D Center</h3><p data-en="AI fire engineering; designated Fire Safety Big Data Center">AI 소방설계 솔루션 개발, 과학기술정보통신부 지정 소방안전 빅데이터센터</p></div></a>
+  <a href="#"><img src="img/p_night.jpg" alt=""><div class="t"><h3 data-en="Products">방재사업본부</h3><p data-en="CADDY seismic products (exclusive distributor) and more">CADDY 내진제품 국내 총판, 그루브조인트, 조립식 소화수조</p></div></a>
+ </div>
+</section>
+
+<section class="sec" style="padding-top:0"><div class="wrap">
+ <div class="head"><div><span class="bgw" aria-hidden="true">Clients</span><h2 class="tit" data-en="Who we work with">이런 발주처와 일합니다</h2><p class="tit-s" data-en="What each client asks, and what we provide">발주처마다 확인하는 것이 다릅니다. 필요한 것부터 보여 드립니다.</p></div></div>
+ <div class="target">
+  <div><h3 data-en="Public agencies">공공기관 · 공기업</h3><p class="q" data-en="&ldquo;Can they handle national facilities?&rdquo;">"국가시설을 맡겨도 되나?"</p><ul><li data-en="Airport, government building track record">공항·정부청사 수행 실적</li><li data-en="Class 1 license, ISO certifications">1급 면허, ISO 인증</li><li data-en="Project certificates on request">실적증명서 발급</li></ul></div>
+  <div><h3 data-en="Enterprises &amp; developers">대기업 · 시행사</h3><p class="q" data-en="&ldquo;Have they done buildings like ours?&rdquo;">"우리 같은 건물을 해 봤나?"</p><ul><li data-en="Supertall and HQ buildings">초고층·사옥 설계</li><li data-en="Performance-based design reviews">성능위주설계 심의 대응</li><li data-en="AI design review (ATC+)">AI 설계 검토(ATC+)</li></ul></div>
+  <div><h3 data-en="Builders &amp; architects">건설사 · 설계사무소</h3><p class="q" data-en="&ldquo;Can they keep up with our schedule?&rdquo;">"공정에 맞춰 대응하나?"</p><ul><li data-en="Fire design as subconsultant">소방 분야 협력 설계</li><li data-en="Integrated supervision">소방·전기·통신 통합 감리</li><li data-en="International codes (NFPA)">해외 기준(NFPA) 적용</li></ul></div>
+  <div><h3 data-en="Industrial &amp; plants">산업시설 · 플랜트</h3><p class="q" data-en="&ldquo;Do they know special hazards?&rdquo;">"특수 위험을 아나?"</p><ul><li data-en="Steel, battery and power plants">제철·배터리·발전 시설</li><li data-en="Seismic products (CADDY)">내진 제품(CADDY) 공급</li><li data-en="Fire risk assessment">화재 위험성 평가</li></ul></div>
+ </div>
+</div></section>
+
+<section class="about">
+ <div class="img" role="img" aria-label="롯데월드타워"></div>
+ <div class="txt">
+  <h2 class="tit" data-en="Since 1947">1947년 설립</h2>
+  <p data-en="Founded as Chosun Fire Equipment, we installed Korea's first sprinkler system at the Government Complex in 1970 and have since worked on the country's major airports, supertall towers and plants.">조선소방기자재(주)로 출발해 1970년 정부종합청사에 국내 첫 스프링클러 설비를 시공했고, 이후 공항·초고층·산업시설의 소방설계와 감리를 맡아 왔습니다.</p>
+  <dl><div><dt data-en="Patents">특허</dt><dd><span data-count="76">76</span><small data-en="">건</small></dd></div><div><dt data-en="Awards &amp; certifications">수상·인증</dt><dd><span data-count="20">20</span><small data-en="">건</small></dd></div><div><dt data-en="Class 1 license">소방시설 설계·감리업</dt><dd>1<small data-en="st class">급</small></dd></div></dl>
+ </div>
+</section>
+
+<section class="sec"><div class="wrap">
+ <div class="head"><div><span class="bgw" aria-hidden="true">Projects</span><h2 class="tit" data-en="Case Studies">수행 사례</h2><p class="tit-s" data-en="What we were asked to do, and what we delivered">어떤 과제를 맡아 무엇을 했는지 정리했습니다</p></div><a class="more" href="#" data-en="All projects">전체 실적 보기</a></div>
+ <div class="case">
+  <a href="#"><div class="ph"><img src="img/p_lotte.jpg" alt=""></div><div class="k" data-en="Supertall">초고층</div><h4 data-en="Lotte World Tower">잠실 롯데월드타워</h4>
+   <dl><dt data-en="Task">과제</dt><dd data-en="Fire safety for a 123-storey supertall tower">123층 초고층 건축물의 화재·피난 안전 확보</dd><dt data-en="Work">수행</dt><dd data-en="Podium supervision, tower design, supertall supervision (2009&ndash;2010)">저층부 감리 → 고층부 설계 → 초고층 감리 (2009~2010)</dd><dt data-en="Result">결과</dt><dd data-en="Continuous involvement from design to supervision">설계부터 감리까지 한 회사가 연속 수행</dd></dl></a>
+  <a href="#"><div class="ph"><img src="img/hero_airport.jpg" alt=""></div><div class="k" data-en="National infrastructure">국가기간시설</div><h4 data-en="Incheon International Airport">인천국제공항</h4>
+   <dl><dt data-en="Task">과제</dt><dd data-en="Fire protection for Korea's gateway airport">국가 관문 공항의 단계별 소방시설</dd><dt data-en="Work">수행</dt><dd data-en="Phase 1 design (1993), Phase 1&middot;2 supervision (2004), T2 expansion design (2018)">1단계 설계(1993), 1·2단계 감리(2004), 제2여객터미널 확장 설계(2018)</dd><dt data-en="Result">결과</dt><dd data-en="25 years of involvement across phases">25년간 단계마다 참여</dd></dl></a>
+  <a href="#"><div class="ph"><img src="img/hero_complex.jpg" alt=""></div><div class="k" data-en="Industrial plant">산업·플랜트</div><h4 data-en="Hyundai Steel Dangjin Works">현대제철 당진공장</h4>
+   <dl><dt data-en="Task">과제</dt><dd data-en="Fire protection for a large steel mill">대형 제철소 생산시설 소방</dd><dt data-en="Work">수행</dt><dd data-en="Phase 1 fire protection design (2007)">1기 소방설계 (2007)</dd><dt data-en="Result">결과</dt><dd data-en="To be filled with client data">성과 내용은 자료 받아 작성</dd></dl></a>
+ </div>
+</div></section>
+
+<section class="sec bottom"><div class="wrap bt">
+ <div><div class="head" style="margin-bottom:24px"><span class="bgw" aria-hidden="true">News</span><h2 class="tit" data-en="News">새소식</h2><a class="more" href="#" data-en="More">더보기</a></div>
+  <ul class="news">
+   <li><a href="#" data-en="Received Minister of Climate, Energy and Environment Commendation">기후에너지환경부 장관 표창 수상</a><span>2025.11.20</span></li>
+   <li><a href="#" data-en="Received Minister of SMEs and Startups Commendation">중소벤처기업부 장관 표창 수상</a><span>2025.10.02</span></li>
+   <li><a href="#" data-en="Selected for national R&amp;D: AI electrical fire prevention for traditional markets">전통시장 AI 전기화재 예방 시스템 국가 R&amp;D 과제 선정</a><span>2025.06.12</span></li>
+   <li><a href="#" data-en="2026 new graduate recruitment">2026년 신입·경력 사원 채용 안내</a><span>2025.05.30</span></li>
+  </ul></div>
+ <div><div class="head" style="margin-bottom:24px"><h2 class="tit" data-en="Quick Links">바로가기</h2></div>
+  <div class="quick"><a href="#" data-en="Company Profile">회사소개서</a><a href="#" data-en="Certifications">인증·면허 현황</a><a href="#" data-en="Project Inquiry">사업 문의</a><a href="#" data-en="Location">오시는 길</a></div></div>
+</div></section>
+
+<section class="sec inq" id="inq"><div class="wrap">
+ <div><h2 class="tit" data-en="Project Inquiry">사업 문의</h2><p data-en="Leave just three details. The responsible division will call you within one business day.">이름·회사명·연락처만 남겨 주시면 담당 본부가 1영업일 안에 연락드립니다.</p><div class="tel">02-2023-5000</div></div>
+ <form onsubmit="event.preventDefault();alert('시안 화면입니다')">
+  <input required placeholder="이름 *" data-ph-en="Name *"><input required placeholder="회사·기관명 *" data-ph-en="Company *"><input required placeholder="연락처 *" data-ph-en="Phone *">
+  <select class="full"><option data-en="Field (optional)">문의 분야 (선택)</option><option data-en="Design">설계</option><option data-en="Supervision">감리</option><option data-en="Performance-based design">성능위주설계</option><option data-en="R&amp;D / AI">연구개발·AI</option><option data-en="Products">방재제품</option></select>
+  <textarea placeholder="문의 내용 (선택)" data-ph-en="Message (optional)"></textarea>
+  <div class="full agree"><label><input type="checkbox" required> <span data-en="I agree to the collection of personal information">개인정보 수집·이용 동의</span></label><button data-en="Send">문의 보내기</button></div>
+ </form>
+</div></section>
+
+<div class="mcta"><a href="tel:0220235000" data-en="Call">전화 문의</a><a class="p" href="#inq" data-en="Inquiry">사업 문의</a></div>
+
+<footer><div class="wrap">
+ <div class="top"><div><a href="#" data-en="Privacy Policy">개인정보처리방침</a><a href="#" data-en="Email Policy">이메일무단수집거부</a><a href="#" data-en="Sitemap">사이트맵</a></div>
+  <select aria-label="Family Site"><option>Family Site</option><option>한방 (hanbang1947.co.kr)</option><option>그룹웨어</option></select></div>
+ <img src="img/logo_b.png" alt="한방유비스(주)">
+ <p data-en="Hanbang UBIS Co., Ltd. · 9F Seoul Forest IT Valley, 77 Seongsuil-ro, Seongdong-gu, Seoul 04790<br>TEL +82-2-2023-5000 · FAX +82-2-2023-5007 · Business Reg. 220-81-15635">한방유비스(주) · 대표이사 최두찬, 김상일 · (04790) 서울특별시 성동구 성수일로 77 서울숲IT밸리 9층<br>TEL 02-2023-5000 · FAX 02-2023-5007 · 사업자등록번호 220-81-15635</p>
+ <p style="margin-top:10px">COPYRIGHT © KFUBIS. ALL RIGHTS RESERVED.</p>
+</div></footer>
+
+<nav class="mmenu" id="mm">
+ <div class="x"><img src="img/logo_a.png" alt="" style="width:140px"><button aria-label="닫기" onclick="mm(0)">×</button></div>
+ <details><summary data-en="Company">회사소개</summary><ul><li data-en="CEO Message">인사말</li><li data-en="Vision">경영이념</li><li data-en="History">연혁</li><li data-en="Organization">조직도</li><li data-en="Certifications">인증·수상</li><li data-en="Location">오시는 길</li></ul></details>
+ <details><summary data-en="Business">사업분야</summary><ul><li data-en="Design">설계</li><li data-en="Supervision">감리</li><li data-en="Fire Research">방재연구</li><li data-en="Products">방재제품</li></ul></details>
+ <details><summary data-en="Projects">주요실적</summary><ul><li data-en="Public">공공·국가기간시설</li><li data-en="High-rise">초고층·복합시설</li><li data-en="Industrial">산업·플랜트</li></ul></details>
+ <details><summary data-en="R&amp;D">연구개발</summary><ul><li>R&amp;D Center</li><li data-en="Projects">수행과제</li><li data-en="Patents">특허</li></ul></details>
+ <details><summary data-en="PR">홍보센터</summary><ul><li data-en="News">새소식</li><li data-en="Press">보도자료</li><li data-en="Brochure">회사소개서</li></ul></details>
+ <details><summary data-en="Careers">인재채용</summary><ul><li data-en="Jobs">채용공고</li><li data-en="Apply">입사지원</li></ul></details>
+</nav>
+
+<script>
+var lang='ko';
+function mm(o){document.getElementById('mm').classList.toggle('open',!!o)}
+var hd=document.getElementById('hd');
+addEventListener('scroll',function(){hd.classList.toggle('solid',scrollY>60)});
+var sl=[].slice.call(document.querySelectorAll('.slide')),i=0;
+function show(n){sl[i].classList.remove('on');i=n;sl[i].classList.add('on');
+ document.getElementById('cur').textContent='0'+(i+1);
+ document.getElementById('cap').textContent=lang==='en'?sl[i].dataset.capEn:sl[i].dataset.cap;
+ var p=document.getElementById('prog');p.classList.remove('run');void p.offsetWidth;p.classList.add('run');}
+show(0);setInterval(function(){show((i+1)%sl.length)},6000);
+function setLang(l){lang=l;document.documentElement.lang=l;
+ document.querySelectorAll('[data-en]').forEach(function(e){if(e.dataset.ko===undefined)e.dataset.ko=e.innerHTML;e.innerHTML=l==='en'?e.dataset.en:e.dataset.ko;});
+ document.querySelectorAll('.util button[data-l]').forEach(function(b){b.classList.toggle('on',b.dataset.l===l)});
+ document.getElementById('cap').textContent=l==='en'?sl[i].dataset.capEn:sl[i].dataset.cap;
+ document.querySelectorAll('[data-ph-en]').forEach(function(e){if(e.dataset.phKo===undefined)e.dataset.phKo=e.placeholder;e.placeholder=l==='en'?e.dataset.phEn:e.dataset.phKo;});}
+setLang(new URLSearchParams(location.search).get('lang')==='en'?'en':'ko');
+</script>
+<script src="motion.js"></script>
+</body>
+</html>

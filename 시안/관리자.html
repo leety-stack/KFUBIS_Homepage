@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[공통 시안] 한방유비스 홈페이지 관리자</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="draft">공통 시안 · 홈페이지 관리자 — 표본 데이터, 화면 동작 확인용 (저장은 되지 않음)</div>
+<div class="app">
+ <aside id="side">
+  <div class="brand">KFUBIS CMS<small>홈페이지 관리자</small></div>
+  <a href="#dash" data-v="dash">대시보드</a>
+  <div class="grp">사이트 구성</div>
+  <a href="#main" data-v="main">메인 화면 구성</a><a href="#banner" data-v="banner">메인 배너</a><a href="#menu" data-v="menu">메뉴 관리</a><a href="#page" data-v="page">페이지 편집</a><a href="#popup" data-v="popup">팝업</a>
+  <div class="grp">게시판·콘텐츠</div>
+  <a href="#works" data-v="works">실적 관리</a><a href="#news" data-v="news">소식·보도자료</a><a href="#rnd" data-v="rnd">R&amp;D 과제</a><a href="#certs" data-v="certs">인증·수상·특허 <em style="background:#d97706">1</em></a><a href="#files" data-v="files">자료실</a><a href="#jobs" data-v="jobs">채용공고</a>
+  <div class="grp">고객</div>
+  <a href="#inquiry" data-v="inquiry">문의 관리 <em>3</em></a><a href="#certreq" data-v="certreq">실적증명 요청 <em>1</em></a><a href="#apply" data-v="apply">입사 지원 <em>1</em></a>
+  <div class="grp">설정</div>
+  <a href="#company" data-v="company">회사 정보·하단 문구</a><a href="#i18n" data-v="i18n">다국어 문구</a><a href="#seo" data-v="seo">검색 노출 (SEO)</a><a href="#users" data-v="users">관리자 계정·권한</a><a href="#stats" data-v="stats">접속 통계</a><a href="#history" data-v="history">변경 이력·되돌리기</a>
+ </aside>
+ <main>
+  <div class="top">
+   <button class="menu" aria-label="메뉴" onclick="document.getElementById('side').classList.toggle('open')">☰</button>
+   <strong id="ttl">대시보드</strong>
+   <div class="r"><span class="hide-m">홍보팀 김○○ (최고 관리자)</span><a class="btn sm" href="A_기업정통형.html" target="_blank">홈페이지 보기 ↗</a></div>
+  </div>
+  <div class="content">
+   <section class="view" id="v-dash"></section>
+   <section class="view" id="v-main"></section>
+   <section class="view" id="v-banner"></section>
+   <section class="view" id="v-works"></section>
+   <section class="view" id="v-news"></section>
+   <section class="view" id="v-rnd"></section>
+   <section class="view" id="v-certs"></section>
+   <section class="view" id="v-files"></section>
+   <section class="view" id="v-jobs"></section>
+   <section class="view" id="v-inquiry"></section>
+   <section class="view" id="v-certreq"></section>
+   <section class="view" id="v-apply"></section>
+   <section class="view" id="v-company"></section>
+   <section class="view" id="v-i18n"></section>
+   <section class="view" id="v-seo"></section>
+   <section class="view" id="v-users"></section>
+   <section class="view" id="v-stats"></section>
+   <section class="view" id="v-history"></section>
+   <!-- ───────── 메뉴 관리 ───────── -->
+   <section class="view" id="v-menu">
+    <div class="ph"><div><h1>메뉴 관리</h1><p>왼쪽 ⠿ 손잡이를 끌어 순서를 바꾸고, 메뉴를 눌러 이름·연결 페이지를 고칩니다. [저장]을 눌러야 홈페이지에 반영됩니다.</p></div>
+     <div style="display:flex;gap:8px"><button class="btn" onclick="addTop()">+ 1단 메뉴 추가</button><button class="btn navy" onclick="toast('메뉴 순서와 설정을 저장했습니다 (시안)')">저장</button></div></div>
+    <div class="mm">
+     <div class="panel"><div class="panel-hd"><h2>메뉴 구조</h2><span class="cnt" id="mcount"></span></div><div class="tree"><ul id="tree"></ul></div></div>
+     <div class="panel"><div class="panel-hd"><h2 id="mtitle">메뉴 설정</h2><div style="display:flex;gap:6px"><button class="btn sm" onclick="addChild()">+ 하위 메뉴</button><button class="btn sm" style="color:var(--pri)" onclick="delMenu()">삭제</button></div></div>
+      <div class="panel-bd" style="display:grid;gap:14px">
+       <div class="grid2">
+        <div class="f"><label>메뉴 이름 (국문) <i>*</i></label><input id="m-ko"></div>
+        <div class="f"><label>메뉴 이름 (영문)</label><input id="m-en"><span class="help">비워 두면 영문 사이트에서 숨김</span></div>
+       </div>
+       <div class="linkbox">
+        <div class="f"><label>누르면 이동할 곳</label>
+         <div class="chips" id="m-type"><label><input type="radio" name="lt" value="page" checked> 페이지</label><label><input type="radio" name="lt" value="board"> 게시판</label><label><input type="radio" name="lt" value="url"> 외부 링크</label><label><input type="radio" name="lt" value="none"> 하위 메뉴만</label></div></div>
+        <div class="f" id="m-target-wrap"><label id="m-target-l">연결 페이지</label><select id="m-target"></select></div>
+        <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="m-new" style="width:auto"> 새 창으로 열기</label>
+       </div>
+       <div class="grid2">
+        <div class="f"><label>노출</label><div style="display:flex;gap:16px;align-items:center"><label style="display:flex;gap:8px;align-items:center"><span class="sw"><input type="checkbox" id="m-pc" checked><span></span></span> PC</label><label style="display:flex;gap:8px;align-items:center"><span class="sw"><input type="checkbox" id="m-mo" checked><span></span></span> 모바일</label></div></div>
+        <div class="f"><label>메뉴 주소</label><input id="m-slug"><span class="help">kfubis.co.kr/<b id="m-slug-v"></b></span></div>
+       </div>
+       <div class="help">마지막 수정: 홍보팀 김○○ · 2026.11.20 14:02 — <a href="#" style="text-decoration:underline">변경 이력 보기</a></div>
+      </div></div>
+    </div>
+   </section>
+
+   <!-- ───────── 페이지 편집 ───────── -->
+   <section class="view" id="v-page">
+    <div class="ph">
+     <div><h1>페이지 편집</h1><p>블록을 쌓아 페이지를 만듭니다. 가운데 화면에서 블록을 누르면 오른쪽에서 글·사진을 고칩니다.</p></div>
+     <div class="pstate">
+      <select id="pg-sel" style="width:auto"><option>회사소개 › 인사말</option><option>회사소개 › 연혁</option><option>사업분야 › 설계</option><option>사업분야 › 감리</option><option>연구개발 › R&amp;D Center</option></select>
+      <div class="seg" id="pg-lang"><button class="on" data-l="ko">국문</button><button data-l="en">English</button></div>
+      <div class="seg" id="pg-dev"><button class="on" data-d="pc">PC</button><button data-d="mo">모바일</button></div>
+      <span class="tag t-wait" id="pg-st">임시저장됨</span>
+      <button class="btn" onclick="toast('임시저장했습니다 — 홈페이지에는 아직 보이지 않습니다')">임시저장</button>
+      <button class="btn pri" onclick="pub()">게시</button>
+     </div>
+    </div>
+    <div class="pe">
+     <div class="panel"><div class="panel-hd"><h2>블록</h2><span class="help">끌어서 순서 변경</span></div>
+      <div class="blist" id="blist"></div>
+      <div class="palette"><button data-add="hero">+ 제목 배너</button><button data-add="text">+ 글·사진</button><button data-add="nums">+ 숫자 띠</button><button data-add="cta">+ 문의 버튼</button><button data-add="sign">+ 서명</button><button data-add="text2">+ 사진·글</button></div>
+     </div>
+     <div class="canvas-wrap"><div class="canvas" id="canvas"><div class="cv-hd"><img src="img/logo_a.png" alt=""><span>kfubis.co.kr/company/ceo</span></div><div id="blocks"></div></div></div>
+     <div class="panel props"><div class="panel-hd"><h2 id="pr-title">블록 설정</h2><button class="btn sm ghost" onclick="delBlock()" style="color:var(--pri)">블록 삭제</button></div>
+      <div class="panel-bd" id="props"></div>
+      <div class="panel-bd" style="border-top:1px solid var(--line)"><b style="font-size:13px">변경 이력</b><div class="hist" style="margin-top:6px"><span>11.20 14:02 홍보팀 김○○ — 인사말 문구 수정 <a href="#" style="color:var(--blue)">되돌리기</a></span><span>11.12 09:41 홍보팀 김○○ — 대표 사진 교체 <a href="#" style="color:var(--blue)">되돌리기</a></span></div></div>
+     </div>
+    </div>
+   </section>
+
+   <!-- ───────── 팝업 ───────── -->
+   <section class="view" id="v-popup">
+    <div class="ph"><div><h1>팝업 관리</h1><p>기간을 정해 두면 그 기간에만 자동으로 뜹니다. 여러 개가 겹치면 순서대로 나란히 뜹니다.</p></div>
+     <button class="btn" onclick="newPop()">+ 새 팝업</button></div>
+    <div class="panel"><div style="overflow-x:auto"><table>
+     <thead><tr><th>제목</th><th>기간</th><th class="hide-m">위치</th><th class="hide-m">기기</th><th>상태</th></tr></thead>
+     <tbody id="plist"></tbody></table></div></div>
+    <div class="pp">
+     <div class="panel"><div class="panel-hd"><h2>팝업 설정</h2><button class="btn sm" style="color:var(--pri)">삭제</button></div>
+      <div class="panel-bd" style="display:grid;gap:14px">
+       <div class="f"><label>제목 (관리용) <i>*</i></label><input id="p-title"></div>
+       <div class="grid2">
+        <div class="f"><label>시작</label><input type="datetime-local" id="p-from"></div>
+        <div class="f"><label>종료</label><input type="datetime-local" id="p-to"></div>
+       </div>
+       <div class="f"><label>내용 종류</label><div class="seg" id="p-kind"><button class="on" data-k="img">이미지</button><button data-k="text">글</button><button data-k="both">이미지+글</button></div></div>
+       <div class="f" id="p-img-f"><label>이미지</label><div class="lib" id="p-lib"></div><span class="help">새 이미지는 끌어 놓거나 눌러서 올림 · 모바일용 이미지를 따로 올릴 수 있음</span></div>
+       <div class="grid2" id="p-text-f">
+        <div class="f full"><label>글 제목</label><input id="p-h"></div>
+        <div class="f full"><label>글 내용</label><textarea id="p-b"></textarea></div>
+       </div>
+       <div class="f"><label>누르면 이동할 주소</label><input id="p-link" placeholder="예: /pr/news/123"></div>
+       <div class="grid2">
+        <div class="f"><label>위치 (PC)</label><div class="pos" id="p-pos"></div></div>
+        <div class="f"><label>크기 (PC, 가로 px)</label><input type="range" min="260" max="520" step="10" id="p-w"><span class="help" id="p-wv"></span></div>
+       </div>
+       <div class="grid2">
+        <div class="f"><label>노출 기기</label><div style="display:flex;gap:16px"><label style="display:flex;gap:8px;align-items:center"><span class="sw"><input type="checkbox" id="p-pc" checked><span></span></span> PC</label><label style="display:flex;gap:8px;align-items:center"><span class="sw"><input type="checkbox" id="p-mo" checked><span></span></span> 모바일</label></div><span class="help">모바일은 화면 아래에서 올라오는 형태로 자동 표시</span></div>
+        <div class="f"><label>노출 페이지</label><select id="p-page"><option>메인 화면만</option><option>모든 페이지</option><option>국문 사이트만</option><option>영문 사이트만</option></select></div>
+       </div>
+       <div class="f"><label>닫기 옵션</label><select id="p-close"><option value="오늘 하루 보지 않기">오늘 하루 보지 않기</option><option value="7일 동안 보지 않기">7일 동안 보지 않기</option><option value="다시 보지 않기">다시 보지 않기</option></select></div>
+       <div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn">미리보기 새 창</button><button class="btn navy" onclick="toast('팝업을 저장했습니다 (시안)')">저장</button></div>
+      </div></div>
+     <div class="panel"><div class="panel-hd"><h2>미리보기</h2><div class="seg" id="p-dev"><button class="on" data-d="pc">PC</button><button data-d="mo">모바일</button></div></div>
+      <div class="panel-bd"><div class="site" id="site"><div class="pop" id="pop"></div></div><p class="help" style="margin-top:10px">실제 홈페이지 첫 화면 위에 뜨는 모습입니다. 왼쪽에서 고치면 바로 바뀝니다.</p></div></div>
+    </div>
+   </section>
+  </div>
+ </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="admin-site.js"></script>
+<script src="admin-views.js"></script>
+</body>
+</html>
