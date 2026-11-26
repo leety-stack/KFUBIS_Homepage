@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한방유비스 — 계열사 연결 (시안 G1)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="group.css">
+<style>
+.gbar{background:#0f1115;color:#cbd0d8;font-size:12.5px}
+.gbar .wrap{display:flex;align-items:center;gap:22px;height:38px}
+.gbar .gname{font-size:11.5px;color:#fff}
+.gbar ul{display:flex;gap:18px;flex:1}
+.gbar li a{display:flex;align-items:center;opacity:.75}
+.gbar li a:hover,.gbar li.on a{opacity:1;color:#fff}
+.gbar li.on a{font-weight:700}
+.gbar .r{opacity:.7}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.hd{display:flex;align-items:center;justify-content:space-between;height:80px}
+.hd img{height:38px}
+.hd nav{display:flex;gap:40px;font-weight:600}
+.hero{position:relative;height:560px;color:#fff;overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.6),rgba(0,0,0,.05) 70%)}
+.hero .wrap{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:center}
+.hero b{font-size:clamp(40px,6vw,86px);font-weight:800;line-height:.95;letter-spacing:-.04em;text-transform:uppercase}
+.hero h1{font-size:clamp(22px,2.4vw,32px);margin-top:20px}
+.sec{padding:110px 0}
+.sec h2{font-size:clamp(26px,2.8vw,38px);font-weight:800;letter-spacing:-.03em}
+.sec .s{color:var(--sub);margin-top:8px}
+.cos{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
+.co{border:1px solid var(--line);display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s}
+.co:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,.08)}
+.co .im{aspect-ratio:4/3;overflow:hidden;position:relative}
+.co .im img{width:100%;height:100%;object-fit:cover}
+.co .im span{position:absolute;left:0;top:0;background:var(--c);color:#fff;font-size:12px;font-weight:700;padding:5px 12px}
+.co .t{padding:22px;flex:1;display:flex;flex-direction:column;gap:6px}
+.co h3{font-size:20px}
+.co p{font-size:14px;color:var(--sub);flex:1}
+.co .go{font-weight:700;font-size:14px;color:var(--c)}
+.co.me{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}
+footer{background:#1b1f26;color:#9aa0a8;font-size:13.5px;padding:44px 0}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+footer img{height:30px;margin-bottom:14px}
+.fam{position:relative;width:240px}
+.fam button{width:100%;background:#1b1f26;color:#ddd;border:1px solid #444;padding:11px 14px;font:inherit;text-align:left;display:flex;justify-content:space-between;cursor:pointer}
+.fam ul{position:absolute;bottom:100%;left:0;right:0;background:#fff;color:var(--ink);border:1px solid #444;display:none}
+.fam.open ul{display:block}
+.fam li a{display:flex;align-items:center;padding:10px 14px;font-size:14px}
+.fam li a:hover{background:var(--bg)}
+@media (max-width:1000px){.cos{grid-template-columns:1fr 1fr}.hd nav,.gbar .r{display:none}.gbar ul{overflow-x:auto;white-space:nowrap}}
+@media (max-width:560px){.cos{grid-template-columns:1fr}.hero{height:440px}.gbar .gname{display:none}}
+</style>
+</head>
+<body data-reveal=".co,.sec h2,.sec .s">
+<div class="draft">그룹 시안 G1 · <b>패밀리사이트형</b> — 한방유비스 홈페이지는 그대로, 맨 위 그룹 줄·계열사 소개·하단 Family Site로 계열사에 연결합니다</div>
+<div class="gbar"><div class="wrap"><span class="gname">HANBANG GROUP</span>
+ <ul><li><a href="#"><span class="co-dot" style="background:var(--c-hb)"></span>한방</a></li><li class="on"><a href="#"><span class="co-dot" style="background:var(--c-ubis)"></span>한방유비스</a></li><li><a href="#"><span class="co-dot" style="background:var(--c-kubis)"></span>케이유비스</a></li><li><a href="#"><span class="co-dot" style="background:var(--c-ai)"></span>AI 계열사(가칭)</a></li></ul>
+ <span class="r">KOR · ENG</span></div></div>
+<header><div class="wrap hd"><img src="../img/logo_a.png" alt="한방유비스(주)"><nav><a href="#">회사소개</a><a href="#">사업분야</a><a href="#">주요실적</a><a href="#">연구개발</a><a href="#grp">계열사</a><a href="#">문의</a></nav></div></header>
+<section class="hero"><img src="../img/hero_coast.jpg" alt=""><div class="wrap"><b data-intro>Fire Protection<br>Since 1947</b><h1 data-intro>공항·초고층·플랜트의 소방설계와 감리</h1></div></section>
+
+<section class="sec" id="grp"><div class="wrap">
+ <h2>한방그룹 계열사</h2><p class="s">설계·감리부터 시공, 신설 법인, AI까지 — 화재안전의 모든 단계를 함께합니다</p>
+ <div class="cos">
+  <a class="co" href="#" style="--c:var(--c-hb)"><div class="im"><img src="../img/hero_complex.jpg" alt=""><span>계열사</span></div><div class="t"><h3>한방</h3><p><em class="tbd">회사 소개 한 줄 — 자료 받아서 작성</em></p><span class="go">hanbang1947.co.kr →</span></div></a>
+  <a class="co me" href="#" style="--c:var(--c-ubis)"><div class="im"><img src="../img/hero_airport.jpg" alt=""><span>지금 보는 곳</span></div><div class="t"><h3>한방유비스</h3><p>소방설계·감리·성능위주설계, AI 소방 엔지니어링</p><span class="go">kfubis.co.kr</span></div></a>
+  <a class="co" href="#" style="--c:var(--c-kubis)"><div class="im"><img src="../img/p_tower3.jpg" alt=""><span>신설</span></div><div class="t"><h3>케이유비스</h3><p><em class="tbd">신설 법인 — 사업 소개 받아서 작성</em></p><span class="go">소개 페이지 →</span></div></a>
+  <a class="co" href="#" style="--c:var(--c-ai)"><div class="im"><img src="../img/p_data.jpg" alt=""><span>가칭</span></div><div class="t"><h3>AI 계열사</h3><p>소방 데이터·AI 엔지니어링 — 빅데이터, AI 설계 검토</p><span class="go">소개 페이지 →</span></div></a>
+ </div>
+ <p class="s" style="margin-top:22px;font-size:13px">※ 사이트가 없는 케이유비스·AI 계열사는 한방유비스 홈페이지 안에 소개 페이지를 두고, 같은 관리자에서 고칩니다.</p>
+</div></section>
+
+<footer><div class="wrap">
+ <div><img src="../img/logo_w.png" alt="한방유비스(주)"><p>한방유비스(주) · 서울특별시 성동구 성수일로 77 서울숲IT밸리 9층 · TEL 02-2023-5000</p></div>
+ <div class="fam" id="fam"><button onclick="document.getElementById('fam').classList.toggle('open')">Family Site <span>▴</span></button>
+  <ul><li><a href="#"><span class="co-dot" style="background:var(--c-hb)"></span>한방</a></li><li><a href="#"><span class="co-dot" style="background:var(--c-kubis)"></span>케이유비스</a></li><li><a href="#"><span class="co-dot" style="background:var(--c-ai)"></span>AI 계열사(가칭)</a></li><li><a href="#">그룹웨어 (직원용)</a></li></ul></div>
+</div></footer>
+<script src="../motion.js"></script>
+</body>
+</html>

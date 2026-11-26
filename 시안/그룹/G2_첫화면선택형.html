@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HANBANG GROUP — 계열사 선택 (시안 G2)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="group.css">
+<style>
+body{background:#0b0d11;color:#fff;overflow-x:hidden}
+.top{position:absolute;z-index:5;left:0;right:0;top:34px}
+.top .wrap{display:flex;justify-content:space-between;align-items:center}
+.top .r{font-size:13px;opacity:.75;display:flex;gap:18px}
+.intro{position:absolute;z-index:5;left:0;right:0;top:110px;pointer-events:none}
+.intro h1{font-size:clamp(26px,3vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.25}
+.intro p{opacity:.75;margin-top:8px}
+.gate{display:flex;height:100vh;min-height:640px}
+.gate a{position:relative;flex:1;overflow:hidden;transition:flex .6s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;justify-content:flex-end;padding:0 36px 64px;border-left:1px solid rgba(255,255,255,.12)}
+.gate a:first-child{border-left:0}
+.gate a img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(.7) brightness(.45);transform:scale(1.08);transition:filter .6s,transform 1.2s}
+.gate a::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.85),rgba(0,0,0,.1) 60%)}
+.gate a::before{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--c);z-index:2;transform:scaleX(0);transform-origin:left;transition:transform .5s}
+.gate a>*{position:relative;z-index:1}
+.gate a:hover{flex:1.9}
+.gate a:hover img{filter:none brightness(.6);transform:scale(1)}
+.gate a:hover::before{transform:scaleX(1)}
+.gate .no{font-size:13px;opacity:.6;font-weight:700;letter-spacing:.1em}
+.gate h2{font-size:clamp(24px,2.4vw,38px);font-weight:800;letter-spacing:-.03em;margin:6px 0 4px;white-space:nowrap}
+.gate .en{font-size:12px;letter-spacing:.16em;opacity:.65}
+.gate .d{max-height:0;overflow:hidden;opacity:0;transition:max-height .6s,opacity .6s;font-size:15px;color:#d1d5db;margin-top:14px;max-width:420px}
+.gate a:hover .d{max-height:120px;opacity:1}
+.gate .go{margin-top:18px;font-weight:700;font-size:14px;display:inline-flex;gap:8px;align-items:center;opacity:.85}
+.gate .go i{font-style:normal;transition:transform .3s}
+.gate a:hover .go i{transform:translateX(6px)}
+.gate .new{display:inline-block;font-size:11px;font-weight:700;background:var(--c);padding:2px 8px;margin-left:8px;vertical-align:4px;letter-spacing:0}
+.foot{position:absolute;z-index:5;left:0;right:0;bottom:18px;font-size:12.5px;opacity:.75}
+.foot .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.foot label{display:flex;gap:8px;align-items:center;cursor:pointer}
+@media (max-width:900px){
+ .intro{position:relative;top:0;padding:96px 0 26px}
+ .gate{flex-direction:column;height:auto;min-height:0}
+ .gate a{min-height:200px;flex:none!important;padding:0 22px 26px;border-left:0;border-top:1px solid rgba(255,255,255,.12)}
+ .gate a img{filter:grayscale(.3) brightness(.5)}
+ .gate .d{max-height:none;opacity:1;font-size:14px;margin-top:6px}
+ .foot{position:relative;bottom:auto;padding:20px 0 28px}
+}
+</style>
+</head>
+<body>
+<div class="draft">그룹 시안 G2 · <b>첫 화면 선택형</b> — 그룹 주소(예: hanbang.co.kr)로 들어오면 계열사를 먼저 고릅니다. 사진·소개 문구는 예시</div>
+<div style="position:relative">
+ <div class="top"><div class="wrap"><span class="gname">HANBANG GROUP<small>한방그룹</small></span><span class="r"><a href="#">그룹 소개</a><a href="#">KOR</a><a href="#">ENG</a></span></div></div>
+ <div class="intro"><div class="wrap"><h1 data-intro>1947년부터,<br>대한민국 화재안전의 모든 단계</h1><p data-intro>찾으시는 회사를 선택하세요</p></div></div>
+ <nav class="gate" aria-label="계열사 선택">
+  <a href="#" style="--c:var(--c-hb)"><img src="../img/hero_complex.jpg" alt=""><span class="no">01</span><h2>한방</h2><span class="en">HANBANG</span><p class="d"><em class="tbd">회사 소개 한 줄 — 자료 받아서 작성</em></p><span class="go">사이트로 이동 <i>→</i></span></a>
+  <a href="../A_기업정통형.html" style="--c:var(--c-ubis)"><img src="../img/hero_airport.jpg" alt=""><span class="no">02</span><h2>한방유비스</h2><span class="en">HANBANG UBIS</span><p class="d">공항·초고층·플랜트의 소방설계와 감리, 성능위주설계</p><span class="go">사이트로 이동 <i>→</i></span></a>
+  <a href="#" style="--c:var(--c-kubis)"><img src="../img/p_tower3.jpg" alt=""><span class="no">03</span><h2>케이유비스<span class="new">NEW</span></h2><span class="en">K-UBIS</span><p class="d"><em class="tbd">신설 법인 — 사업 소개 받아서 작성</em></p><span class="go">사이트로 이동 <i>→</i></span></a>
+  <a href="#" style="--c:var(--c-ai)"><img src="../img/p_data.jpg" alt=""><span class="no">04</span><h2>AI 계열사<span class="new">가칭</span></h2><span class="en">HANBANG AI</span><p class="d">소방 데이터·AI 엔지니어링 — 소방안전 빅데이터, AI 설계 검토</p><span class="go">사이트로 이동 <i>→</i></span></a>
+ </nav>
+ <div class="foot"><div class="wrap"><label><input type="checkbox"> 다음부터 고른 회사로 바로 이동</label><span>© HANBANG GROUP</span></div></div>
+</div>
+<script src="../motion.js"></script>
+</body>
+</html>
