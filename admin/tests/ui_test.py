@@ -22,7 +22,7 @@ with sync_playwright() as p:
     pg.fill('input[type=password]', PW); pg.click(".login-box button"); pg.wait_for_selector("aside")
     check("로그인 → 사이드바", pg.locator("aside a").count() >= 20)
     pg.wait_for_timeout(1200); pg.screenshot(path=str(OUT / "dash.png"))
-    check("대시보드 숫자", "등록된 글" in pg.inner_text(".kpis"))
+    check("대시보드 숫자", "처리 대기" in pg.inner_text(".kpis"))
 
     pg.click("aside >> text=실적 관리"); pg.wait_for_selector(".blist-t tbody tr >> nth=0"); pg.wait_for_timeout(500)
     check(f"실적 목록 {pg.locator('.blist-t tbody tr').count()}건", pg.locator(".blist-t tbody tr").count() >= 5)
@@ -51,7 +51,7 @@ with sync_playwright() as p:
     check("시험 글 삭제", pg.locator(".blist-t tbody tr", has_text="관리자 화면 시험 글").count() == 0)
     pg.screenshot(path=str(OUT / "news_list.png"))
 
-    pg.click("aside >> text=문의 관리"); pg.wait_for_timeout(300)
+    pg.click("aside >> text=관리자 계정"); pg.wait_for_timeout(300)
     check("다음 단계 화면 안내", "다음 단계" in pg.inner_text(".content"))
     m = b.new_page(viewport={"width": 390, "height": 844}); m.on("pageerror", lambda e: errs.append(str(e)))
     m.goto(URL + "#/works"); m.wait_for_timeout(1500); m.screenshot(path=str(OUT / "mobile.png"))

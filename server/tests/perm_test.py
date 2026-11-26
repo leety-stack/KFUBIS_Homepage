@@ -85,6 +85,53 @@ req("DELETE", f"/api/collections/banners/records/{bid}", token=top)
 if tu: req("DELETE", f"/api/collections/users/records/{tu}", token=top)
 if tr: req("DELETE", f"/api/collections/roles/records/{tr}", token=top)
 
+# ── 3단계: 접수함 ──
+import time, requests
+MAIL = os.environ.get("MAILBOX")  # 시험용 메일 수신기 파일 (없으면 메일 내용 확인은 건너뜀)
+def mails(): return open(MAIL, encoding="utf-8").read() if MAIL and os.path.exists(MAIL) else ""
+m0 = len(mails())
+s, d = req("POST", "/api/collections/inquiries/records", {"org": "시험도시공사", "name": "이시험", "tel": "02-000-0000", "email": "client@test.local", "org_type": "공공기관", "field": "감리", "message": "감리 문의 시험", "agree": True}); iid = d.get("id")
+check(f"비로그인 문의 접수 ({s})", s == 200)
+s, _ = req("POST", "/api/collections/inquiries/records", {"org": "x", "name": "x", "tel": "1", "agree": True, "status": "완료"}); check(f"비로그인은 상태를 못 정함 ({s})", s in (400, 403))
+s, _ = req("POST", "/api/collections/inquiries/records", {"org": "x", "name": "x", "tel": "1", "agree": False}); check(f"개인정보 동의 없으면 접수 안 됨 ({s})", s in (400, 403))
+s, _ = req("GET", "/api/collections/inquiries/records"); check(f"비로그인은 문의 목록 못 봄 ({_.get('totalItems', 0)}건)", _.get("totalItems", 0) == 0)
+s, d = req("GET", f"/api/collections/inquiries/records/{iid}", token=top)
+check(f"자동 배정 = {d.get('dept')} · 상태 {d.get('status')}", d.get("dept") == "감리사업본부" and d.get("status") == "신규")
+time.sleep(1); check("담당 본부 알림 메일 도착" + ("" if MAIL else " (수신기 없음 — 건너뜀)"), (not MAIL) or "supervision@kfubis.local" in mails()[m0:])
+# 본부 담당 범위: 감리사업본부 사람만 봄
+def mkdept(email, dept):
+    uid = mkuser(email, "본부 담당"); req("PATCH", f"/api/collections/users/records/{uid}", {"dept": dept}, token=top); return uid
+sv_id = mkdept("sv@test.local", "감리사업본부"); ds_id = mkdept("ds@test.local", "설계사업본부")
+sv = login("sv@test.local", "test-12345"); ds = login("ds@test.local", "test-12345")
+s, _ = req("GET", f"/api/collections/inquiries/records/{iid}", token=sv); check(f"감리본부 담당은 자기 문의 봄 ({s})", s == 200)
+s, _ = req("GET", f"/api/collections/inquiries/records/{iid}", token=ds); check(f"설계본부 담당은 감리 문의 못 봄 ({s})", s == 404)
+s, _ = req("POST", "/api/cms/reply", {"collection": "inquiries", "id": iid, "subject": "답변 시험", "body": "검토 후 연락드리겠습니다."}, token=ds); check(f"다른 본부는 답장 못 보냄 ({s})", s in (403, 404))
+m1 = len(mails())
+s, d = req("POST", "/api/cms/reply", {"collection": "inquiries", "id": iid, "subject": "답변 시험", "body": "검토 후 연락드리겠습니다.", "status": "처리 중"}, token=sv)
+check(f"담당 본부 답장 메일 ({s} {d.get('message', '')})", s == 200)
+time.sleep(1); check("답장 메일 도착" + ("" if MAIL else " (건너뜀)"), (not MAIL) or "client@test.local" in mails()[m1:])
+s, d = req("GET", f"/api/collections/inquiries/records/{iid}", token=top); check(f"답장 후 상태·기록 ({d.get('status')}, 기록 {len(d.get('log') or [])}건)", d.get("status") == "처리 중" and len(d.get("log") or []) >= 2)
+# 실적증명: 발급 파일 올리고 첨부해서 보내기
+s, d = req("POST", "/api/collections/certreqs/records", {"org": "시험공사", "name": "정시험", "tel": "1", "email": "cert@test.local", "project": "인천국제공항 — 설계", "purpose": "입찰 제출", "agree": True}); cid = d.get("id")
+check(f"비로그인 실적증명 요청 ({s})", s == 200)
+pdf = next(iter(__import__("glob").glob(os.path.join(os.path.dirname(__file__), "..", "..", "제안서", "*.pdf"))), None)
+r = requests.patch(f"{B}/api/collections/certreqs/records/{cid}", headers={"Authorization": top}, files={"issued_file": ("실적증명서.pdf", open(pdf, "rb"), "application/pdf")})
+check(f"발급 파일 올리기 ({r.status_code})", r.status_code == 200)
+s, _ = req("GET", f"/api/files/certreqs/{cid}/{r.json().get('issued_file')}"); check(f"발급 파일은 비로그인에게 안 보임 ({s})", s in (403, 404))
+m2 = len(mails())
+s, d = req("POST", "/api/cms/reply", {"collection": "certreqs", "id": cid, "subject": "실적증명서 발급", "body": "첨부합니다.", "status": "발급 완료", "attach": True}, token=top)
+check(f"실적증명서 첨부 메일 ({s} {d.get('message', '')})", s == 200)
+time.sleep(1); check("첨부 메일 도착" + ("" if MAIL else " (건너뜀)"), (not MAIL) or ("cert@test.local" in mails()[m2:] and "application/pdf" in mails()[m2:]))
+# 입사 지원: 온라인 지원 안 받는 공고는 거절
+s, d = req("POST", "/api/collections/jobs/records", {"title": "시험 공고(닫힘)", "status": "게시", "state": "모집 중", "online_apply": False}, token=top); j1 = d.get("id")
+s, d = req("POST", "/api/collections/jobs/records", {"title": "시험 공고(열림)", "status": "게시", "state": "모집 중", "online_apply": True}, token=top); j2 = d.get("id")
+s, _ = req("POST", "/api/collections/applications/records", {"job": j1, "name": "홍시험", "tel": "1", "email": "ap@test.local", "agree": True}); check(f"온라인 지원 안 받는 공고 거절 ({s})", s == 400)
+s, d = req("POST", "/api/collections/applications/records", {"job": j2, "name": "홍시험", "tel": "1", "email": "ap@test.local", "agree": True}); aid = d.get("id"); check(f"온라인 지원 접수 ({s})", s == 200)
+s, d = req("GET", f"/api/collections/applications/records/{aid}", token=top); check(f"개인정보 삭제일 자동 지정 ({(d.get('delete_after') or '')[:10]})", bool(d.get("delete_after")))
+for c, i in [("inquiries", iid), ("certreqs", cid), ("applications", aid), ("jobs", j1), ("jobs", j2)]:
+    if i: req("DELETE", f"/api/collections/{c}/records/{i}", token=top)
+for i in [sv_id, ds_id]: req("DELETE", f"/api/collections/users/records/{i}", token=top)
+
 # 정리
 for c, i in [("works", wid), ("jobs", jid), ("news", nid)]:
     if i: req("DELETE", f"/api/collections/{c}/records/{i}", token=top)

@@ -18,9 +18,9 @@ export const MENU: MenuGroup[] = [
   { group: "게시판·콘텐츠", items: [
     { key: "works", label: "실적 관리", ready: true }, { key: "news", label: "소식·보도자료", ready: true }, { key: "rnd", label: "R&D 과제", ready: true },
     { key: "certs", label: "인증·수상·특허", ready: true }, { key: "downloads", label: "자료실", ready: true }, { key: "jobs", label: "채용공고", ready: true }] },
-  { group: "고객", items: [{ key: "inquiry", label: "문의 관리" }, { key: "certreq", label: "실적증명 요청" }, { key: "apply", label: "입사 지원" }] },
+  { group: "고객", items: [{ key: "inquiry", label: "문의 관리", ready: true }, { key: "certreq", label: "실적증명 요청", ready: true }, { key: "apply", label: "입사 지원", ready: true }] },
   { group: "설정", items: [
-    { key: "company", label: "회사 정보·하단 문구" }, { key: "i18n", label: "다국어 문구" },
+    { key: "company", label: "회사 정보·하단 문구", ready: true }, { key: "i18n", label: "다국어 문구" },
     { key: "seo", label: "검색 노출 (SEO)", option: true }, { key: "stats", label: "접속 통계", option: true }, { key: "history", label: "변경 이력·되돌리기", option: true }] },
   { group: "관리자", items: [{ key: "users", label: "관리자 계정" }, { key: "roles", label: "역할·권한" }, { key: "logins", label: "로그인 기록" }] },
 ];

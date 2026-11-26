@@ -23,3 +23,13 @@ export function errText(e: any): string {
   }
   return e?.response?.message || e?.message || "알 수 없는 오류";
 }
+
+/** 서버 시각(UTC) → 한국 시각 "2026.11.26 15:08" (short: "11.26 15:08") */
+export function showTime(v?: string, short = false): string {
+  if (!v) return "";
+  const d = new Date(v.includes("T") ? v : v.replace(" ", "T"));
+  if (isNaN(d.getTime())) return v;
+  const p = (n: number) => String(n).padStart(2, "0");
+  const s = `${p(d.getMonth() + 1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  return short ? s : `${d.getFullYear()}.${s}`;
+}

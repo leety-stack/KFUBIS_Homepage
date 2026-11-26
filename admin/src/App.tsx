@@ -7,6 +7,8 @@ import Menus from "./pages/Menus";
 import Banners from "./pages/Banners";
 import Popups from "./pages/Popups";
 import MainSections from "./pages/MainSections";
+import Inbox, { INBOX } from "./pages/Inbox";
+import Company from "./pages/Company";
 import { AuthProvider, useAuth } from "./lib/auth";
 import { ToastProvider, Opt } from "./components/ui";
 import { BOARDS } from "./boards";
@@ -20,7 +22,8 @@ function Page() {
   if (level(item.key as MenuKey) <= 0) return <section className="view on"><div className="ph"><div><h1>{item.label}</h1><p>이 메뉴를 볼 권한이 없습니다. 최고 관리자에게 요청하세요.</p></div></div></section>;
   if (key === "dash") return <Dashboard />;
   if (BOARDS[key]) return <Board boardKey={key} />;
-  const P: Record<string, () => React.ReactElement> = { menu: Menus, banner: Banners, popup: Popups, main: MainSections };
+  if (INBOX[key]) return <Inbox inboxKey={key} />;
+  const P: Record<string, () => React.ReactElement> = { menu: Menus, banner: Banners, popup: Popups, main: MainSections, company: Company };
   if (P[key]) { const C = P[key]; return <C />; }
   return (
     <section className="view on">
