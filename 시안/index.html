@@ -57,6 +57,11 @@ a{color:inherit;text-decoration:none}
 .gw div{border:1px solid #2c2f36;padding:16px 18px}
 .gw b{display:block;margin-bottom:4px}.gw span{color:#9aa0aa;font-size:14px}
 .gcards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.gcards.g2{grid-template-columns:1.2fr 1fr;margin-top:24px}
+.gapply{background:#16181d;border:1px solid #d42a1f;display:flex;flex-direction:column}
+.gapply img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:bottom}
+.gapply>div{padding:20px 22px 24px}
+.gapply small{color:#d42a1f;font-weight:800;letter-spacing:.1em}.gapply b{display:block;font-size:21px;margin:2px 0 8px}.gapply p{color:#a7acb5;font-size:14px}.gapply ul{margin-top:12px;list-style:none;display:grid;gap:6px;font-size:13.5px;color:#cfd3da}
 .gcards a{background:#16181d;border:1px solid #2c2f36;display:flex;flex-direction:column;transition:border-color .3s,transform .3s}
 .gcards a:hover{border-color:#fff;transform:translateY(-4px)}
 .gcards img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
@@ -74,7 +79,7 @@ a{color:inherit;text-decoration:none}
  <small>HANBANG UBIS · WEBSITE RENEWAL · DRAFT</small>
  <h1>한방유비스 대표홈페이지<br>개편 방향 시안</h1>
  <p>대기업·공공기관 발주처가 홈페이지에서 확인하는 것 — 무엇을 하는 회사인지, 믿을 수 있는지, 비슷한 실적이 있는지, 어떻게 문의하는지 — 에 바로 답하도록 구성했습니다.</p>
- <ul><li>반응형 PC·태블릿·모바일</li><li>국문 / 영문</li><li>공통 관리자</li><li>스크롤 애니메이션</li><li>3필드 간편 문의</li><li>관리자에서 전부 직접 수정</li><li><a href="#group" style="color:inherit">한방그룹 연결안 ↓</a></li></ul>
+ <ul><li>반응형 PC·태블릿·모바일</li><li>국문 / 영문</li><li>공통 관리자</li><li>스크롤 애니메이션</li><li>3필드 간편 문의</li><li>관리자에서 전부 직접 수정</li><li><a href="#group" style="color:inherit">계열사 연결 ↓</a></li></ul>
 </header>
 
 <section class="show reveal">
@@ -147,19 +152,13 @@ a{color:inherit;text-decoration:none}
 </section>
 
 <section class="grp reveal" id="group">
- <div class="no">GROUP</div><h2>한방그룹 홈페이지 연결안 — 3종</h2>
- <p class="gl">한방 · 한방유비스 · 케이유비스 · AI 계열사(가칭)의 홈페이지는 각각 따로 있으므로 <b>연결만</b> 합니다. "자료 받아서 작성"으로 표시한 곳은 아직 내용이 없는 자리입니다.</p>
- <div class="gw">
-  <div><b>① "한방" 검색 노출</b><span>"한방"으로 검색하면 한약방이 먼저 나옴 → 그룹 이름으로 찾아지는 주소가 필요</span></div>
-  <div><b>② 계열사 연결</b><span>각 회사 홈페이지로 한 번에 찾아 들어가게</span></div>
-  <div><b>③ AI 역량 공개</b><span>설립·인수 전이라도 그룹의 AI 역량을 밖에 보여 줘야 함</span></div>
+ <div class="no">GROUP</div><h2>한방그룹 계열사 연결</h2>
+ <p class="gl">한방 · 케이유비스 · AI 계열사(가칭)의 홈페이지는 각각 따로 있으므로 <b>연결만</b> 합니다.</p>
+ <div class="gcards g2">
+  <div class="gapply"><img src="mock/F_show.jpg" alt="시안 A 하단 Family Site"><div><small>적용</small><b>하단 Family Site — 선택 상자</b><p>시안 A~D 모든 페이지 맨 아래에서 회사를 고르고 [이동]을 누르면 그 회사 홈페이지가 새 창으로 열립니다. 목록과 순서는 관리자 "회사 정보"에서 고칩니다.</p><ul><li><span class="o">○</span> 계열사 연결 — 모든 페이지 하단</li><li><span class="o">○</span> 만드는 양 가장 적음</li><li><span class="x">✕</span> "한방" 검색 노출은 해결 안 됨</li></ul></div></div>
+  <a href="그룹/G2_첫화면선택형.html"><img src="mock/G_show.jpg" alt=""><div><small>참고 · G2</small><b>첫 화면 선택형</b><p>나중에 그룹 주소(예: hanbang.co.kr)를 따로 만들 때, 들어오자마자 회사를 고르는 한 장짜리 화면</p><ul><li><span class="m">△</span> 한방 검색 — 그룹 주소는 생기나 내용이 적어 약함</li><li><span class="o">○</span> AI 계열사를 첫 화면에 나란히 공개</li><li><span class="o">○</span> 한 장이라 만드는 양 적음</li></ul></div></a>
  </div>
- <div class="gcards">
-  <a href="그룹/G1_패밀리사이트형.html"><img src="mock/G1_show.jpg" alt=""><div><small>G1</small><b>패밀리사이트형</b><p>한방유비스 사이트 맨 위 그룹 줄 + 계열사 카드 + 하단 Family Site</p><ul><li><span class="x">✕</span> 한방 검색 — 한방유비스 사이트 안에만 있음</li><li><span class="o">○</span> 계열사 연결</li><li><span class="m">△</span> AI 공개 — 카드 한 장</li><li><span class="o">○</span> 만드는 양 가장 적음</li></ul></div></a>
-  <a href="그룹/G2_첫화면선택형.html"><img src="mock/G_show.jpg" alt=""><div><small>G2</small><b>첫 화면 선택형</b><p>그룹 주소로 들어오면 회사를 골라 각 홈페이지로 이동 (고른 회사 기억)</p><ul><li><span class="m">△</span> 한방 검색 — 주소는 생기나 내용이 적어 약함</li><li><span class="o">○</span> 계열사 연결 — 첫 화면에서 바로</li><li><span class="o">○</span> AI 공개 — 첫 화면에 나란히</li><li><span class="o">○</span> 만드는 양 적음 (한 장)</li></ul></div></a>
-  <a href="그룹/G3_그룹통합형.html"><img src="mock/G3_show.jpg" alt=""><div><small>G3</small><b>그룹 통합형</b><p>한방그룹 대표 사이트 — 그룹 소개·계열사 탭·바로가기·소식</p><ul><li><span class="o">○</span> 한방 검색 — 내용이 있는 그룹 사이트로 노출</li><li><span class="o">○</span> 계열사 연결 — 탭·바로가기</li><li><span class="o">○</span> AI 공개 — 기술·AI 메뉴</li><li><span class="m">△</span> 그룹 소개 글·사진 필요</li></ul></div></a>
- </div>
- <div class="grec"><b>추천 — 그룹 주소에 G3를 가볍게 + 한방유비스 사이트에 G1</b><p>"한방"으로 검색될 그룹 주소가 필요하므로 그룹 소개와 계열사 바로가기를 담은 G3를 가볍게 만들고, 한방유비스 사이트에는 G1의 그룹 줄·Family Site를 넣어 서로 오가게 합니다. 그룹 소개 글 준비가 어렵다면 G2로 먼저 열 수 있지만 검색 노출 효과는 약합니다.</p></div>
+ <div class="grec"><b>정리 — 한방유비스 홈페이지에는 하단 Family Site만 넣습니다</b><p>"한방" 검색 노출과 AI 계열사 공개가 필요해지면 G2 같은 그룹 주소용 선택 화면을 추가로 붙일 수 있습니다.</p></div>
 </section>
 
 <div class="notes">※ 사진·로고는 현재 홈페이지(kfubis.co.kr)에서 가져왔으며, 사진과 실적 이름의 짝은 확인 전입니다.<br>※ 게시판 제목·날짜, 관리자 화면 숫자는 화면 구성을 보여 주기 위한 예시입니다. 사례의 "결과" 중 비어 있는 것은 자료를 받아 채웁니다.<br>※ 발주처 이름 띠는 실제 로고 이미지(사용 허락 후)로 바꿉니다.</div>

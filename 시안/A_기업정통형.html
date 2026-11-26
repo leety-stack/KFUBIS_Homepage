@@ -216,6 +216,12 @@ footer img{width:150px;margin-bottom:16px;opacity:.85}
  .clients .lb{display:none}
  .vtxt .btns a{flex:1;text-align:center;padding:14px 10px}
 }
+
+.fam{display:flex;gap:4px}
+.fam select{background:transparent;color:#ddd;border:1px solid #4a4f59;padding:9px 12px;font:inherit;font-size:13.5px;min-width:200px;cursor:pointer}
+.fam select option{color:#111}
+.fam button{background:transparent;color:#ddd;border:1px solid #4a4f59;padding:9px 14px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.fam button:hover{background:#fff;color:#111}
 </style>
 </head>
 <body data-reveal=".head,.biz a,.target>div,.about .txt>*,.case>a,.news li,.quick a,.inq .wrap>*" data-reveal-img=".about .img">
@@ -335,7 +341,7 @@ footer img{width:150px;margin-bottom:16px;opacity:.85}
 
 <footer><div class="wrap">
  <div class="top"><div><a href="#" data-en="Privacy Policy">개인정보처리방침</a><a href="#" data-en="Email Policy">이메일무단수집거부</a><a href="#" data-en="Sitemap">사이트맵</a></div>
-  <select aria-label="Family Site"><option>Family Site</option><option>한방 (hanbang1947.co.kr)</option><option>그룹웨어</option></select></div>
+  <form class="fam" onsubmit="event.preventDefault();var v=this.s.value;if(v)window.open(v,'_blank','noopener')"><select name="s" aria-label="Family Site"><option value="">Family Site</option><option value="https://hanbang1947.co.kr">한방</option><option value="#kubis">케이유비스</option><option value="#ai">AI 계열사(가칭)</option><option value="#gw">그룹웨어 (직원용)</option></select><button type="submit">이동</button></form></div>
  <img src="img/logo_w.png" alt="한방유비스(주)">
  <p data-en="Hanbang UBIS Co., Ltd. · 9F Seoul Forest IT Valley, 77 Seongsuil-ro, Seongdong-gu, Seoul 04790<br>TEL +82-2-2023-5000 · FAX +82-2-2023-5007 · Business Reg. 220-81-15635">한방유비스(주) · 대표이사 최두찬, 김상일 · (04790) 서울특별시 성동구 성수일로 77 서울숲IT밸리 9층<br>TEL 02-2023-5000 · FAX 02-2023-5007 · 사업자등록번호 220-81-15635</p>
  <p style="margin-top:10px">COPYRIGHT © KFUBIS. ALL RIGHTS RESERVED.</p>

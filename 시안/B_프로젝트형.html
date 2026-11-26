@@ -148,6 +148,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
  body{padding-bottom:54px}
 }
 @media (max-width:520px){.who ul{grid-template-columns:1fr}.who li{border-right:0!important;padding-left:0!important}.clients .lb{display:none}}
+
+.fam{display:flex;gap:4px}
+.fam select{background:transparent;color:var(--ink, #111);border:1px solid #cfd3d9;padding:9px 12px;font:inherit;font-size:13.5px;min-width:200px;cursor:pointer}
+.fam select option{color:#111}
+.fam button{background:transparent;color:var(--ink, #111);border:1px solid #cfd3d9;padding:9px 14px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.fam button:hover{background:#111;color:#fff}
 </style>
 </head>
 <body data-reveal=".nums>div,.who li,.lbl,.idx li,.gal figure,.exp>div,.rd li,.rd>div,.contact h2,.contact dl" data-reveal-img=".gal img">
@@ -239,7 +245,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
  </form>
 </div></section>
 <div class="mcta"><a href="tel:0220235000" data-en="Call">전화 문의</a><a class="p" href="#ct" data-en="Inquiry">사업 문의</a></div>
-<footer><div class="wrap"><span data-en="Hanbang UBIS Co., Ltd. · Business Reg. 220-81-15635">한방유비스(주) · 사업자등록번호 220-81-15635</span><span>© KFUBIS</span></div></footer>
+<footer><div class="wrap"><span data-en="Hanbang UBIS Co., Ltd. · Business Reg. 220-81-15635">한방유비스(주) · 사업자등록번호 220-81-15635</span><span style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><form class="fam" onsubmit="event.preventDefault();var v=this.s.value;if(v)window.open(v,'_blank','noopener')"><select name="s" aria-label="Family Site"><option value="">Family Site</option><option value="https://hanbang1947.co.kr">한방</option><option value="#kubis">케이유비스</option><option value="#ai">AI 계열사(가칭)</option><option value="#gw">그룹웨어 (직원용)</option></select><button type="submit">이동</button></form><span>© KFUBIS</span></span></div></footer>
 
 <script>
 var th=document.getElementById('thumb');
