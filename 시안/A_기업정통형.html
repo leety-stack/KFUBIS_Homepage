@@ -147,7 +147,7 @@ footer img{width:150px;margin-bottom:16px;opacity:.85}
 .vtxt h2{font-size:clamp(22px,2.4vw,34px)!important;font-weight:600!important}
 .vbar{bottom:132px!important}
 .vcat{position:absolute;z-index:2;left:0;right:0;bottom:0;border-top:1px solid rgba(255,255,255,.3);background:rgba(10,20,35,.35);backdrop-filter:blur(6px);color:#fff}
-.vcat ul{display:grid;grid-template-columns:repeat(5,1fr)}
+.vcat ul{display:grid;grid-template-columns:repeat(4,1fr)}
 .vcat a{display:flex;flex-direction:column;gap:4px;padding:24px 26px;border-left:1px solid rgba(255,255,255,.2);transition:background .3s}
 .vcat li:first-child a{border-left:0}
 .vcat a:hover{background:var(--red)}
@@ -242,7 +242,7 @@ footer img{width:150px;margin-bottom:16px;opacity:.85}
  </div>
  <div class="mega"><div class="in">
   <ul><li><a href="#" data-en="CEO Message">인사말</a></li><li><a href="#" data-en="Vision">경영이념</a></li><li><a href="#" data-en="History">연혁</a></li><li><a href="#" data-en="Organization">조직도</a></li><li><a href="#" data-en="Certifications">인증·수상</a></li><li><a href="#" data-en="Location">오시는 길</a></li></ul>
-  <ul><li><a href="#" data-en="Design">설계</a></li><li><a href="#" data-en="Supervision">감리</a></li><li><a href="#" data-en="Fire Research">방재연구</a></li><li><a href="#kubis" target="_blank" rel="noopener" title="k-UBIS 홈페이지로 이동 (주소 받기)" data-en="Products (k-UBIS) &#8599;">방재제품 (k-UBIS) &#8599;</a></li></ul>
+  <ul><li><a href="#" data-en="Design">설계</a></li><li><a href="#" data-en="Supervision">감리</a></li><li><a href="#" data-en="Fire Research">방재연구</a></li></ul>
   <ul><li><a href="#" data-en="Public">공공·국가기간시설</a></li><li><a href="#" data-en="High-rise">초고층·복합시설</a></li><li><a href="#" data-en="Industrial">산업·플랜트</a></li></ul>
   <ul><li><a href="#" data-en="R&amp;D Center">R&amp;D Center</a></li><li><a href="#" data-en="Projects">수행과제</a></li><li><a href="#" data-en="Patents">특허</a></li></ul>
   <ul><li><a href="#" data-en="News">새소식</a></li><li><a href="#" data-en="Press">보도자료</a></li><li><a href="#" data-en="Brochure">회사소개서</a></li><li><a href="#" data-en="Video">홍보영상</a></li></ul>
@@ -265,7 +265,6 @@ footer img{width:150px;margin-bottom:16px;opacity:.85}
   <li><a href="#"><small>02</small><b data-en="Supervision">감리</b></a></li>
   <li><a href="#"><small>03</small><b data-en="Performance-based design">성능위주설계</b></a></li>
   <li><a href="#"><small>04</small><b data-en="R&amp;D &middot; AI">연구개발·AI</b></a></li>
-  <li><a href="#kubis" target="_blank" rel="noopener" title="k-UBIS 홈페이지로 이동 (주소 받기)"><small>05</small><b data-en="Products (k-UBIS)">방재제품 (k-UBIS)</b></a></li>
  </ul></div></nav>
  <div class="vbar"><div class="wrap"><span class="arr"><button type="button" onclick="show((i+sl.length-1)%sl.length)" aria-label="이전">&lsaquo;</button><button type="button" onclick="show((i+1)%sl.length)" aria-label="다음">&rsaquo;</button></span><span class="num"><b id="cur">01</b> / 03</span><span class="prog"><i id="prog"></i></span><span class="cap" id="cap"></span></div></div>
 </section>
@@ -275,14 +274,13 @@ footer img{width:150px;margin-bottom:16px;opacity:.85}
 </div>
 
 <section class="sec"><div class="wrap">
- <div class="head"><div><span class="bgw" aria-hidden="true">Business</span><h2 class="tit" data-en="Business">사업분야</h2><p class="tit-s" data-en="Four divisions cover design, supervision, research and R&amp;D. Products are supplied by our affiliate k-UBIS.">설계·감리·방재연구·R&amp;D 네 개 본부가 맡고, 방재제품은 계열사 k-UBIS가 공급합니다</p></div></div>
+ <div class="head"><div><span class="bgw" aria-hidden="true">Business</span><h2 class="tit" data-en="Business">사업분야</h2><p class="tit-s" data-en="Four divisions covering design, supervision, research and R&amp;D">설계부터 감리, 연구, R&amp;D까지 네 개 본부가 맡고 있습니다</p></div></div>
 </div>
  <div class="biz">
   <a href="#"><img src="img/p_tower1.jpg" alt=""><div class="t"><h3 data-en="Design">설계사업본부</h3><p data-en="Fire strategy and system design under Korean and international codes">건축물 용도와 공간 특성에 맞춘 종합 방재계획, 국내외 기준 적용 설계</p></div></a>
   <a href="#"><img src="img/p_tower4.jpg" alt=""><div class="t"><h3 data-en="Supervision">감리사업본부</h3><p data-en="Fire, electrical, telecom and mechanical supervision">소방·전기·통신·기계 감리 — 초고층, 국가기간시설, 대형 건축물</p></div></a>
   <a href="#"><img src="img/p_tower3.jpg" alt=""><div class="t"><h3 data-en="Fire Research">방재연구소</h3><p data-en="Performance-based design and fire safety research">성능위주설계, 화재·피난 시뮬레이션, 국내외 방재기준 연구</p></div></a>
   <a href="#"><img src="img/p_data.jpg" alt=""><div class="t"><h3>R&amp;D Center</h3><p data-en="AI fire engineering; designated Fire Safety Big Data Center">AI 소방설계 솔루션 개발, 과학기술정보통신부 지정 소방안전 빅데이터센터</p></div></a>
-  <a href="#kubis" target="_blank" rel="noopener" title="k-UBIS 홈페이지로 이동 (주소 받기)"><img src="img/p_night.jpg" alt=""><div class="t"><h3 data-en='Products · k-UBIS <em style="font-style:normal;font-size:11px;font-weight:700;padding:1px 7px;border:1px solid currentColor;border-radius:999px;margin-left:6px;vertical-align:middle;opacity:.75">Affiliate</em> &#8599;'>방재제품 · k-UBIS <em style="font-style:normal;font-size:11px;font-weight:700;padding:1px 7px;border:1px solid currentColor;border-radius:999px;margin-left:6px;vertical-align:middle;opacity:.75">계열사</em> &#8599;</h3><p data-en="Supplied by our affiliate k-UBIS — CADDY seismic products, grooved joints, modular water tanks">계열사 k-UBIS가 공급합니다 — CADDY 내진제품 국내 총판, 그루브조인트, 조립식 소화수조</p></div></a>
  </div>
 </section>
 
@@ -352,7 +350,7 @@ footer img{width:150px;margin-bottom:16px;opacity:.85}
 <nav class="mmenu" id="mm">
  <div class="x"><img src="img/logo_a.png" alt="" style="width:140px"><button aria-label="닫기" onclick="mm(0)">×</button></div>
  <details><summary data-en="Company">회사소개</summary><ul><li data-en="CEO Message">인사말</li><li data-en="Vision">경영이념</li><li data-en="History">연혁</li><li data-en="Organization">조직도</li><li data-en="Certifications">인증·수상</li><li data-en="Location">오시는 길</li></ul></details>
- <details><summary data-en="Business">사업분야</summary><ul><li data-en="Design">설계</li><li data-en="Supervision">감리</li><li data-en="Fire Research">방재연구</li><li data-en="Products (k-UBIS) &#8599;">방재제품 (k-UBIS) &#8599;</li></ul></details>
+ <details><summary data-en="Business">사업분야</summary><ul><li data-en="Design">설계</li><li data-en="Supervision">감리</li><li data-en="Fire Research">방재연구</li></ul></details>
  <details><summary data-en="Projects">주요실적</summary><ul><li data-en="Public">공공·국가기간시설</li><li data-en="High-rise">초고층·복합시설</li><li data-en="Industrial">산업·플랜트</li></ul></details>
  <details><summary data-en="R&amp;D">연구개발</summary><ul><li>R&amp;D Center</li><li data-en="Projects">수행과제</li><li data-en="Patents">특허</li></ul></details>
  <details><summary data-en="PR">홍보센터</summary><ul><li data-en="News">새소식</li><li data-en="Press">보도자료</li><li data-en="Brochure">회사소개서</li></ul></details>
