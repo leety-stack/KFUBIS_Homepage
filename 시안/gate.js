@@ -8,7 +8,7 @@
   var CO = [
     { k: 'hb', nm: '한방', en: 'HANBANG', c: '#2b4a7a', img: 'img/hero_complex.jpg', d: '회사 소개 한 줄 — 자료 받아서 작성', url: 'https://hanbang1947.co.kr', host: 'hanbang1947.co.kr' },
     { k: 'ubis', nm: '한방유비스', en: 'HANBANG UBIS', c: '#bc1616', img: 'img/hero_airport.jpg', d: '공항·초고층·플랜트의 소방설계와 감리, 성능위주설계', url: '', host: '지금 보는 홈페이지', me: 1 },
-    { k: 'kubis', nm: '케이유비스', en: 'K-UBIS', c: '#0f766e', img: 'img/p_tower3.jpg', d: '신설 법인 — 사업 소개 받아서 작성', url: '#kubis', host: '주소 받기', tag: 'NEW' },
+    { k: 'kubis', nm: '케이유비스', en: 'k-UBIS', c: '#0f766e', img: 'img/p_tower3.jpg', d: '방재제품 — CADDY 내진제품 국내 총판, 그루브조인트, 조립식 소화수조', url: '#kubis', host: '주소 받기', tag: 'NEW' },
     { k: 'ai', nm: 'AI 계열사', en: 'HANBANG AI', c: '#5b3fd1', img: 'img/p_data.jpg', d: '소방 데이터·AI 엔지니어링 — 빅데이터, AI 설계 검토', url: '#ai', host: '주소 받기', tag: '가칭' }];
   var q = new URLSearchParams(location.search), force = q.get('gate') === '1';
   if (q.get('gate') === '0') return; /* 화면 캡처용 */
@@ -23,13 +23,10 @@
     '.gt-top b{letter-spacing:.16em;font-size:14px}.gt-top b small{letter-spacing:.02em;opacity:.7;font-weight:600;margin-left:8px;font-size:12px}' +
     '.gt-top span{font-size:13px;opacity:.75}' +
     '.gt-in{position:absolute;z-index:3;left:44px;right:44px;top:96px;pointer-events:none}' +
-    '.gt-in h1{font-size:clamp(26px,3vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.25;animation:gtu 1s .2s both}' +
-    '.gt-in p{opacity:.75;margin-top:8px;animation:gtu 1s .4s both}' +
-    '@keyframes gtu{from{opacity:0;transform:translateY(24px)}}' +
+    '.gt-in h1{font-size:clamp(26px,3vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.25}' +
+    '.gt-in p{opacity:.75;margin-top:8px}' +
     '.gt-row{flex:1;display:flex}' +
-    '.gt a{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 34px 86px;border-left:1px solid rgba(255,255,255,.12);color:#fff;text-decoration:none;transition:flex .6s cubic-bezier(.2,.7,.2,1);animation:gtp .9s both}' +
-    '.gt a:nth-child(2){animation-delay:.1s}.gt a:nth-child(3){animation-delay:.2s}.gt a:nth-child(4){animation-delay:.3s}' +
-    '@keyframes gtp{from{opacity:0;transform:translateY(40px)}}' +
+    '.gt a{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 34px 86px;border-left:1px solid rgba(255,255,255,.12);color:#fff;text-decoration:none;transition:flex .6s cubic-bezier(.2,.7,.2,1)}' +
     '.gt a:first-child{border-left:0}' +
     '.gt a img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(.7) brightness(.42);transform:scale(1.08);transition:filter .6s,transform 1.2s}' +
     '.gt a::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.85),rgba(0,0,0,.1) 60%)}' +
@@ -79,5 +76,5 @@
   });
   document.getElementById('gtSkip').onclick = close;
   addEventListener('keydown', function (e) { if (e.key === 'Escape' && document.body.contains(g)) close(); });
-  setTimeout(function () { var me = g.querySelector('a.me'); if (me) me.focus({ preventScroll: true }); }, 50);
+  g.setAttribute('tabindex', '-1'); setTimeout(function () { g.focus({ preventScroll: true }); }, 50); /* 카드에 바로 초점을 주면 마우스 올린 효과가 저절로 켜짐 → 창 전체에 초점 */
 })();

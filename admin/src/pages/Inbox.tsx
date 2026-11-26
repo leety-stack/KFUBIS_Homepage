@@ -4,7 +4,7 @@ import { useAuth } from "../lib/auth";
 import { errText, pb, showDate, showTime, type Rec } from "../lib/pb";
 import type { MenuKey } from "../menu";
 
-const DEPTS = ["설계사업본부", "감리사업본부", "방재연구소", "R&D센터", "방재사업본부", "경영지원팀"];
+const DEPTS = ["설계사업본부", "감리사업본부", "방재연구소", "R&D센터", "경영지원팀"];
 interface Def {
   key: MenuKey; col: string; title: string; desc: string; states: string[]; expand?: string;
   line: (r: Rec) => string; info: (r: Rec) => [string, string][]; files: string[]; search: string[];

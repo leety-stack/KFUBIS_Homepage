@@ -12,7 +12,7 @@ const F: FieldDef[] = [
   { name: "addr_ko", label: "주소 (국문)", type: "text", full: true }, { name: "addr_en", label: "주소 (영문)", type: "text", full: true },
 ];
 const LOGOS: FieldDef[] = [{ name: "logo_light", label: "로고 (밝은 바탕용)", type: "image" }, { name: "logo_dark", label: "로고 (어두운 바탕용)", type: "image" }];
-const DEPTS = ["설계사업본부", "감리사업본부", "방재연구소", "R&D센터", "방재사업본부", "경영지원팀"];
+const DEPTS = ["설계사업본부", "감리사업본부", "방재연구소", "R&D센터", "경영지원팀"];
 
 export default function Company() {
   const { level } = useAuth(); const lv = level("company"); const toast = useToast();

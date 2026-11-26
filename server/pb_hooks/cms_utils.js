@@ -2,7 +2,7 @@
 module.exports = {
   // 문의 분야 → 담당 본부
   deptOf(field) {
-    return ({ "설계": "설계사업본부", "감리": "감리사업본부", "성능위주설계": "방재연구소", "연구개발·AI": "R&D센터", "방재제품": "방재사업본부" })[field] || "경영지원팀";
+    return ({ "설계": "설계사업본부", "감리": "감리사업본부", "성능위주설계": "방재연구소", "연구개발·AI": "R&D센터" })[field] || "경영지원팀";
   },
   // 컬렉션 → 관리자 메뉴 키
   menuOf(col) { return ({ inquiries: "inquiry", certreqs: "certreq", applications: "apply" })[col] || ""; },

@@ -46,8 +46,7 @@ header.solid{background:rgba(11,13,17,.92);backdrop-filter:blur(8px);border-bott
 .vis{position:relative;height:100vh;min-height:640px;overflow:hidden}
 .vis .s{position:absolute;inset:0;opacity:0;transition:opacity 1.1s}
 .vis .s.on{opacity:1}
-.vis .s img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 7s ease-out}
-.vis .s.on img{transform:scale(1)}
+.vis .s img{width:100%;height:100%;object-fit:cover}
 .vis .s::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,6,9,.82) 0%,rgba(5,6,9,.35) 60%,rgba(5,6,9,.2)),linear-gradient(0deg,rgba(5,6,9,.75),transparent 40%)}
 .vis .t{position:absolute;z-index:2;left:0;right:0;top:50%;transform:translateY(-48%)}
 .vis .top{font-size:14px;color:#c7ccd5;display:flex;gap:16px;flex-wrap:wrap}
@@ -68,10 +67,9 @@ header.solid{background:rgba(11,13,17,.92);backdrop-filter:blur(8px);border-bott
 .vis .ctl button:hover{background:#fff;color:#111}
 .vis .dots{display:flex;gap:10px;margin-left:10px}
 .vis .dots i{width:46px;height:2px;background:rgba(255,255,255,.25);position:relative;overflow:hidden}
-.vis .dots i.on::after{content:"";position:absolute;inset:0;background:#fff;animation:pg 6s linear forwards}
-@keyframes pg{from{transform:translateX(-100%)}}
+.vis .dots i.on::after{content:"";position:absolute;inset:0;background:#fff}
 .vis .scroll{margin-left:auto;font-size:12px;letter-spacing:.2em;color:#aab0bb;writing-mode:vertical-rl;position:relative;padding-bottom:50px}
-.vis .scroll::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:40px;background:#fff;animation:sc 1.8s infinite}
+.vis .scroll::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:40px;background:#fff}
 @keyframes sc{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
 /* 문장 강조 */
@@ -186,7 +184,7 @@ footer .lk a{margin-left:20px;color:#b0b6c0}
 .fam button:hover{background:#fff;color:#111}
 </style>
 </head>
-<body data-reveal=".nums>div,.lab,.sec h2,.sec .sd,.biz li,.who>div,.case,.inq .wrap>*">
+<body data-reveal=".lab,.sec h2,.biz li,.case">
 <header id="hd">
  <div class="wrap hd">
   <a class="logo" href="#"><img src="img/logo_w.png" alt="한방유비스(주)"></a>
@@ -200,7 +198,7 @@ footer .lk a{margin-left:20px;color:#b0b6c0}
  <div class="rr"><button class="x" onclick="fm(0)" aria-label="닫기">×</button>
   <dl>
    <dt data-en="Company">회사소개</dt><dd><a href="#" data-en="CEO Message">인사말</a><a href="#" data-en="Vision">경영이념</a><a href="#" data-en="History">연혁</a><a href="#" data-en="Organization">조직도</a><a href="#" data-en="Certifications">인증·수상</a><a href="#" data-en="Location">오시는 길</a></dd>
-   <dt data-en="Business">사업분야</dt><dd><a href="#" data-en="Design">설계</a><a href="#" data-en="Supervision">감리</a><a href="#" data-en="PBD">성능위주설계</a><a href="#" data-en="R&amp;D">연구개발</a><a href="#" data-en="Products">방재제품</a></dd>
+   <dt data-en="Business">사업분야</dt><dd><a href="#" data-en="Design">설계</a><a href="#" data-en="Supervision">감리</a><a href="#" data-en="PBD">성능위주설계</a><a href="#" data-en="R&amp;D">연구개발</a><a href="#kubis" target="_blank" rel="noopener" title="k-UBIS 홈페이지로 이동 (주소 받기)" data-en="Products (k-UBIS) &#8599;">방재제품 (k-UBIS) &#8599;</a></dd>
    <dt data-en="Projects">수행실적</dt><dd><a href="#" data-en="Public">공공·국가기간</a><a href="#" data-en="High-rise">초고층·복합</a><a href="#" data-en="Industrial">산업·플랜트</a></dd>
    <dt data-en="R&amp;D">연구개발</dt><dd><a href="#">R&amp;D Center</a><a href="#" data-en="Projects">수행과제</a><a href="#" data-en="Patents">특허</a></dd>
    <dt data-en="PR">홍보센터</dt><dd><a href="#" data-en="News">새소식</a><a href="#" data-en="Brochure">회사소개서</a><a href="#" data-en="Video">홍보영상</a></dd>
@@ -235,13 +233,13 @@ footer .lk a{margin-left:20px;color:#b0b6c0}
 <div class="mq marquee"><div><span data-en="Incheon International Airport Corp.">인천국제공항공사</span><span data-en="Lotte">롯데</span><span data-en="Hyundai Motor">현대자동차</span><span data-en="Hyundai Steel">현대제철</span><span data-en="Government Complex">정부종합청사</span><span data-en="USFK">주한미군</span></div></div>
 
 <section class="sec" id="biz"><div class="wrap biz">
- <div class="stk"><div class="lab">BUSINESS</div><h2 data-en="Five divisions,<br>one accountable partner">다섯 개 본부가<br>한 회사로 움직입니다</h2><p class="sd" data-en="Design, supervision, research and products — handled in-house so nothing falls between contractors.">설계·감리·연구·제품을 모두 직접 수행해, 업체가 바뀌는 사이에 빠지는 일이 없습니다.</p></div>
+ <div class="stk"><div class="lab">BUSINESS</div><h2 data-en="Four divisions,<br>one accountable partner">네 개 본부가<br>한 회사로 움직입니다</h2><p class="sd" data-en="Design, supervision, research and AI — handled in-house so nothing falls between contractors. Products are supplied by our affiliate k-UBIS.">설계·감리·연구·AI를 모두 직접 수행해, 업체가 바뀌는 사이에 빠지는 일이 없습니다. 방재제품은 계열사 k-UBIS가 공급합니다.</p></div>
  <ul>
   <li><a href="#" style="--img:url(img/p_tower1.jpg)"><small>01</small><div><h3 data-en="Design">설계</h3><p data-en="Fire strategy and systems under Korean and international codes">건축물 용도에 맞춘 방재계획, 국내외 기준 적용 설계</p></div><i>&#8594;</i></a></li>
   <li><a href="#" style="--img:url(img/p_tower4.jpg)"><small>02</small><div><h3 data-en="Supervision">감리</h3><p data-en="Fire, electrical, telecom and mechanical">소방·전기·통신·기계 공사감리</p></div><i>&#8594;</i></a></li>
   <li><a href="#" style="--img:url(img/p_tower3.jpg)"><small>03</small><div><h3 data-en="Performance-Based Design">성능위주설계</h3><p data-en="Fire and evacuation simulation">화재·피난 시뮬레이션 기반 안전성 검토</p></div><i>&#8594;</i></a></li>
   <li><a href="#" style="--img:url(img/p_data.jpg)"><small>04</small><div><h3 data-en="R&amp;D &middot; AI">연구개발 · AI</h3><p data-en="AI design tools; Fire Safety Big Data Center">AI 소방설계, 소방안전 빅데이터센터</p></div><i>&#8594;</i></a></li>
-  <li><a href="#" style="--img:url(img/p_night.jpg)"><small>05</small><div><h3 data-en="Products">방재제품</h3><p data-en="Exclusive distributor of CADDY seismic products">CADDY 내진제품 국내 총판, 조립식 소화수조</p></div><i>&#8594;</i></a></li>
+  <li><a href="#kubis" target="_blank" rel="noopener" title="k-UBIS 홈페이지로 이동 (주소 받기)" style="--img:url(img/p_night.jpg)"><small>05</small><div><h3 data-en='Products · k-UBIS <em style="font-style:normal;font-size:11px;font-weight:700;padding:1px 7px;border:1px solid currentColor;border-radius:999px;margin-left:6px;vertical-align:middle;opacity:.75">Affiliate</em>'>방재제품 · k-UBIS <em style="font-style:normal;font-size:11px;font-weight:700;padding:1px 7px;border:1px solid currentColor;border-radius:999px;margin-left:6px;vertical-align:middle;opacity:.75">계열사</em></h3><p data-en="Affiliate k-UBIS — CADDY seismic products, modular water tanks">계열사 k-UBIS — CADDY 내진제품 국내 총판, 조립식 소화수조</p></div><i>&#8599;</i></a></li>
  </ul>
 </div></section>
 
@@ -251,7 +249,7 @@ footer .lk a{margin-left:20px;color:#b0b6c0}
   <div><em>01</em><h3 data-en="Public agencies">공공기관 · 공기업</h3><p class="q" data-en="&ldquo;Can they handle national facilities?&rdquo;">"국가시설을 맡겨도 되나?"</p><ul><li data-en="Airport &amp; government building record">공항·정부청사 수행 실적</li><li data-en="Class 1 license, ISO">1급 면허, ISO 인증</li><li data-en="Project certificates">실적증명서 발급</li></ul></div>
   <div><em>02</em><h3 data-en="Enterprises &amp; developers">대기업 · 시행사</h3><p class="q" data-en="&ldquo;Have they done buildings like ours?&rdquo;">"우리 같은 건물을 해 봤나?"</p><ul><li data-en="Supertall &amp; HQ design">초고층·사옥 설계</li><li data-en="PBD reviews">성능위주설계 심의 대응</li><li data-en="AI design review">AI 설계 검토</li></ul></div>
   <div><em>03</em><h3 data-en="Builders &amp; architects">건설사 · 설계사무소</h3><p class="q" data-en="&ldquo;Can they keep pace?&rdquo;">"공정에 맞춰 대응하나?"</p><ul><li data-en="Subconsultant fire design">소방 분야 협력 설계</li><li data-en="Integrated supervision">통합 감리</li><li data-en="NFPA codes">해외 기준(NFPA) 적용</li></ul></div>
-  <div><em>04</em><h3 data-en="Industrial &amp; plants">산업시설 · 플랜트</h3><p class="q" data-en="&ldquo;Do they know special hazards?&rdquo;">"특수 위험을 아나?"</p><ul><li data-en="Steel, battery, power">제철·배터리·발전 시설</li><li data-en="Seismic products">내진 제품 공급</li><li data-en="Fire risk assessment">화재 위험성 평가</li></ul></div>
+  <div><em>04</em><h3 data-en="Industrial &amp; plants">산업시설 · 플랜트</h3><p class="q" data-en="&ldquo;Do they know special hazards?&rdquo;">"특수 위험을 아나?"</p><ul><li data-en="Steel, battery, power">제철·배터리·발전 시설</li><li data-en="Special suppression systems">특수소화설비 설계</li><li data-en="Fire risk assessment">화재 위험성 평가</li></ul></div>
  </div>
 </div></section>
 
@@ -279,7 +277,7 @@ footer .lk a{margin-left:20px;color:#b0b6c0}
 
 <footer><div class="wrap">
  <div><img src="img/logo_w.png" alt="한방유비스(주)"><p data-en="Hanbang UBIS Co., Ltd. · 9F Seoul Forest IT Valley, 77 Seongsuil-ro, Seongdong-gu, Seoul<br>TEL +82-2-2023-5000 · FAX +82-2-2023-5007 · Business Reg. 220-81-15635">한방유비스(주) · 서울특별시 성동구 성수일로 77 서울숲IT밸리 9층<br>TEL 02-2023-5000 · FAX 02-2023-5007 · 사업자등록번호 220-81-15635</p></div>
- <div style="display:grid;gap:14px;justify-items:end"><form class="fam" onsubmit="event.preventDefault();var v=this.s.value;if(v)window.open(v,'_blank','noopener')"><select name="s" aria-label="Family Site"><option value="">Family Site</option><option value="https://hanbang1947.co.kr">한방</option><option value="#kubis">케이유비스</option><option value="#ai">AI 계열사(가칭)</option><option value="#gw">그룹웨어 (직원용)</option></select><button type="submit">이동</button></form><div class="lk"><a href="#" data-en="Privacy Policy">개인정보처리방침</a><a href="#" data-en="Sitemap">사이트맵</a></div></div>
+ <div style="display:grid;gap:14px;justify-items:end"><form class="fam" onsubmit="event.preventDefault();var v=this.s.value;if(v)window.open(v,'_blank','noopener')"><select name="s" aria-label="Family Site"><option value="">Family Site</option><option value="https://hanbang1947.co.kr">한방</option><option value="#kubis">k-UBIS (케이유비스)</option><option value="#ai">AI 계열사(가칭)</option><option value="#gw">그룹웨어 (직원용)</option></select><button type="submit">이동</button></form><div class="lk"><a href="#" data-en="Privacy Policy">개인정보처리방침</a><a href="#" data-en="Sitemap">사이트맵</a></div></div>
 </div></footer>
 <div class="mcta"><a href="tel:0220235000" data-en="Call">전화 문의</a><a class="p" href="#inq" data-en="Inquiry">사업 문의</a></div>
 
@@ -292,8 +290,8 @@ var SL=[
 var ss=[].slice.call(document.querySelectorAll('.vis .s')),ws=[].slice.call(document.querySelectorAll('.vis .word b')),ds=[].slice.call(document.querySelectorAll('.vis .dots i')),k=0,tm;
 function paint(){document.getElementById('vko').textContent=lang==='en'?SL[k].en:SL[k].ko;document.getElementById('vdesc').textContent=lang==='en'?SL[k].den:SL[k].dko;}
 function go(d){var n=(k+d+ss.length)%ss.length;ss[k].classList.remove('on');ws[k].classList.remove('on');ws[k].classList.add('out');ds[k].classList.remove('on');
- var o=ws[k];setTimeout(function(){o.classList.remove('out')},900);k=n;ss[k].classList.add('on');ws[k].classList.add('on');void ds[k].offsetWidth;ds[k].classList.add('on');paint();clearInterval(tm);tm=setInterval(function(){go(1)},6000);}
-paint();tm=setInterval(function(){go(1)},6000);
+ var o=ws[k];setTimeout(function(){o.classList.remove('out')},900);k=n;ss[k].classList.add('on');ws[k].classList.add('on');void ds[k].offsetWidth;ds[k].classList.add('on');paint();}
+paint(); /* 자동 넘김 없음 — 좌우 버튼으로 */
 function fm(o){var f=document.getElementById('full');f.classList.toggle('open',!!o);f.setAttribute('aria-hidden',!o);}
 var hd=document.getElementById('hd');addEventListener('scroll',function(){hd.classList.toggle('solid',scrollY>80)});
 function cs(d){var c=document.getElementById('cases');c.scrollBy({left:d*(c.querySelector('.case').offsetWidth+26),behavior:'smooth'});}

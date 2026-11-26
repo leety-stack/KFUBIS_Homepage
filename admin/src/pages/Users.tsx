@@ -4,7 +4,7 @@ import { useAuth } from "../lib/auth";
 import { errText, pb, showTime, type Rec } from "../lib/pb";
 import { pwProblem } from "../components/PwChange";
 
-const DEPTS = ["홍보팀", "설계사업본부", "감리사업본부", "방재연구소", "R&D센터", "방재사업본부", "경영지원팀"];
+const DEPTS = ["홍보팀", "설계사업본부", "감리사업본부", "방재연구소", "R&D센터", "경영지원팀"];
 const locked = (u: Rec) => !!u.locked_until && new Date(u.locked_until.replace(" ", "T")) > new Date();
 
 export default function Users() {
