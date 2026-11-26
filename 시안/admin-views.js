@@ -15,20 +15,22 @@
     inquiry: '문의 관리', certreq: '실적증명 요청', apply: '입사 지원',
     company: '회사 정보·하단 문구', i18n: '다국어 문구', seo: '검색 노출 (SEO)', stats: '접속 통계', history: '변경 이력·되돌리기', users: '관리자 계정', roles: '역할·권한', logins: '로그인 기록'
   };
-  /* 숨긴 메뉴 — 실제로 해 보고 확정되면 여기서 지우기만 하면 다시 켜짐 */
-  var HIDDEN = { page: 1, seo: 1, stats: 1, history: 1 };
+  /* 옵션 메뉴 — 사이드바·제목에 "옵션" 표시. 숨기려면 HIDDEN에 넣기 (예: { page: 1, seo: 1, stats: 1, history: 1 }) */
+  var OPTION = { page: 1, seo: 1, stats: 1, history: 1 };
+  var HIDDEN = {};
   var built = {};
   function view(v) {
     if (!TT[v] || HIDDEN[v]) v = 'dash';
     if (!built[v] && R[v]) { R[v]($('#v-' + v)); built[v] = 1; }
     $$('.view').forEach(function (x) { x.classList.toggle('on', x.id === 'v-' + v); });
     $$('aside a[data-v]').forEach(function (a) { a.classList.toggle('on', a.dataset.v === v); });
-    $('#ttl').textContent = TT[v]; $('#side').classList.remove('open'); scrollTo(0, 0);
+    $('#ttl').innerHTML = E(TT[v]) + (OPTION[v] ? '<i class="opt" title="옵션 항목 — 필요 없으면 숨길 수 있음">옵션</i>' : '');
+    var h1 = $('#v-' + v + ' .ph h1'); if (h1 && OPTION[v] && !$('.opt', h1)) h1.insertAdjacentHTML('beforeend', '<i class="opt" title="옵션 항목 — 필요 없으면 숨길 수 있음">옵션</i>'); $('#side').classList.remove('open'); scrollTo(0, 0);
     if (v === 'popup' && window.drawPop) drawPop();
     if (v === 'stats' || v === 'dash') $$('#v-' + v + ' [data-chart]').forEach(drawChart);
   }
   window.view = view;
-  $$('aside a[data-v]').forEach(function (a) { if (HIDDEN[a.dataset.v]) a.remove(); });
+  $$('aside a[data-v]').forEach(function (a) { if (HIDDEN[a.dataset.v]) a.remove(); else if (OPTION[a.dataset.v]) a.insertAdjacentHTML('beforeend', '<i class="opt" title="옵션 항목 — 필요 없으면 숨길 수 있음">옵션</i>'); });
   addEventListener('hashchange', function () { view(location.hash.slice(1)); });
 
   function head(t, p, btns) { return '<div class="ph"><div><h1>' + t + '</h1><p>' + p + '</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">' + (btns || '') + '</div></div>'; }
@@ -72,31 +74,23 @@
     el.innerHTML = head('대시보드', '2026.11.26 (목) 기준 — 오늘 처리할 일과 홈페이지 현황') +
       '<div class="kpis">' +
       '<a class="kpi" href="#inquiry"><small>처리 대기 문의</small><b style="color:var(--pri)">3</b><span>신규 3 · 1영업일 넘은 것 0</span></a>' +
-      '<a class="kpi" href="#works"><small>게시 대기</small><b>2</b><span>임시저장 실적 1 · 예약 소식 1</span></a>' +
+      '<a class="kpi" href="#stats"><small>방문자 (30일)</small><b>' + visits30.reduce(function (a, b) { return a + b; }, 0).toLocaleString() + '</b><span style="color:var(--ok)">지난 30일보다 12% 늘어남</span></a>' +
       '<a class="kpi" href="#inquiry"><small>이번 달 문의</small><b>27</b><span>공공 11 · 기업 13 · 기타 3</span></a>' +
       '<a class="kpi" href="#i18n"><small>영문 미입력</small><b style="color:var(--warn)">38</b><span>실적 31 · 문구 7</span></a></div>' +
       '<div class="row2">' +
       '<section class="panel"><div class="panel-hd"><h2>오늘 처리할 일</h2></div><ul class="todo">' +
       '<li><a href="#inquiry">' + tag('신규') + ' 사업 문의 3건 — 담당 본부 배정 완료, 회신 필요</a></li>' +
       '<li><a href="#certreq">' + tag('신규') + ' 실적증명 요청 1건 — ○○도시공사</a></li>' +
-      '<li><a href="#works">' + tag('임시저장') + ' 실적 "○○ 데이터센터" 게시 전</a></li>' +
+      '<li><a href="#page">' + tag('임시저장') + ' 페이지 "회사소개 › 인사말" 게시 전</a></li>' +
       '<li><a href="#popup">' + tag('예약') + ' 팝업 "연말연시 휴무 안내" 12.24 자동 시작</a></li>' +
       '<li><a href="#certs">' + tag('만료 임박') + ' 인증 "ISO 9001" 유효기간 12.31 — 갱신본 올리기</a></li>' +
       '<li><a href="#i18n">' + tag('확인 필요') + ' 영문 미입력 38건</a></li></ul></section>' +
-      '<section class="panel"><div class="panel-hd"><h2>지금 홈페이지에 떠 있는 것</h2></div><ul class="todo">' +
-      '<li><a href="#banner">' + tag('노출 중') + ' 메인 배너 2개 — 6초마다 넘김</a></li>' +
-      '<li><a href="#popup">' + tag('노출 중') + ' 팝업 "2026 국제소방안전박람회 참가" ~12.05</a></li>' +
-      '<li><a href="#popup">' + tag('예약') + ' 팝업 "연말연시 휴무 안내" 12.24 ~ 01.02</a></li>' +
-      '<li><a href="#main">' + tag('노출 중') + ' 메인 수행 사례 3건 — 롯데월드타워 · 인천국제공항 · GBC</a></li>' +
-      '<li><a href="#jobs">' + tag('모집 중') + ' 채용공고 2건</a></li></ul></section></div>' +
+      '<section class="panel"><div class="panel-hd"><h2>방문자 추이 (30일)</h2><a class="btn sm" href="#stats">통계 자세히</a></div><div class="panel-bd"><div data-chart=\'' + JSON.stringify({ name: '일별 방문자', x: days30, v: visits30, unit: '명' }) + '\' data-h="200"></div></div></section></div>' +
       '<div class="row2">' +
       '<section class="panel"><div class="panel-hd"><h2>최근 문의</h2><a class="btn sm" href="#inquiry">전체 보기</a></div><div class="tbl"><table><thead><tr><th>기관 / 분야</th><th>상태</th><th class="hide-m">담당</th></tr></thead><tbody>' +
       INQ.slice(0, 5).map(function (q) { return '<tr onclick="location.hash=\'inquiry\'"><td><b>' + E(q.org) + '</b><div class="sub">' + E(q.field) + ' · ' + q.at + '</div></td><td>' + tag(q.st) + '</td><td class="hide-m">' + E(q.dept) + '</td></tr>'; }).join('') + '</tbody></table></div></section>' +
-      '<section class="panel"><div class="panel-hd"><h2>최근 게시한 글</h2><a class="btn sm" href="#news">소식 관리</a></div><ul class="todo">' +
-      '<li><span class="sub" style="min-width:86px">11.20</span><span><b>소식</b> — 기후에너지환경부 장관 표창 수상</span></li>' +
-      '<li><span class="sub" style="min-width:86px">11.18</span><span><b>실적</b> — 인천국제공항 제2여객터미널 영문 정보 추가</span></li>' +
-      '<li><span class="sub" style="min-width:86px">11.10</span><span><b>채용</b> — 소방감리 경력직 채용</span></li>' +
-      '<li><span class="sub" style="min-width:86px">10.02</span><span><b>소식</b> — 중소벤처기업부 장관 표창 수상</span></li></ul></section></div>';
+      '<section class="panel"><div class="panel-hd"><h2>최근 변경</h2><a class="btn sm" href="#history">변경 이력</a></div><ul class="todo">' +
+      HIST.slice(0, 5).map(function (h) { return '<li><span class="sub" style="min-width:86px">' + h.at.slice(5) + '</span><span><b>' + E(h.who) + '</b> — ' + E(h.where) + ' · ' + E(h.what) + '</span></li>'; }).join('') + '</ul></section></div>';
   };
 
   /* ───────────── 메인 화면 구성 ───────────── */
@@ -283,7 +277,7 @@
           }
           h += '</div>';
         });
-        return h + '</div><p class="help" style="margin-top:14px">[게시]를 눌러야 홈페이지에 반영됩니다. 임시저장한 내용은 홈페이지에 보이지 않습니다.</p>';
+        return h + '</div><p class="help" style="margin-top:14px">[게시]를 눌러야 홈페이지에 반영되고, 이전 내용은 변경 이력에 남습니다.</p>';
       }
       function open(i, isNew) {
         var r = C.rows[i], bd = $('.m-bd', modal);
@@ -293,7 +287,7 @@
         var dd = $('input[data-k="due"]', bd); if (dd) dd.disabled = !!r.until;
         $$('[data-img]', bd).forEach(function (im) { im.onclick = function () { r[im.dataset.img] = im.dataset.s; $$('[data-img]', bd).forEach(function (x) { x.classList.toggle('on', x === im); }); }; });
         $('[data-mdel]', modal).style.display = isNew ? 'none' : '';
-        $('[data-mdel]', modal).onclick = function () { if (confirm('삭제할까요?')) { C.rows.splice(C.rows.indexOf(r), 1); mOnClose = null; closeModal(); rows(); toast('삭제했습니다'); } };
+        $('[data-mdel]', modal).onclick = function () { if (confirm('삭제할까요? 변경 이력에서 되살릴 수 있습니다.')) { C.rows.splice(C.rows.indexOf(r), 1); mOnClose = null; closeModal(); rows(); toast('삭제했습니다'); } };
         $('[data-mtmp]', modal).onclick = function () { r.st = '임시저장'; mOnClose = null; closeModal(); rows(); toast('임시저장했습니다 — 홈페이지에는 아직 안 보입니다'); };
         $('[data-mpub]', modal).onclick = function () { if (!r.name) { toast('제목을 입력하세요'); return; } r.st = '게시'; mOnClose = null; closeModal(); rows(); toast('게시했습니다 — 홈페이지에 반영되었습니다 (시안)'); };
         mOnClose = isNew ? function () { if (!r.name) { C.rows.splice(C.rows.indexOf(r), 1); rows(); } } : null;
@@ -317,7 +311,7 @@
     { org: '○○전자', who: '최○○ 책임', tel: '031-000-0000', mail: 'choi@○○.com', type: '대기업·건설사', field: 'AI 솔루션', at: '11.22 14:05', st: '완료', dept: 'R&D센터', src: '구글 검색(검색어는 구글이 알려 주지 않음) → 메인 → 사업 문의', msg: 'AI 설계 검토(ATC+) 데모를 요청합니다.', file: '' }];
   var INBOX = {
     inquiry: { title: '문의 관리', desc: '홈페이지 사업 문의입니다. 문의 분야에 따라 담당 본부가 자동으로 정해지고 담당자에게 메일이 갑니다. 1영업일이 지나면 관리자에게 다시 알립니다.', rows: INQ, line: function (q) { return q.field + (q.en ? ' · 영문' : ''); },
-      info: function (q) { return [['기관 유형', q.type], ['담당자', q.who], ['연락처', q.tel], ['메일', q.mail], ['문의 분야', q.field], ['받은 시각', '2026.' + q.at]]; }, tpl: ['기본 회신 (담당자 연결 안내)', 'RFP 접수 확인', '견적 회신', 'English — general reply'] },
+      info: function (q) { return [['기관 유형', q.type], ['담당자', q.who], ['연락처', q.tel], ['메일', q.mail], ['문의 분야', q.field], ['받은 시각', '2026.' + q.at], ['들어온 경로', q.src || '—']]; }, tpl: ['기본 회신 (담당자 연결 안내)', 'RFP 접수 확인', '견적 회신', 'English — general reply'] },
     certreq: { title: '실적증명 요청', desc: '발주처가 입찰·등록용 실적증명서를 요청한 건입니다. 발급 파일을 올리고 [보내기]를 누르면 요청자에게 메일로 갑니다.', rows: [
       { org: '○○도시공사', who: '정○○ 주무관', tel: '02-000-0000', mail: 'jung@○○.go.kr', field: '인천국제공항 제2여객터미널 확장 — 설계', at: '11.26 09:30', st: '신규', dept: '경영지원팀', msg: '○○ 입찰 참가자격 심사용으로 실적증명서 1부 요청드립니다. 용도: 입찰 제출', file: '' },
       { org: '○○공사', who: '오○○ 대리', tel: '02-000-0000', mail: 'oh@○○.or.kr', field: '잠실 롯데월드타워 — 감리', at: '11.18 13:10', st: '발급 완료', dept: '경영지원팀', msg: '협력업체 등록용', file: '실적증명서_롯데월드타워.pdf' }],
@@ -368,7 +362,7 @@
       [['name', '회사명 (국문)'], ['nameEn', '회사명 (영문)'], ['ceo', '대표자'], ['biz', '사업자등록번호'], ['tel', '대표 전화'], ['fax', '팩스'], ['mail', '대표 메일'], ['addr', '주소 (국문)', 1], ['addrEn', '주소 (영문)', 1]].map(function (f) { return '<div class="f' + (f[2] ? ' full' : '') + '"><label>' + f[1] + '</label><input data-c="' + f[0] + '" value="' + E(C[f[0]]) + '"></div>'; }).join('') +
       '</div><div class="grid2" style="margin-top:14px"><div class="f"><label>로고 (밝은 바탕용)</label><div class="logo-up"><img src="img/logo_a.png" alt=""><button class="btn sm">바꾸기</button></div></div><div class="f"><label>로고 (어두운 바탕용)</label><div class="logo-up dk"><img src="img/logo_w.png" alt=""><button class="btn sm">바꾸기</button></div></div><div class="f"><label>파비콘 (브라우저 탭 아이콘)</label><div class="drop">PNG 512×512</div></div><div class="f"><label>회사소개서 기본 파일</label><select><option>회사소개서 2025 (국문)</option></select></div></div></div></section>' +
       '<section class="panel"><div class="panel-hd"><h2>하단 링크 · 관련 사이트 · SNS</h2></div><div class="panel-bd">' +
-      '<div class="f"><label>하단 링크</label><ul class="mini-l"><li>개인정보처리방침 <span class="help">오픈 전 함께 작성</span></li><li>이메일무단수집거부 <span class="help">기본 문구</span></li><li>사이트맵 <span class="help">자동</span></li></ul></div>' +
+      '<div class="f"><label>하단 링크</label><ul class="mini-l"><li>개인정보처리방침 <a href="#page" class="help">페이지 편집 ›</a></li><li>이메일무단수집거부 <a href="#page" class="help">페이지 편집 ›</a></li><li>사이트맵 <span class="help">자동</span></li></ul></div>' +
       '<div class="f"><label>관련 사이트 (Family Site)</label><ul class="mini-l"><li>한방 — hanbang1947.co.kr <button class="btn sm ghost">×</button></li><li>케이유비스 — <span class="sub">주소 입력</span> <button class="btn sm ghost">×</button></li><li>AI 계열사(가칭) — <span class="sub">주소 입력</span> <button class="btn sm ghost">×</button></li><li>그룹웨어 — 직원용 <button class="btn sm ghost">×</button></li></ul><button class="btn sm">+ 추가</button><span class="help" style="display:block;margin-top:4px">모든 페이지 하단 Family Site 선택 상자에 이 순서로 나옵니다 (새 창)</span></div>' +
       '<div class="grid2"><div class="f"><label>YouTube</label><input placeholder="채널 주소"></div><div class="f"><label>블로그</label><input placeholder="블로그 주소"></div></div>' +
       '<b style="font-size:13px;display:block;margin:16px 0 6px">하단 미리보기</b><div class="foot-prev" id="fp"></div></div></section></div>';
@@ -436,7 +430,7 @@
     '홍보 담당': [1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 2, 0, 2, 3, 2, 1, 1, 0, 0, 0],
     '본부 담당': [1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     '채용 담당': [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0] };
-  var HIDE_M = ['페이지 편집', '검색 노출 (SEO)', '접속 통계', '변경 이력·되돌리기'];
+  var HIDE_M = []; /* 권한 표에서 뺄 메뉴 이름 (숨길 때 같이) */
   Object.keys(PERM).forEach(function (r) { PERM[r] = PERM[r].filter(function (_, i) { return HIDE_M.indexOf(MEN[i][1]) < 0; }); });
   MEN = MEN.filter(function (m) { return HIDE_M.indexOf(m[1]) < 0; });
   var lvClass = function (t, v) { return t === 'c' ? v : v === 0 ? 0 : v === LVS[t].length - 1 ? 3 : 1; };
@@ -498,7 +492,7 @@
       MEN.forEach(function (m, i) {
         if (m[0] !== g) { g = m[0]; h += '<li class="pg">' + g + '</li>'; }
         var v = PERM[cur][i];
-        h += '<li class="pr"><span><b>' + m[1] + '</b></span><span class="seg">' + LVS[m[2]].map(function (L, j) { return '<button data-i="' + i + '" data-v="' + j + '" class="' + (j === v ? 'on lvs' + lvClass(m[2], j) : '') + '"' + (fixed ? ' disabled' : '') + '>' + L + '</button>'; }).join('') + '</span></li>';
+        h += '<li class="pr"><span><b>' + m[1] + '</b>' + (['페이지 편집', '검색 노출 (SEO)', '접속 통계', '변경 이력·되돌리기'].indexOf(m[1]) > -1 ? '<i class="opt" title="옵션 항목 — 필요 없으면 숨길 수 있음">옵션</i>' : '') + '</span><span class="seg">' + LVS[m[2]].map(function (L, j) { return '<button data-i="' + i + '" data-v="' + j + '" class="' + (j === v ? 'on lvs' + lvClass(m[2], j) : '') + '"' + (fixed ? ' disabled' : '') + '>' + L + '</button>'; }).join('') + '</span></li>';
       });
       $('#rpan').innerHTML = '<div class="panel-hd"><h2>' + E(cur) + ' — 메뉴별 권한</h2>' + (fixed ? '<span class="help">최고 관리자는 바꿀 수 없음</span>' : '<div style="display:flex;gap:6px"><button class="btn sm" data-all="0">모두 없음</button><button class="btn sm" data-all="1">모두 보기</button></div>') + '</div>' +
         (cur === '본부 담당' ? '<div class="panel-bd" style="border-bottom:1px solid var(--line)"><div class="f"><label>문의 볼 범위</label><select style="width:auto"><option>자기 본부로 배정된 것만</option><option>전체</option></select></div></div>' : '') +

@@ -21,7 +21,7 @@
   <div class="grp">고객</div>
   <a href="#inquiry" data-v="inquiry">문의 관리 <em title="새 문의 3건" aria-label="새 문의 3건">3</em></a><a href="#certreq" data-v="certreq">실적증명 요청 <em title="새 요청 1건" aria-label="새 요청 1건">1</em></a><a href="#apply" data-v="apply">입사 지원 <em title="새 지원 1건" aria-label="새 지원 1건">1</em></a>
   <div class="grp">설정</div>
-  <a href="#company" data-v="company">회사 정보·하단 문구</a><a href="#i18n" data-v="i18n">다국어 문구</a>
+  <a href="#company" data-v="company">회사 정보·하단 문구</a><a href="#i18n" data-v="i18n">다국어 문구</a><a href="#seo" data-v="seo">검색 노출 (SEO)</a><a href="#stats" data-v="stats">접속 통계</a><a href="#history" data-v="history">변경 이력·되돌리기</a>
   <div class="grp">관리자</div>
   <a href="#users" data-v="users">관리자 계정</a><a href="#roles" data-v="roles">역할·권한</a><a href="#logins" data-v="logins">로그인 기록</a>
  </aside>
@@ -74,7 +74,7 @@
         <div class="f"><label>노출</label><div style="display:flex;gap:16px;align-items:center"><label style="display:flex;gap:8px;align-items:center"><span class="sw"><input type="checkbox" id="m-pc" checked><span></span></span> PC</label><label style="display:flex;gap:8px;align-items:center"><span class="sw"><input type="checkbox" id="m-mo" checked><span></span></span> 모바일</label></div></div>
         <div class="f"><label>메뉴 주소</label><input id="m-slug"><span class="help">kfubis.co.kr/<b id="m-slug-v"></b></span></div>
        </div>
-       <div class="help">마지막 수정: 홍보팀 김○○ · 2026.11.20 14:02</div>
+       <div class="help">마지막 수정: 홍보팀 김○○ · 2026.11.20 14:02 — <a href="#history" style="text-decoration:underline">변경 이력 보기</a></div>
       </div></div>
     </div>
    </section>
@@ -100,6 +100,7 @@
      <div class="canvas-wrap"><div class="canvas" id="canvas"><div class="cv-hd"><img src="img/logo_a.png" alt=""><span>kfubis.co.kr/company/ceo</span></div><div id="blocks"></div></div></div>
      <div class="panel props"><div class="panel-hd"><h2 id="pr-title">블록 설정</h2><button class="btn sm ghost" onclick="delBlock()" style="color:var(--pri)">블록 삭제</button></div>
       <div class="panel-bd" id="props"></div>
+      <div class="panel-bd" style="border-top:1px solid var(--line)"><b style="font-size:13px">변경 이력</b><div class="hist" style="margin-top:6px"><span>11.20 14:02 홍보팀 김○○ — 인사말 문구 수정 <a href="#" style="color:var(--blue)">되돌리기</a></span><span>11.12 09:41 홍보팀 김○○ — 대표 사진 교체 <a href="#" style="color:var(--blue)">되돌리기</a></span></div></div>
      </div>
     </div>
    </section>
