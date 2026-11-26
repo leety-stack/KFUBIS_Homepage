@@ -1,7 +1,7 @@
 // 관리자 계정 공통 함수 — accounts.pb.js 에서 require
 module.exports = {
   rules() {
-    const d = { fail_limit: 5, lock_minutes: 30, idle_minutes: 30, mfa: false };
+    const d = { fail_limit: 5, lock_minutes: 30, idle_minutes: 30 };
     try {
       const st = $app.findFirstRecordByFilter("site_settings", "id != ''");
       const s = st.getString("login_rules"); if (s && s !== "null") return Object.assign(d, JSON.parse(s));

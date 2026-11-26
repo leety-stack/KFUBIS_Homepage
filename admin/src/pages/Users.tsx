@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Modal, Tag, useToast } from "../components/ui";
 import { useAuth } from "../lib/auth";
 import { errText, pb, showTime, type Rec } from "../lib/pb";
+import { pwProblem } from "../components/PwChange";
 
 const DEPTS = ["홍보팀", "설계사업본부", "감리사업본부", "방재연구소", "R&D센터", "방재사업본부", "경영지원팀"];
 const locked = (u: Rec) => !!u.locked_until && new Date(u.locked_until.replace(" ", "T")) > new Date();
@@ -26,8 +27,8 @@ export default function Users() {
 
   return (
     <section className="view on">
-      <div className="ph"><div><h1>관리자 계정</h1><p>관리자 화면을 쓰는 직원 계정입니다. 줄을 누르면 고치고, 퇴사·휴직자는 [사용 중지]로 바로 막습니다. 비밀번호는 본인이 메일로 정하므로 관리자도 모릅니다.</p></div>
-        {top && <button className="btn navy" onClick={() => setInvite(true)}>+ 관리자 초대</button>}</div>
+      <div className="ph"><div><h1>관리자 계정</h1><p>관리자 화면을 쓰는 직원 계정입니다. 줄을 누르면 고치고, 퇴사·휴직자는 [사용 중지]로 바로 막습니다. 새 계정과 비밀번호 초기화는 임시 비밀번호로 하고, 본인이 첫 로그인 때 바꿉니다.</p></div>
+        {top && <button className="btn navy" onClick={() => setInvite(true)}>+ 계정 만들기</button>}</div>
       <section className="panel">
         <div className="panel-hd"><div className="flt">{["전체", "사용", "중지", "잠김"].map((x) => <button key={x} className={x === f ? "on" : ""} onClick={() => setF(x)}>{x}{x === "잠김" && list.filter(locked).length ? " " + list.filter(locked).length : ""}</button>)}</div>
           <input className="srch" placeholder="이름·메일·부서 검색" value={q} onChange={(e) => setQ(e.target.value)} /></div>
@@ -38,7 +39,7 @@ export default function Users() {
               <td><b>{u.name || "(이름 없음)"}</b>{u.id === user?.id && <span className="tag t-pub" style={{ marginLeft: 6 }}>나</span>}</td>
               <td className="hide-m sub">{u.email}</td><td className="hide-m">{u.dept}</td><td>{u.expand?.role?.name || <span className="sub">역할 없음</span>}</td>
               <td className="hide-m sub">{showTime(u.last_login, true) || "—"}</td>
-              <td><Tag t={u.status || "사용"} />{locked(u) && <span className="tag t-new" style={{ marginLeft: 4 }}>잠김</span>}</td>
+              <td><Tag t={u.status || "사용"} />{locked(u) && <span className="tag t-new" style={{ marginLeft: 4 }}>잠김</span>}{u.pw_temp && <span className="tag t-wait" style={{ marginLeft: 4 }} title="첫 로그인 때 본인이 바꿔야 함">임시 비밀번호</span>}</td>
               <td className="hide-m"><button className="btn sm">{top ? "수정" : "보기"}</button></td>
             </tr>))}
             {!shown.length && <tr><td colSpan={7} className="empty">계정이 없습니다</td></tr>}</tbody>
@@ -66,6 +67,12 @@ function EditUser({ u, roles, top, me, api, onClose, onSaved }: { u: Rec; roles:
     try { await pb.collection("users").delete(u.id); toast("삭제했습니다"); onSaved(); } catch (e) { toast("삭제하지 못했습니다 — " + errText(e)); }
   };
   const ro = !top;
+  const [reset, setReset] = useState<string | null>(null);
+  const resetPw = async () => {
+    const p = pwProblem(reset || "", reset || ""); if (p) { toast(p); return; }
+    try { await pb.collection("users").update(u.id, { password: reset, passwordConfirm: reset }); toast("임시 비밀번호를 정했습니다 — 본인에게 알려 주세요"); onSaved(); }
+    catch (e) { toast("바꾸지 못했습니다 — " + errText(e)); }
+  };
   return (
     <Modal title={`관리자 계정 — ${u.name || u.email}`} onClose={onClose}
       footer={<>{top && !self && <button className="btn" style={{ color: "var(--pri)", marginRight: "auto" }} onClick={del}>삭제</button>}
@@ -82,34 +89,42 @@ function EditUser({ u, roles, top, me, api, onClose, onSaved }: { u: Rec; roles:
       </div>
       <dl className="info" style={{ marginTop: 16 }}><dt>마지막 접속</dt><dd>{showTime(u.last_login) || "—"}</dd><dt>계정 잠금</dt><dd>{locked(u) ? `잠김 — ${showTime(u.locked_until)}까지` : "없음"}</dd><dt>만든 날</dt><dd>{showTime(u.created)}</dd></dl>
       {top && <div className="f" style={{ marginTop: 10 }}><label>보안</label><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button type="button" className="btn sm" onClick={() => confirm(`${u.email} 로 비밀번호 재설정 메일을 보낼까요?`) && api("/api/cms/users/reset", { id: u.id }, "비밀번호 재설정 메일을 보냈습니다")}>비밀번호 재설정 메일 보내기</button>
+        {!self && <button type="button" className="btn sm" onClick={() => setReset(reset === null ? "" : null)}>비밀번호 초기화</button>}
         {locked(u) && <button type="button" className="btn sm" onClick={() => api("/api/cms/users/unlock", { id: u.id }, "잠금을 풀었습니다").then((ok) => ok && onSaved())}>잠금 풀기</button>}
         {!self && <button type="button" className="btn sm" onClick={() => confirm("이 계정을 모든 기기에서 로그아웃시킬까요?") && api("/api/cms/users/logout-all", { id: u.id }, "모든 기기에서 로그아웃시켰습니다")}>모든 기기에서 로그아웃</button>}
       </div></div>}
+      {top && reset !== null && <div className="f" style={{ marginTop: 10, background: "#f8fafc", padding: 12, borderRadius: 8 }}><label>임시 비밀번호</label>
+        <div style={{ display: "flex", gap: 8 }}><input value={reset} placeholder="8자 이상, 영문+숫자" onChange={(e) => setReset(e.target.value)} />
+          <button type="button" className="btn sm navy" onClick={resetPw}>정하기</button></div>
+        <span className="help">본인에게 직접 알려 주세요. 다음 로그인 때 본인이 새 비밀번호로 바꿔야 하고, 지금 로그인된 기기는 모두 로그아웃됩니다.</span></div>}
     </Modal>
   );
 }
 
 function Invite({ roles, onClose, onDone }: { roles: Rec[]; onClose: () => void; onDone: () => void }) {
   const toast = useToast();
-  const [v, setV] = useState({ email: "", name: "", dept: "", tel: "", role: roles.find((r) => r.name === "홍보 담당")?.id || "" });
+  const [v, setV] = useState({ email: "", name: "", dept: "", tel: "", role: roles.find((r) => r.name === "홍보 담당")?.id || "", pw: "" });
   const set = (k: string, x: string) => setV((p) => ({ ...p, [k]: x }));
   const send = async () => {
     if (!v.email || !v.name) { toast("이름과 메일을 입력하세요"); return; }
+    const p = pwProblem(v.pw, v.pw); if (p) { toast("임시 비밀번호: " + p); return; }
     try {
-      const r: any = await pb.send("/api/cms/users/invite", { method: "POST", body: v });
-      toast(r.mailed ? `${v.email} 로 초대 메일을 보냈습니다` : r.message); onDone();
-    } catch (e: any) { toast(e?.response?.message || errText(e)); }
+      const { pw, ...rest } = v;
+      await pb.collection("users").create({ ...rest, status: "사용", password: pw, passwordConfirm: pw });
+      toast(`계정을 만들었습니다 — ${v.email} / 임시 비밀번호를 본인에게 알려 주세요`); onDone();
+    } catch (e: any) { toast(e?.response?.data?.email ? "이미 있는 메일 주소입니다" : "만들지 못했습니다 — " + errText(e)); }
   };
   return (
-    <Modal title="관리자 초대" onClose={onClose} footer={<><button className="btn" style={{ marginLeft: "auto" }} onClick={onClose}>취소</button><button className="btn navy" onClick={send}>초대 메일 보내기</button></>}>
+    <Modal title="관리자 계정 만들기" onClose={onClose} footer={<><button className="btn" style={{ marginLeft: "auto" }} onClick={onClose}>취소</button><button className="btn navy" onClick={send}>만들기</button></>}>
       <div className="grid2">
         <div className="f"><label><i>* </i>이름</label><input value={v.name} onChange={(e) => set("name", e.target.value)} autoFocus /></div>
         <div className="f"><label><i>* </i>회사 메일 (아이디)</label><input type="email" value={v.email} placeholder="name@kfubis.com" onChange={(e) => set("email", e.target.value)} /></div>
         <div className="f"><label>부서</label><select value={v.dept} onChange={(e) => set("dept", e.target.value)}><option value="">선택</option>{DEPTS.map((d) => <option key={d}>{d}</option>)}</select></div>
         <div className="f"><label>역할</label><select value={v.role} onChange={(e) => set("role", e.target.value)}>{roles.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></div>
+        <div className="f"><label>연락처</label><input value={v.tel} onChange={(e) => set("tel", e.target.value)} /></div>
+        <div className="f"><label><i>* </i>임시 비밀번호</label><input value={v.pw} placeholder="8자 이상, 영문+숫자" onChange={(e) => set("pw", e.target.value)} /></div>
       </div>
-      <p className="help" style={{ marginTop: 14 }}>초대 메일을 받은 직원이 링크를 눌러 직접 비밀번호를 정합니다(30분 안). 관리자는 비밀번호를 알 수 없습니다.</p>
+      <p className="help" style={{ marginTop: 14 }}>임시 비밀번호는 본인에게 직접 알려 주세요. 처음 로그인하면 본인만 아는 비밀번호로 바꿔야 사용할 수 있습니다.</p>
     </Modal>
   );
 }

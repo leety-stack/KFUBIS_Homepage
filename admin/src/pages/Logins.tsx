@@ -16,7 +16,7 @@ export default function Logins() {
   const [list, setList] = useState<Rec[]>([]); const [total, setTotal] = useState(0);
   const [f, setF] = useState("전체"); const [who, setWho] = useState(""); const [from, setFrom] = useState(new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10));
   const [kpi, setKpi] = useState({ today: 0, fail7: 0, locked: 0 });
-  const [rules, setRules] = useState({ fail_limit: 5, lock_minutes: 30, idle_minutes: 30, mfa: false });
+  const [rules, setRules] = useState({ fail_limit: 5, lock_minutes: 30, idle_minutes: 30 });
 
   const load = useCallback(async () => {
     const p = [pb.filter("created >= {:d}", { d: from + " 00:00:00" })];
@@ -31,10 +31,9 @@ export default function Logins() {
     setKpi({ today: t, fail7: f7, locked: lk });
   }, [f, who, from]);
   useEffect(() => { load().catch((e) => toast(errText(e))); }, [load]); // eslint-disable-line
-  useEffect(() => { pb.collection("site_settings").getFirstListItem("id != ''").then((s: any) => s.login_rules && setRules({ ...rules, ...s.login_rules })).catch(() => {}); }, []); // eslint-disable-line
+  useEffect(() => { pb.collection("site_settings").getFirstListItem("id != ''").then((s: any) => s.login_rules && setRules({ fail_limit: s.login_rules.fail_limit ?? 5, lock_minutes: s.login_rules.lock_minutes ?? 30, idle_minutes: s.login_rules.idle_minutes ?? 30 })).catch(() => {}); }, []); // eslint-disable-line
 
   const saveRules = async () => {
-    if (rules.mfa && !confirm("2단계 인증을 켜면 모든 관리자가 로그인할 때 메일로 받은 인증번호를 넣어야 합니다. 회사 메일(SMTP)이 설정되어 있어야 합니다. 켤까요?")) return;
     try { const r: any = await pb.send("/api/cms/login-rules", { method: "POST", body: rules }); setRules(r); toast("로그인 규칙을 저장했습니다"); }
     catch (e: any) { toast(e?.response?.message || errText(e)); }
   };
@@ -46,7 +45,7 @@ export default function Logins() {
         <div className="kpi"><small>오늘 로그인</small><b>{kpi.today}</b><span>성공</span></div>
         <div className="kpi"><small>실패 (7일)</small><b style={{ color: kpi.fail7 ? "var(--pri)" : undefined }}>{kpi.fail7}</b><span>비밀번호 틀림·없는 계정·중지</span></div>
         <div className="kpi"><small>잠긴 계정</small><b style={{ color: kpi.locked ? "var(--pri)" : undefined }}>{kpi.locked}</b><span><a href="#/users" style={{ textDecoration: "underline" }}>관리자 계정에서 풀기</a></span></div>
-        <div className="kpi"><small>2단계 인증</small><b>{rules.mfa ? "켜짐" : "꺼짐"}</b><span>메일 인증번호</span></div>
+        <div className="kpi"><small>자동 로그아웃</small><b>{rules.idle_minutes >= 60 ? rules.idle_minutes / 60 + "시간" : rules.idle_minutes + "분"}</b><span>쓰지 않으면</span></div>
       </div>
       <section className="panel">
         <div className="panel-hd"><div className="flt">{["전체", "성공", "실패"].map((x) => <button key={x} className={x === f ? "on" : ""} onClick={() => setF(x)}>{x}</button>)}</div>
@@ -63,7 +62,6 @@ export default function Logins() {
           <div className="f"><label>연속 실패 시 잠금</label><select value={rules.fail_limit} disabled={!top} onChange={(e) => setRules({ ...rules, fail_limit: Number(e.target.value) })}>{[3, 5, 10].map((n) => <option key={n} value={n}>{n}번 틀리면</option>)}</select></div>
           <div className="f"><label>잠금 시간</label><select value={rules.lock_minutes} disabled={!top} onChange={(e) => setRules({ ...rules, lock_minutes: Number(e.target.value) })}>{[15, 30, 60, 1440].map((n) => <option key={n} value={n}>{n === 1440 ? "하루" : n + "분"}</option>)}</select></div>
           <div className="f"><label>자동 로그아웃</label><select value={rules.idle_minutes} disabled={!top} onChange={(e) => setRules({ ...rules, idle_minutes: Number(e.target.value) })}>{[15, 30, 60, 240].map((n) => <option key={n} value={n}>{n >= 60 ? n / 60 + "시간" : n + "분"} 동안 사용 안 하면</option>)}</select></div>
-          <div className="f"><label>2단계 인증 (메일 인증번호)</label><select value={rules.mfa ? "켜기" : "끄기"} disabled={!top} onChange={(e) => setRules({ ...rules, mfa: e.target.value === "켜기" })}><option>끄기</option><option>켜기</option></select><span className="help">켜면 비밀번호 다음에 메일로 받은 6자리 번호를 넣어야 로그인됩니다</span></div>
         </div></div></section>
     </section>
   );

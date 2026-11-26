@@ -9,7 +9,8 @@ aside a em.soon{background:none;min-width:0;height:auto;font-style:normal;font-s
 .login-box{background:#fff;border-radius:16px;padding:40px 36px;width:min(400px,92vw);display:grid;gap:14px;box-shadow:0 30px 60px rgba(0,0,0,.3)}
 .login-box img{height:36px;justify-self:start}
 .login-box h1{font-size:20px;margin-bottom:6px}
-.login-box label{display:grid;gap:6px;font-weight:600;font-size:13px}
+.login-box label,.pwform label{display:grid;gap:6px;font-weight:600;font-size:13px}
+.pwform{display:grid;gap:14px}
 .login-box .btn{justify-content:center;padding:12px;font-size:15px}
 .login-err{color:var(--pri);font-size:13px;background:#fef2f2;padding:10px 12px;border-radius:8px}
 .imgin{display:flex;gap:14px;align-items:center;flex-wrap:wrap}

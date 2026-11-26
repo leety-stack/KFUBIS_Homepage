@@ -13,6 +13,7 @@ import Users from "./pages/Users";
 import Roles from "./pages/Roles";
 import Logins from "./pages/Logins";
 import { AuthProvider, useAuth } from "./lib/auth";
+import { ForcePwChange } from "./components/PwChange";
 import { ToastProvider, Opt } from "./components/ui";
 import { BOARDS } from "./boards";
 import { ALL_ITEMS, HIDDEN, type MenuKey } from "./menu";
@@ -38,6 +39,7 @@ function Page() {
 function Gate() {
   const { user } = useAuth();
   if (!user) return <Login />;
+  if (user.pw_temp) return <ForcePwChange />;
   return (
     <Shell>
       <Routes>

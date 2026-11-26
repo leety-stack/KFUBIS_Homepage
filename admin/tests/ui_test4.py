@@ -1,4 +1,4 @@
-"""관리자 4단계(관리자 계정·역할·권한·로그인 기록·2단계 인증·자동 로그아웃) 화면 점검
+"""관리자 4단계(관리자 계정·임시 비밀번호·역할·권한·로그인 기록·자동 로그아웃) 화면 점검
 사용: py -3.10 admin/tests/ui_test4.py   (5183·8095 개발 서버, 메일 확인은 MAILBOX=시험 수신기 파일)
 """
 import os, pathlib, re, sys, time, requests
@@ -14,7 +14,7 @@ def check(n, c): res.append(bool(c)); print(("  OK  " if c else "  !!  ") + n)
 
 tok = requests.post(f"{PB}/api/collections/users/auth-with-password", json={"identity": EMAIL, "password": PW}).json()["token"]
 H = {"Authorization": tok}
-RULES = {"fail_limit": 5, "lock_minutes": 30, "idle_minutes": 30, "mfa": False}
+RULES = {"fail_limit": 5, "lock_minutes": 30, "idle_minutes": 30}
 roles = {r["name"]: r["id"] for r in requests.get(f"{PB}/api/collections/roles/records?perPage=50", headers=H).json()["items"]}
 def users(): return requests.get(f"{PB}/api/collections/users/records?perPage=500", headers=H).json()["items"]
 def drop_user(email):
@@ -43,13 +43,14 @@ try:
      pg.goto(URL + "#/users"); pg.wait_for_selector(".blist-t tbody tr"); pg.wait_for_timeout(600)
      t = pg.inner_text(".blist-t")
      check("계정 목록: 나·역할·상태", "나" in t and "최고 관리자" in t and "화면시험" in t)
-     m0 = len(mails())
-     pg.click("text=+ 관리자 초대"); pg.wait_for_selector(".modal")
+     pg.click("text=+ 계정 만들기"); pg.wait_for_selector(".modal")
      pg.locator(".modal input").nth(0).fill("초대시험"); pg.locator(".modal input[type=email]").fill("invite-ui4@test.local")
-     pg.locator(".modal select").nth(1).select_option(label="본부 담당"); pg.click(".modal >> text=초대 메일 보내기"); pg.wait_for_timeout(1500)
-     check("초대 → 목록에 추가", pg.locator(".blist-t tbody tr", has_text="초대시험").count() == 1)
-     time.sleep(1); box = mails()[m0:]
-     check("초대 메일(비밀번호 정하기 링크)" + ("" if MAIL else " (수신기 없음)"), (not MAIL) or ("invite-ui4@test.local" in box and "confirm-password-reset" in box))
+     pg.locator(".modal select").nth(1).select_option(label="본부 담당")
+     pg.locator(".modal input[placeholder^='8자']").fill("short"); pg.click(".m-ft button:has-text(\"만들기\")"); pg.wait_for_timeout(500)
+     check("약한 임시 비밀번호 거절", pg.locator(".modal").count() == 1)
+     pg.locator(".modal input[placeholder^='8자']").fill("temp-1234"); pg.click(".m-ft button:has-text(\"만들기\")"); pg.wait_for_timeout(1500)
+     row = pg.locator(".blist-t tbody tr", has_text="초대시험")
+     check("계정 만들기 → 목록에 '임시 비밀번호' 표시", row.count() == 1 and "임시 비밀번호" in row.inner_text())
 
      row_of(pg, "ui4@test.local").click(); pg.wait_for_selector(".modal")
      pg.locator(".modal select").nth(0).select_option("감리사업본부"); pg.locator(".modal select").nth(1).select_option(label="홍보 담당")
@@ -79,7 +80,16 @@ try:
 
      # 새 역할로 로그인 → 허용된 메뉴만
      c2 = b.new_context(viewport={"width": 1600, "height": 1000}); p2 = c2.new_page(); p2.on("dialog", lambda d: d.accept())
-     login(p2, "ui4@test.local", "test-12345"); p2.wait_for_selector("aside"); p2.wait_for_timeout(800)
+     login(p2, "ui4@test.local", "test-12345"); p2.wait_for_selector(".login-box h1:has-text('비밀번호 바꾸기')")
+     check("임시 비밀번호로 로그인 → 비밀번호 바꾸기 화면", p2.locator("aside").count() == 0)
+     pw_in = p2.locator(".login-box input[type=password]")
+     pw_in.nth(0).fill("test-12345"); pw_in.nth(1).fill("test-12345"); pw_in.nth(2).fill("test-12345"); p2.click(".login-box button"); p2.wait_for_timeout(500)
+     check("같은 비밀번호로는 못 바꿈", "다른 비밀번호" in p2.inner_text(".login-err"))
+     pw_in.nth(1).fill("mine-5678"); pw_in.nth(2).fill("mine-5678"); p2.click(".login-box button"); p2.wait_for_selector("aside"); p2.wait_for_timeout(800)
+     check("바꾼 뒤 바로 사용 (임시 해제)", requests.get(f"{PB}/api/collections/users/records/{uid}", headers=H).json().get("pw_temp") is False)
+     p2.click(".top >> text=비밀번호 변경"); p2.wait_for_selector(".modal .pwform")
+     mi = p2.locator(".modal input[type=password]"); mi.nth(0).fill("mine-5678"); mi.nth(1).fill("mine-9012"); mi.nth(2).fill("mine-9012"); p2.click(".m-ft button:has-text(\"바꾸기\")"); p2.wait_for_timeout(1500)
+     check("머리 줄 [비밀번호 변경] 후에도 로그인 유지", p2.locator(".modal").count() == 0 and p2.locator("aside").count() == 1)
      side = p2.inner_text("aside")
      check("권한 있는 메뉴만 보임", "실적 관리" in side and "입사 지원" in side and "관리자 계정" not in side and "메인 배너" not in side)
      p2.goto(URL + "#/users"); p2.wait_for_timeout(800)
@@ -93,13 +103,17 @@ try:
 
      # 잘못된 비밀번호 5번 → 잠김 → 화면에서 풀기
      for _ in range(5): requests.post(f"{PB}/api/collections/users/auth-with-password", json={"identity": "ui4@test.local", "password": "wrong-pw"})
-     c3 = b.new_context(); p3 = c3.new_page(); login(p3, "ui4@test.local", "test-12345"); p3.wait_for_selector(".login-err")
+     c3 = b.new_context(); p3 = c3.new_page(); login(p3, "ui4@test.local", "mine-9012"); p3.wait_for_selector(".login-err")
      check("잠긴 계정 로그인 → 잠김 안내", "잠겼" in p3.inner_text(".login-err")); c3.close()
      pg.goto(URL + "#/users"); pg.wait_for_selector(".blist-t tbody tr"); pg.wait_for_timeout(500)
      pg.locator(".flt button", has_text="잠김").click(); pg.wait_for_timeout(300)
      check("잠김 걸러 보기", row_of(pg, "ui4@test.local").count() == 1)
      row_of(pg, "ui4@test.local").click(); pg.click(".modal >> text=잠금 풀기"); pg.wait_for_timeout(1000)
-     check("잠금 풀기", requests.post(f"{PB}/api/collections/users/auth-with-password", json={"identity": "ui4@test.local", "password": "test-12345"}).status_code == 200)
+     check("잠금 풀기", requests.post(f"{PB}/api/collections/users/auth-with-password", json={"identity": "ui4@test.local", "password": "mine-9012"}).status_code == 200)
+     pg.locator(".flt button", has_text="전체").click(); pg.wait_for_timeout(300)
+     row_of(pg, "ui4@test.local").click(); pg.click(".modal button:has-text(\"비밀번호 초기화\")"); pg.locator(".modal input[placeholder^='8자']").fill("reset-3456"); pg.click(".modal button:has-text(\"정하기\")"); pg.wait_for_timeout(1000)
+     check("비밀번호 초기화 → 다시 임시", requests.get(f"{PB}/api/collections/users/records/{uid}", headers=H).json().get("pw_temp") is True
+           and requests.post(f"{PB}/api/collections/users/auth-with-password", json={"identity": "ui4@test.local", "password": "reset-3456"}).status_code == 200)
 
      # 로그인 기록
      pg.goto(URL + "#/logins"); pg.wait_for_selector(".tbl tbody tr"); pg.wait_for_timeout(800)
@@ -110,23 +124,10 @@ try:
      check("실패만 걸러 보기", "성공" not in pg.locator(".tbl tbody").inner_text())
      pg.screenshot(path=str(OUT / "logins.png"))
      sel = pg.locator(".panel", has_text="로그인 규칙").locator("select")
-     sel.nth(0).select_option("3"); sel.nth(3).select_option("켜기"); pg.click(".panel >> text=저장"); pg.wait_for_timeout(1000)
+     check("2단계 인증 설정 없음", "2단계" not in pg.inner_text("main"))
+     sel.nth(0).select_option("3"); sel.nth(2).select_option("15"); pg.click(".panel >> text=저장"); pg.wait_for_timeout(1000)
      st = requests.get(f"{PB}/api/collections/site_settings/records").json()["items"][0]["login_rules"]
-     check("로그인 규칙 저장 (3번·2단계 켜짐)", st.get("fail_limit") == 3 and st.get("mfa") is True)
-
-     # 2단계 인증 로그인 (메일 인증번호)
-     if MAIL:
-         c4 = b.new_context(); p4 = c4.new_page(); m1 = len(mails())
-         login(p4, "ui4@test.local", "test-12345"); p4.wait_for_selector("input[autocomplete=one-time-code]", timeout=10000)
-         check("비밀번호 다음 인증번호 단계", "인증번호" in p4.inner_text(".login-box"))
-         time.sleep(1.5); m = re.findall(r"(?:^|\s|>)(\d{6})(?:\s|<|$)", mails()[m1:], re.M)
-         p4.fill("input[autocomplete=one-time-code]", "000000" if m and m[-1] == "000000" else "000001"); p4.click(".login-box button"); p4.wait_for_selector(".login-err")
-         check("틀린 인증번호 거부", "인증번호" in p4.inner_text(".login-err"))
-         p4.fill("input[autocomplete=one-time-code]", m[-1] if m else ""); p4.click(".login-box button")
-         try: p4.wait_for_selector("aside", timeout=8000); ok = True
-         except Exception: ok = False
-         check("메일 인증번호로 로그인", ok); c4.close()
-     else: print("  --  2단계 인증 화면 시험 건너뜀 (MAILBOX 없음)")
+     check("로그인 규칙 저장 (3번·15분)", st.get("fail_limit") == 3 and st.get("idle_minutes") == 15 and "mfa" not in st)
      check("화면 오류 없음", not errs)
      if errs: print(errs[:3])
 finally:

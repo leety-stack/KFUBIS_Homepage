@@ -6,10 +6,9 @@ interface Auth {
   user: Rec | null;
   /** 0 없음 · 1 보기 · 2 수정(임시저장까지) · 3 게시 */
   level: (k: MenuKey) => number;
-  /** 2단계 인증이 켜져 있으면 { mfaId } 를 돌려줌 → otp() 로 마무리 */
-  login: (email: string, pw: string) => Promise<{ mfaId?: string }>;
-  sendOtp: (email: string) => Promise<string>;
-  otp: (otpId: string, code: string, mfaId: string) => Promise<void>;
+  login: (email: string, pw: string) => Promise<void>;
+  /** 본인 비밀번호 바꾸기 — 바꾸면 기존 로그인이 풀리므로 새 비밀번호로 다시 로그인함 */
+  changePw: (oldPw: string, newPw: string) => Promise<void>;
   logout: (why?: string) => void;
   /** 자동 로그아웃 등으로 로그인 화면에 보여 줄 안내 */
   notice: string;
@@ -35,19 +34,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   const [notice, setNotice] = useState("");
   const login = async (email: string, pw: string) => {
-    try {
-      const r = await pb.collection("users").authWithPassword(email, pw, { expand: "role" });
-      setNotice(""); setUser(r.record as Rec); return {};
-    } catch (e: any) {
-      const mfaId = e?.response?.mfaId;
-      if (e?.status === 401 && mfaId) return { mfaId };
-      throw e;
-    }
-  };
-  const sendOtp = async (email: string) => (await pb.collection("users").requestOTP(email)).otpId;
-  const otp = async (otpId: string, code: string, mfaId: string) => {
-    const r = await pb.collection("users").authWithOTP(otpId, code, { mfaId, expand: "role" });
+    const r = await pb.collection("users").authWithPassword(email, pw, { expand: "role" });
     setNotice(""); setUser(r.record as Rec);
+  };
+  const changePw = async (oldPw: string, newPw: string) => {
+    const me = user!;
+    await pb.collection("users").update(me.id, { oldPassword: oldPw, password: newPw, passwordConfirm: newPw });
+    const r = await pb.collection("users").authWithPassword(me.email, newPw, { expand: "role" });
+    setUser(r.record as Rec);
   };
   const logout = (why = "") => { pb.authStore.clear(); setUser(null); setNotice(why); };
 
@@ -70,6 +64,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => { ev.forEach((x) => window.removeEventListener(x, on)); window.clearInterval(t); };
   }, [user?.id]); // eslint-disable-line
 
-  return <Ctx.Provider value={{ user, level, login, sendOtp, otp, logout, notice }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ user, level, login, changePw, logout, notice }}>{children}</Ctx.Provider>;
 }
 export const useAuth = () => useContext(Ctx);

@@ -1,5 +1,5 @@
 /// <reference path="../pb_data/types.d.ts" />
-// 관리자 계정 — 로그인 기록·실패 잠금, 초대·비밀번호 재설정·잠금 풀기·모든 기기 로그아웃, 로그인 규칙
+// 관리자 계정 — 로그인 기록·실패 잠금, 임시 비밀번호, 잠금 풀기·모든 기기 로그아웃, 로그인 규칙 (메일 인증·2단계 인증은 쓰지 않음)
 
 // ── 비밀번호 로그인: 잠금 확인, 성공·실패 기록, 실패가 쌓이면 잠금 ──
 onRecordAuthWithPasswordRequest((e) => {
@@ -15,8 +15,6 @@ onRecordAuthWithPasswordRequest((e) => {
   try {
     e.next();
   } catch (err) {
-    const msg = String(err);
-    if (/multi-factor|mfa/i.test(msg)) { a.log(e, rec, e.identity, true, "비밀번호 확인 · 2단계 인증 대기"); throw err; }
     a.log(e, rec, e.identity, false, rec ? (rec.getString("status") === "중지" ? "중지된 계정" : "비밀번호 틀림") : "없는 계정");
     if (rec) {
       // 마지막 성공 이후, 잠금 시간 안의 연속 실패 수
@@ -38,37 +36,17 @@ onRecordAuthWithPasswordRequest((e) => {
   }
 }, "users");
 
-// ── 2단계 인증(메일 인증번호) 완료 ──
-onRecordAuthWithOTPRequest((e) => {
-  const a = require(`${__hooks}/acct_utils.js`);
-  try { e.next(); } catch (err) { a.log(e, e.record, e.record ? e.record.getString("email") : "", false, "인증번호 틀림"); throw err; }
-  if (e.record) { e.record.set("last_login", new Date().toISOString().replace("T", " ")); $app.save(e.record); a.log(e, e.record, e.record.getString("email"), true, "로그인 · 2단계 인증 완료"); }
+// ── 비밀번호: 최고 관리자가 만들거나 바꾸면 임시(첫 로그인 때 본인이 변경), 본인이 바꾸면 임시 해제 ──
+onRecordCreateRequest((e) => {
+  e.record.set("verified", true);
+  e.record.set("pw_temp", true);
+  e.next();
 }, "users");
-
-// ── 최고 관리자 전용 API ──
-routerAdd("POST", "/api/cms/users/invite", (e) => {
-  const a = require(`${__hooks}/acct_utils.js`); a.requireTop(e);
+onRecordUpdateRequest((e) => {
   const b = e.requestInfo().body || {};
-  const email = String(b.email || "").trim();
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return e.json(400, { message: "메일 주소를 확인하세요" });
-  try { $app.findAuthRecordByEmail("users", email); return e.json(400, { message: "이미 있는 메일 주소입니다" }); } catch (_) {}
-  const col = $app.findCollectionByNameOrId("users");
-  const u = new Record(col);
-  u.set("email", email); u.set("name", String(b.name || "")); u.set("dept", String(b.dept || "")); u.set("tel", String(b.tel || ""));
-  u.set("role", String(b.role || "")); u.set("status", "사용"); u.set("verified", true);
-  u.setPassword($security.randomString(24)); // 본인이 메일로 비밀번호를 정함 — 관리자는 모름
-  $app.save(u);
-  let mailed = true, warn = "";
-  try { $mails.sendRecordPasswordReset($app, u); } catch (err) { mailed = false; warn = String(err); }
-  return e.json(200, { id: u.id, mailed: mailed, message: mailed ? "" : `계정은 만들었지만 초대 메일을 보내지 못했습니다 — ${warn}` });
-}, $apis.requireAuth("users"));
-
-routerAdd("POST", "/api/cms/users/reset", (e) => {
-  const a = require(`${__hooks}/acct_utils.js`); a.requireTop(e);
-  const u = a.target(e);
-  try { $mails.sendRecordPasswordReset($app, u); } catch (err) { return e.json(502, { message: `메일을 보내지 못했습니다 — ${err}` }); }
-  return e.json(200, { ok: true });
-}, $apis.requireAuth("users"));
+  if (b.password) e.record.set("pw_temp", !(e.auth && e.auth.id === e.record.id));
+  e.next();
+}, "users");
 
 routerAdd("POST", "/api/cms/users/unlock", (e) => {
   const a = require(`${__hooks}/acct_utils.js`); a.requireTop(e);
@@ -89,13 +67,8 @@ routerAdd("POST", "/api/cms/login-rules", (e) => {
     fail_limit: Math.min(20, Math.max(3, Number(b.fail_limit) || 5)),
     lock_minutes: Math.min(1440, Math.max(5, Number(b.lock_minutes) || 30)),
     idle_minutes: Math.min(480, Math.max(10, Number(b.idle_minutes) || 30)),
-    mfa: !!b.mfa,
   };
   const st = $app.findFirstRecordByFilter("site_settings", "id != ''"); st.set("login_rules", r); $app.save(st);
-  const col = $app.findCollectionByNameOrId("users");
-  col.otp.enabled = r.mfa; col.otp.duration = 300; col.otp.length = 6;
-  col.mfa.enabled = r.mfa; col.mfa.duration = 600;
-  $app.save(col);
   return e.json(200, r);
 }, $apis.requireAuth("users"));
 

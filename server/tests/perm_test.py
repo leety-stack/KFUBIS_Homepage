@@ -91,6 +91,8 @@ if tr: req("DELETE", f"/api/collections/roles/records/{tr}", token=top)
 import time, requests
 MAIL = os.environ.get("MAILBOX")  # 시험용 메일 수신기 파일 (없으면 메일 내용 확인은 건너뜀)
 def mails(): return open(MAIL, encoding="utf-8").read() if MAIL and os.path.exists(MAIL) else ""
+_st = req("GET", "/api/collections/site_settings/records", token=top)[1]["items"][0]; _de = dict(_st.get("dept_emails") or {})
+req("PATCH", f"/api/collections/site_settings/records/{_st['id']}", {"dept_emails": {**_de, "감리사업본부": "supervision@kfubis.local"}}, token=top)  # 알림 받을 본부 메일 (시험 뒤 되돌림)
 m0 = len(mails())
 s, d = req("POST", "/api/collections/inquiries/records", {"org": "시험도시공사", "name": "이시험", "tel": "02-000-0000", "email": "client@test.local", "org_type": "공공기관", "field": "감리", "message": "감리 문의 시험", "agree": True}); iid = d.get("id")
 check(f"비로그인 문의 접수 ({s})", s == 200)
@@ -146,34 +148,28 @@ check("잠금 푼 뒤 로그인", raw_login("lock@test.local", "test-12345").sta
 s, d = req("GET", "/api/collections/login_logs/records?perPage=200&filter=" + urllib.parse.quote('email="lock@test.local"'), token=top)
 check(f"로그인 기록 남음 (실패·잠금·성공 {d.get('totalItems')}건)", d.get("totalItems", 0) >= 7 and any("잠금" in (x["reason"] or "") for x in d["items"]))
 s, d = req("GET", "/api/collections/login_logs/records", token=bonbu); check(f"권한 없으면 로그인 기록 못 봄 ({d.get('totalItems', 0)}건)", d.get("totalItems", 0) == 0)
-# 초대
+# 계정 만들기 (임시 비밀번호) — 메일 인증·2단계 인증 없음
 for u in req("GET", "/api/collections/users/records?perPage=500", token=top)[1].get("items", []):
-    if u.get("email") == "invite@test.local": req("DELETE", f"/api/collections/users/records/{u['id']}", token=top)
-m3 = len(mails())
-s, d = req("POST", "/api/cms/users/invite", {"email": "invite@test.local", "name": "초대 시험", "dept": "홍보팀", "role": roles["홍보 담당"]}, token=bonbu); check(f"최고 관리자 아니면 초대 못 함 ({s})", s == 403)
-s, d = req("POST", "/api/cms/users/invite", {"email": "invite@test.local", "name": "초대 시험", "dept": "홍보팀", "role": roles["홍보 담당"]}, token=top); inv = d.get("id")
-check(f"초대 → 계정 생성 ({s}, 메일 {d.get('mailed')})", s == 200 and inv)
-time.sleep(1); check("초대 메일(비밀번호 정하기 링크) 도착" + ("" if MAIL else " (건너뜀)"), (not MAIL) or ("invite@test.local" in mails()[m3:] and "confirm-password-reset" in mails()[m3:]))
-s, _ = req("POST", "/api/cms/users/invite", {"email": "invite@test.local"}, token=top); check(f"같은 메일 다시 초대 막힘 ({s})", s == 400)
+    if u.get("email") == "new@test.local": req("DELETE", f"/api/collections/users/records/{u['id']}", token=top)
+body = {"email": "new@test.local", "password": "temp-1234", "passwordConfirm": "temp-1234", "name": "새 계정", "role": roles["홍보 담당"], "status": "사용"}
+s, _ = req("POST", "/api/collections/users/records", body, token=bonbu); check(f"최고 관리자 아니면 계정 못 만듦 ({s})", s in (400, 403))
+s, d = req("POST", "/api/collections/users/records", body, token=top); inv = d.get("id")
+check(f"계정 만들기 → 임시 비밀번호 표시 ({s})", s == 200 and d.get("pw_temp") is True and d.get("verified") is True)
+nt = login("new@test.local", "temp-1234"); check("임시 비밀번호로 로그인", bool(nt))
+s, _ = req("PATCH", f"/api/collections/users/records/{inv}", {"pw_temp": False}, token=nt); check(f"본인이 임시 표시만 지우기 막힘 ({s})", s in (400, 403, 404))
+s, _ = req("PATCH", f"/api/collections/users/records/{inv}", {"locked_until": "", "last_login": "2030-01-01 00:00:00.000Z"}, token=nt); check(f"본인이 잠금·접속 시각 고치기 막힘 ({s})", s in (400, 403, 404))
+s, _ = req("PATCH", f"/api/collections/users/records/{inv}", {"oldPassword": "wrong-0000", "password": "mine-5678", "passwordConfirm": "mine-5678"}, token=nt); check(f"지금 비밀번호 틀리면 못 바꿈 ({s})", s == 400)
+s, d = req("PATCH", f"/api/collections/users/records/{inv}", {"oldPassword": "temp-1234", "password": "mine-5678", "passwordConfirm": "mine-5678"}, token=nt)
+check(f"본인이 바꾸면 임시 해제 ({s})", s == 200 and d.get("pw_temp") is False)
+nt2 = login("new@test.local", "mine-5678"); check("새 비밀번호로 로그인", bool(nt2))
+s, d = req("PATCH", f"/api/collections/users/records/{inv}", {"password": "reset-9999", "passwordConfirm": "reset-9999"}, token=top)
+check(f"최고 관리자가 초기화 → 다시 임시 ({s})", s == 200 and d.get("pw_temp") is True)
+r = requests.post(f"{B}/api/collections/users/auth-refresh", headers={"Authorization": nt2}); check(f"초기화하면 예전 로그인 풀림 ({r.status_code})", r.status_code == 401)
 # 모든 기기 로그아웃
 old = login("lock@test.local", "test-12345")
 s, _ = req("POST", "/api/cms/users/logout-all", {"id": lk_id}, token=top)
 r = requests.post(f"{B}/api/collections/users/auth-refresh", headers={"Authorization": old}); check(f"모든 기기 로그아웃 → 예전 토큰 무효 ({r.status_code})", r.status_code == 401)
-# 2단계 인증 (메일 인증번호)
-if MAIL:
-    s, _ = req("POST", "/api/cms/login-rules", {"fail_limit": 5, "lock_minutes": 30, "idle_minutes": 30, "mfa": True}, token=top)
-    r = raw_login("lock@test.local", "test-12345"); mfa = r.json().get("mfaId")
-    check(f"2단계 인증 켜면 비밀번호만으로는 안 됨 ({r.status_code})", r.status_code == 401 and mfa)
-    m4 = len(mails())
-    otp = requests.post(f"{B}/api/collections/users/request-otp", json={"email": "lock@test.local"}).json().get("otpId")
-    time.sleep(1); body = mails()[m4:]
-    import quopri, base64
-    txt = quopri.decodestring(body.encode()).decode("utf-8", "ignore")
-    codes = _re.findall(r"(?:^|\s|>)(\d{6})(?:\s|<|$)", txt, _re.M)[:1]  # 홀로 있는 6자리 = 인증번호 (구분선 숫자 제외)
-    r = requests.post(f"{B}/api/collections/users/auth-with-otp", json={"otpId": otp, "password": codes[0] if codes else "000000", "mfaId": mfa})
-    check(f"메일 인증번호로 로그인 완료 ({r.status_code})", r.status_code == 200)
-    req("POST", "/api/cms/login-rules", {"fail_limit": 5, "lock_minutes": 30, "idle_minutes": 30, "mfa": False}, token=top)
-    check("2단계 인증 끄면 비밀번호로 다시 로그인", raw_login("lock@test.local", "test-12345").status_code == 200)
+r = requests.post(f"{B}/api/collections/users/request-otp", json={"email": "lock@test.local"}); check(f"메일 인증번호 로그인은 꺼져 있음 ({r.status_code})", r.status_code >= 400)
 for i in [lk_id, inv]:
     if i: req("DELETE", f"/api/collections/users/records/{i}", token=top)
 
@@ -184,6 +180,7 @@ s, d = req("POST", "/api/collections/roles/records", {"name": "삭제시험 역�
 s, _ = req("DELETE", f"/api/collections/roles/records/{d.get('id')}", token=top); check(f"안 쓰는 역할은 삭제 ({s})", s == 204)
 
 # 정리
+req("PATCH", f"/api/collections/site_settings/records/{_st['id']}", {"dept_emails": _de}, token=top)
 for c, i in [("works", wid), ("jobs", jid), ("news", nid)]:
     if i: req("DELETE", f"/api/collections/{c}/records/{i}", token=top)
 for i in [bonbu_id, hr_id]: req("DELETE", f"/api/collections/users/records/{i}", token=top)
