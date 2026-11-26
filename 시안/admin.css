@@ -288,3 +288,6 @@ aside a em{display:inline-flex;align-items:center;justify-content:center;min-wid
 .lib8{grid-template-columns:repeat(8,1fr)}
 @media (max-width:820px){.modal{padding:0}.m-box{max-height:100vh;height:100%;border-radius:0}.m-ft{border-radius:0;flex-wrap:wrap}.lib8{grid-template-columns:repeat(4,1fr)}}
 .sw{display:inline-block;vertical-align:middle}
+
+.mx-g td{background:#f3f4f6;font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em;text-align:left!important;padding:7px 12px}
+.mx td:first-child .sub{margin-left:6px}

@@ -282,14 +282,14 @@
 
   /* ───────────── 접수함 공통 (문의·실적증명·입사 지원) ───────────── */
   var INQ = [
-    { org: '○○도시공사', who: '이○○ 과장', tel: '02-000-0000', mail: 'lee@○○.go.kr', type: '공공기관', field: '감리', at: '11.26 10:12', st: '신규', dept: '감리사업본부', msg: '○○ 복합청사 신축공사 소방·전기 통합 감리 관련 제안요청서를 보내 드립니다. 12월 첫 주 현장 설명회 참석 가능 여부도 알려 주십시오.', file: 'RFP_○○복합청사.pdf' },
-    { org: '○○건설', who: '박○○ 대리', tel: '010-0000-0000', mail: 'park@○○.co.kr', type: '대기업·건설사', field: '성능위주설계', at: '11.25 16:40', st: '신규', dept: '방재연구소', msg: '지상 49층 주상복합 성능위주설계 심의 대응 견적을 요청합니다.', file: '' },
-    { org: 'Global EPC Co.', who: 'J. Smith', tel: '+65-0000-0000', mail: 'smith@○○.com', type: '해외', field: '설계', at: '11.25 09:03', st: '신규', dept: '설계사업본부', msg: 'We are looking for a Korean fire protection design partner for a data center project in Pyeongtaek.', file: '', en: 1 },
-    { org: '○○연구원', who: '김○○ 선임', tel: '042-000-0000', mail: 'kim@○○.re.kr', type: '연구기관', field: '공동연구', at: '11.24 11:20', st: '처리 중', dept: 'R&D센터', msg: '배터리 화재 실증 공동연구 참여 의향을 여쭙니다.', file: '' },
-    { org: '○○전자', who: '최○○ 책임', tel: '031-000-0000', mail: 'choi@○○.com', type: '대기업·건설사', field: 'AI 솔루션', at: '11.22 14:05', st: '완료', dept: 'R&D센터', msg: 'AI 설계 검토(ATC+) 데모를 요청합니다.', file: '' }];
+    { org: '○○도시공사', who: '이○○ 과장', tel: '02-000-0000', mail: 'lee@○○.go.kr', type: '공공기관', field: '감리', at: '11.26 10:12', st: '신규', dept: '감리사업본부', src: '나라장터(g2b.go.kr) 링크 → 실적 → 사업 문의', msg: '○○ 복합청사 신축공사 소방·전기 통합 감리 관련 제안요청서를 보내 드립니다. 12월 첫 주 현장 설명회 참석 가능 여부도 알려 주십시오.', file: 'RFP_○○복합청사.pdf' },
+    { org: '○○건설', who: '박○○ 대리', tel: '010-0000-0000', mail: 'park@○○.co.kr', type: '대기업·건설사', field: '성능위주설계', at: '11.25 16:40', st: '신규', dept: '방재연구소', src: '네이버 검색 "성능위주설계 업체" → 사업분야 › 방재연구 → 사업 문의', msg: '지상 49층 주상복합 성능위주설계 심의 대응 견적을 요청합니다.', file: '' },
+    { org: 'Global EPC Co.', who: 'J. Smith', tel: '+65-0000-0000', mail: 'smith@○○.com', type: '해외', field: '설계', at: '11.25 09:03', st: '신규', dept: '설계사업본부', src: 'LinkedIn 게시물 링크(utm) → 영문 실적 → Contact', msg: 'We are looking for a Korean fire protection design partner for a data center project in Pyeongtaek.', file: '', en: 1 },
+    { org: '○○연구원', who: '김○○ 선임', tel: '042-000-0000', mail: 'kim@○○.re.kr', type: '연구기관', field: '공동연구', at: '11.24 11:20', st: '처리 중', dept: 'R&D센터', src: '주소 직접 입력 → R&D Center → 사업 문의', msg: '배터리 화재 실증 공동연구 참여 의향을 여쭙니다.', file: '' },
+    { org: '○○전자', who: '최○○ 책임', tel: '031-000-0000', mail: 'choi@○○.com', type: '대기업·건설사', field: 'AI 솔루션', at: '11.22 14:05', st: '완료', dept: 'R&D센터', src: '구글 검색(검색어는 구글이 알려 주지 않음) → 메인 → 사업 문의', msg: 'AI 설계 검토(ATC+) 데모를 요청합니다.', file: '' }];
   var INBOX = {
     inquiry: { title: '문의 관리', desc: '홈페이지 사업 문의입니다. 문의 분야에 따라 담당 본부가 자동으로 정해지고 담당자에게 메일이 갑니다. 1영업일이 지나면 관리자에게 다시 알립니다.', rows: INQ, line: function (q) { return q.field + (q.en ? ' · 영문' : ''); },
-      info: function (q) { return [['기관 유형', q.type], ['담당자', q.who], ['연락처', q.tel], ['메일', q.mail], ['문의 분야', q.field], ['받은 시각', '2026.' + q.at]]; }, tpl: ['기본 회신 (담당자 연결 안내)', 'RFP 접수 확인', '견적 회신', 'English — general reply'] },
+      info: function (q) { return [['기관 유형', q.type], ['담당자', q.who], ['연락처', q.tel], ['메일', q.mail], ['문의 분야', q.field], ['받은 시각', '2026.' + q.at], ['들어온 경로', q.src || '—']]; }, tpl: ['기본 회신 (담당자 연결 안내)', 'RFP 접수 확인', '견적 회신', 'English — general reply'] },
     certreq: { title: '실적증명 요청', desc: '발주처가 입찰·등록용 실적증명서를 요청한 건입니다. 발급 파일을 올리고 [보내기]를 누르면 요청자에게 메일로 갑니다.', rows: [
       { org: '○○도시공사', who: '정○○ 주무관', tel: '02-000-0000', mail: 'jung@○○.go.kr', field: '인천국제공항 제2여객터미널 확장 — 설계', at: '11.26 09:30', st: '신규', dept: '경영지원팀', msg: '○○ 입찰 참가자격 심사용으로 실적증명서 1부 요청드립니다. 용도: 입찰 제출', file: '' },
       { org: '○○공사', who: '오○○ 대리', tel: '02-000-0000', mail: 'oh@○○.or.kr', field: '잠실 롯데월드타워 — 감리', at: '11.18 13:10', st: '발급 완료', dept: '경영지원팀', msg: '협력업체 등록용', file: '실적증명서_롯데월드타워.pdf' }],
@@ -388,16 +388,30 @@
   /* ───────────── 관리자 계정·권한 ───────────── */
   R.users = function (el) {
     var U = [['김○○', 'kim.hb', '홍보팀', '최고 관리자', '오늘 09:12', true, '사용'], ['이○○', 'lee.hb', '홍보팀', '홍보 담당', '11.25 17:40', true, '사용'], ['박○○', 'park.sv', '감리사업본부', '본부 담당', '11.24 10:03', false, '사용'], ['정○○', 'jung.hr', '경영지원팀', '채용 담당', '11.20 15:22', true, '사용'], ['최○○', 'choi.old', '홍보팀', '홍보 담당', '2026.06.30', false, '중지']];
-    var ROLES = ['최고 관리자', '홍보 담당', '본부 담당', '채용 담당'], MEN = ['메인·배너·팝업', '메뉴·페이지', '실적·소식·R&D', '인증·자료실', '채용공고·입사 지원', '문의·실적증명', '회사 정보·SEO', '관리자 계정·권한'];
-    var M = { '최고 관리자': [3, 3, 3, 3, 3, 3, 3, 3], '홍보 담당': [3, 3, 3, 3, 1, 2, 2, 0], '본부 담당': [0, 0, 2, 0, 0, 2, 0, 0], '채용 담당': [0, 0, 0, 0, 3, 0, 0, 0] };
-    var LV = ['없음', '보기', '수정', '게시'];
+    var ROLES = ['최고 관리자', '홍보 담당', '본부 담당', '채용 담당'];
+    /* 메뉴별 권한 — 종류: c 콘텐츠(없음·보기·수정·게시), q 접수(없음·보기·처리), v 보기만, h 이력(없음·보기·되돌리기) */
+    var LVS = { c: ['없음', '보기', '수정', '게시'], q: ['없음', '보기', '처리'], v: ['없음', '보기'], h: ['없음', '보기', '되돌리기'] };
+    var MEN = [
+      ['대시보드', '대시보드', 'v'],
+      ['사이트 구성', '메인 화면 구성', 'c'], ['사이트 구성', '메인 배너', 'c'], ['사이트 구성', '메뉴 관리', 'c'], ['사이트 구성', '페이지 편집', 'c'], ['사이트 구성', '팝업', 'c'],
+      ['게시판·콘텐츠', '실적 관리', 'c'], ['게시판·콘텐츠', '소식·보도자료', 'c'], ['게시판·콘텐츠', 'R&D 과제', 'c'], ['게시판·콘텐츠', '인증·수상·특허', 'c'], ['게시판·콘텐츠', '자료실', 'c'], ['게시판·콘텐츠', '채용공고', 'c'],
+      ['고객', '문의 관리', 'q'], ['고객', '실적증명 요청', 'q'], ['고객', '입사 지원', 'q'],
+      ['설정', '회사 정보·하단 문구', 'c'], ['설정', '다국어 문구', 'c'], ['설정', '검색 노출 (SEO)', 'c'], ['설정', '관리자 계정·권한', 'c'], ['설정', '접속 통계', 'v'], ['설정', '변경 이력·되돌리기', 'h']];
+    var M = {
+      '최고 관리자': MEN.map(function (m) { return LVS[m[2]].length - 1; }),
+      '홍보 담당': [1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 2, 0, 2, 3, 2, 0, 1, 1],
+      '본부 담당': [1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+      '채용 담당': [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0] };
     el.innerHTML = head('관리자 계정·권한', '관리자 화면을 쓰는 직원 계정입니다. 역할마다 고칠 수 있는 메뉴가 다르고, 퇴사자는 [중지]로 바로 막습니다.', '<button class="btn navy" id="inv">+ 관리자 초대</button>') +
       '<section class="panel"><div class="tbl"><table><thead><tr><th>이름</th><th class="hide-m">아이디</th><th class="hide-m">부서</th><th>역할</th><th class="hide-m">마지막 접속</th><th class="hide-m">2단계 인증</th><th>상태</th></tr></thead><tbody>' +
       U.map(function (u) { return '<tr><td><b>' + u[0] + '</b></td><td class="hide-m sub">' + u[1] + '</td><td class="hide-m">' + u[2] + '</td><td><select style="width:auto">' + ROLES.map(function (r) { return '<option' + (r === u[3] ? ' selected' : '') + '>' + r + '</option>'; }).join('') + '</select></td><td class="hide-m sub">' + u[4] + '</td><td class="hide-m">' + (u[5] ? tag('사용') : '<span class="tag t-wait">안 씀</span>') + '</td><td>' + tag(u[6]) + '</td></tr>'; }).join('') + '</tbody></table></div></section>' +
-      '<section class="panel"><div class="panel-hd"><h2>역할별 권한</h2><span class="help">칸을 누르면 없음 → 보기 → 수정 → 게시 순으로 바뀝니다</span></div><div class="tbl"><table class="mx"><thead><tr><th>메뉴</th>' + ROLES.map(function (r) { return '<th>' + r + '</th>'; }).join('') + '</tr></thead><tbody>' +
-      MEN.map(function (m, i) { return '<tr><td><b>' + m + '</b></td>' + ROLES.map(function (r) { return '<td><button class="lv lv' + M[r][i] + '" data-r="' + r + '" data-i="' + i + '"' + (r === '최고 관리자' ? ' disabled' : '') + '>' + LV[M[r][i]] + '</button></td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div><div class="panel-bd help">"수정"은 임시저장까지, "게시"는 홈페이지 반영까지 할 수 있습니다. 본부 담당은 자기 본부로 배정된 문의만 봅니다.</div></section>' +
+      '<section class="panel"><div class="panel-hd"><h2>역할별 권한</h2><div style="display:flex;gap:8px"><button class="btn sm">+ 역할 추가</button><button class="btn sm navy" data-save>저장</button></div></div><div class="tbl"><table class="mx"><thead><tr><th>메뉴</th>' + ROLES.map(function (r) { return '<th>' + r + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      (function () { var g = '', h = ''; MEN.forEach(function (m, i) {
+        if (m[0] !== g) { g = m[0]; h += '<tr class="mx-g"><td colspan="' + (ROLES.length + 1) + '">' + g + '</td></tr>'; }
+        h += '<tr><td><b>' + m[1] + '</b> <span class="sub">' + LVS[m[2]].slice(1).join(' · ') + '</span></td>' + ROLES.map(function (r) { var v = M[r][i]; return '<td><button class="lv lv' + (m[2] === 'c' ? v : v === 0 ? 0 : v === LVS[m[2]].length - 1 ? 3 : 1) + '" data-r="' + r + '" data-i="' + i + '"' + (r === '최고 관리자' ? ' disabled' : '') + '>' + LVS[m[2]][v] + '</button></td>'; }).join('') + '</tr>';
+      }); return h; })() + '</tbody></table></div><div class="panel-bd help">칸을 누르면 단계가 바뀝니다. "수정"은 임시저장까지, "게시"는 홈페이지 반영까지, "처리"는 상태 변경·답장까지입니다. 본부 담당은 자기 본부로 배정된 문의만 봅니다. 최고 관리자는 항상 모든 권한을 가집니다.</div></section>' +
       '<section class="panel"><div class="panel-hd"><h2>로그인 기록</h2><span class="help">최근 30일 · 실패 5회면 계정 잠금</span></div><div class="tbl"><table><tbody><tr><td class="sub">11.26 09:12</td><td>김○○</td><td class="hide-m sub">사무실 (내부망)</td><td>' + tag('완료') + '</td></tr><tr><td class="sub">11.25 22:41</td><td>(알 수 없음) admin</td><td class="hide-m sub">해외 IP</td><td><span class="tag t-new">실패 · 차단</span></td></tr><tr><td class="sub">11.25 17:40</td><td>이○○</td><td class="hide-m sub">사무실 (내부망)</td><td>' + tag('완료') + '</td></tr></tbody></table></div></section>';
-    $$('.lv', el).forEach(function (b) { b.onclick = function () { var r = b.dataset.r, i = +b.dataset.i; M[r][i] = (M[r][i] + 1) % 4; b.className = 'lv lv' + M[r][i]; b.textContent = LV[M[r][i]]; }; });
+    $$('.lv', el).forEach(function (b) { b.onclick = function () { var r = b.dataset.r, i = +b.dataset.i, t = MEN[i][2], L = LVS[t], v = (M[r][i] + 1) % L.length; M[r][i] = v; b.className = 'lv lv' + (t === 'c' ? v : v === 0 ? 0 : v === L.length - 1 ? 3 : 1); b.textContent = L[v]; }; });
     $('#inv').onclick = function () { toast('초대 메일을 보내면 직원이 직접 비밀번호를 정합니다 (시안)'); };
   };
 
@@ -411,7 +425,7 @@
       '<section class="panel"><div class="panel-hd"><h2>문의한 기관 유형</h2><span class="help">이번 달 문의 건수</span></div><div class="panel-bd">' + bars([['대기업·건설사', 13], ['공공기관', 11], ['연구기관', 2], ['해외', 1]], '건') + '</div></section></div>' +
       '<section class="panel"><div class="panel-hd"><h2>많이 본 페이지</h2></div><div class="tbl"><table><thead><tr><th>페이지</th><th>조회</th><th class="hide-m">평균 머문 시간</th><th class="hide-m">여기서 문의로 간 비율</th></tr></thead><tbody>' +
       [['메인', 9820, '0:48', '0.6%'], ['실적', 3410, '1:52', '1.9%'], ['사업분야 › 설계', 2240, '1:20', '1.1%'], ['회사소개 › 연혁', 1630, '1:05', '0.2%'], ['자료실', 1210, '0:40', '2.4%']].map(function (r) { return '<tr><td><b>' + r[0] + '</b></td><td>' + r[1].toLocaleString() + '</td><td class="hide-m">' + r[2] + '</td><td class="hide-m">' + r[3] + '</td></tr>'; }).join('') + '</tbody></table></div></section>' +
-      '<details class="panel tblview"><summary>일별 방문자 표로 보기</summary><div class="tbl"><table><tbody>' + days30.map(function (d, i) { return '<tr><td>' + d + '</td><td>' + visits30[i] + '명</td></tr>'; }).join('') + '</tbody></table></div></details>';
+      '<section class="panel"><div class="panel-hd"><h2>어떻게 모으나</h2><span class="help">홈페이지에 넣는 자체 수집 기능 · 외부 분석 도구 없이도 동작</span></div><div class="panel-bd"><ul class="mini-l">' +'<li><span><b>들어온 곳</b> — 브라우저가 알려 주는 직전 주소(리퍼러)로 네이버·구글·나라장터 등을 구분</span></li>' +'<li><span><b>홍보 링크</b> — 메일·링크드인·전시회 QR에 꼬리표(?utm_source=…)를 붙여 어느 홍보에서 왔는지 구분</span></li>' +'<li><span><b>문의와 연결</b> — 처음 들어온 경로를 문의서에 함께 저장해 "어디서 온 문의인지" 확인</span></li>' +'<li><span><b>개인정보</b> — 이름·IP를 저장하지 않고 IP는 국가 판별 뒤 버림, 검색 로봇은 제외</span></li></ul></div></section>' +'<details class="panel tblview"><summary>일별 방문자 표로 보기</summary><div class="tbl"><table><tbody>' + days30.map(function (d, i) { return '<tr><td>' + d + '</td><td>' + visits30[i] + '명</td></tr>'; }).join('') + '</tbody></table></div></details>';
   };
 
   /* ───────────── 변경 이력·되돌리기 ───────────── */
