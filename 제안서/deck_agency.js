@@ -128,7 +128,7 @@ function phone(s, img, x, y, w) {
 const CON = [
   { k: "A", en: "Corporate\nClassic", ko: "기업 정통형", bg: C.navy, fg: C.white, sub: "C5D0E0", pal: ["1D395E", "BC1616", "FFFFFF"], kw: "전체 화면 사진 · 큰 영문 타이포 · 사업 바로가기 줄", fit: "공공기관·대기업에 무난하고 신뢰감 있는 첫인상", desc: "국내 대기업·건설사 홈페이지의 익숙한 구조에, 사진 위 큰 영문 타이포와 첫 화면 아래 사업분야 바로가기를 더했습니다." },
   { k: "B", en: "Project\nPortfolio", ko: "프로젝트 중심형", bg: "FFFFFF", fg: C.ink, sub: C.sub, pal: ["111111", "FFFFFF", "BC1616"], kw: "흰 바탕 · 큰 사진 · 실적 목록이 주인공", fit: "실적으로 말하는 설계사무소 같은 인상", desc: "설계사무소 포트폴리오처럼 실적 목록이 첫 화면의 중심입니다. 줄을 누르면 과제·수행·결과가 펼쳐집니다." },
-  { k: "C", en: "Dark\nPremium", ko: "다크 프리미엄형", bg: "101216", fg: C.white, sub: "9EA4AE", pal: ["0B0D11", "D42A1F", "ECEEF2"], kw: "어두운 바탕 · 슬라이드별 큰 영문 단어 · 가로 사례 카드", fit: "기술력과 고급스러움을 강조하고 싶을 때", desc: "DESIGN · SUPERVISION · RESEARCH가 넘어가는 첫 화면, 스크롤하면 한 단어씩 밝아지는 소개 문장으로 인상을 남깁니다." },
+  { k: "C", en: "Dark\nPremium", ko: "다크 프리미엄형", bg: "101216", fg: C.white, sub: "9EA4AE", pal: ["0B0D11", "D42A1F", "ECEEF2"], kw: "어두운 바탕 · 슬라이드별 큰 영문 단어 · 가로 사례 카드", fit: "기술력과 고급스러움을 강조하고 싶을 때", desc: "좌우 버튼으로 DESIGN · SUPERVISION · RESEARCH를 넘겨 보는 첫 화면, 스크롤하면 한 단어씩 밝아지는 소개 문장으로 인상을 남깁니다." },
   { k: "D", en: "White\nModern", ko: "화이트 모던형", bg: C.off, fg: C.ink, sub: C.sub, pal: ["FFFFFF", "1D395E", "C8191B"], kw: "영문 타이포·사진 겹침 · 사업·발주처 탭 · 홍보영상", fit: "깔끔하면서 정보를 많이 담아야 할 때", desc: "‘SAFETY, ENGINEERED’ 타이포가 사진과 겹치는 첫 화면. 사업분야와 발주처 유형을 탭으로 골라 봅니다." }];
 CON.forEach((c, i) => {
   const s = pptx.addSlide(); s.background = { color: c.bg };
