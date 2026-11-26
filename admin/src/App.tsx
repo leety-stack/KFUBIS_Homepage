@@ -9,6 +9,9 @@ import Popups from "./pages/Popups";
 import MainSections from "./pages/MainSections";
 import Inbox, { INBOX } from "./pages/Inbox";
 import Company from "./pages/Company";
+import Users from "./pages/Users";
+import Roles from "./pages/Roles";
+import Logins from "./pages/Logins";
 import { AuthProvider, useAuth } from "./lib/auth";
 import { ToastProvider, Opt } from "./components/ui";
 import { BOARDS } from "./boards";
@@ -23,7 +26,7 @@ function Page() {
   if (key === "dash") return <Dashboard />;
   if (BOARDS[key]) return <Board boardKey={key} />;
   if (INBOX[key]) return <Inbox inboxKey={key} />;
-  const P: Record<string, () => React.ReactElement> = { menu: Menus, banner: Banners, popup: Popups, main: MainSections, company: Company };
+  const P: Record<string, () => React.ReactElement> = { menu: Menus, banner: Banners, popup: Popups, main: MainSections, company: Company, users: Users, roles: Roles, logins: Logins };
   if (P[key]) { const C = P[key]; return <C />; }
   return (
     <section className="view on">

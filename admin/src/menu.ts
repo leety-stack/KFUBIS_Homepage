@@ -22,7 +22,7 @@ export const MENU: MenuGroup[] = [
   { group: "설정", items: [
     { key: "company", label: "회사 정보·하단 문구", ready: true }, { key: "i18n", label: "다국어 문구" },
     { key: "seo", label: "검색 노출 (SEO)", option: true }, { key: "stats", label: "접속 통계", option: true }, { key: "history", label: "변경 이력·되돌리기", option: true }] },
-  { group: "관리자", items: [{ key: "users", label: "관리자 계정" }, { key: "roles", label: "역할·권한" }, { key: "logins", label: "로그인 기록" }] },
+  { group: "관리자", items: [{ key: "users", label: "관리자 계정", ready: true }, { key: "roles", label: "역할·권한", ready: true }, { key: "logins", label: "로그인 기록", ready: true }] },
 ];
 
 /** 옵션 기능 숨김 — 담당자가 숨기려면 여기에 키를 넣는다 (예: ["page", "seo", "stats", "history"]) */

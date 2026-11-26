@@ -20,6 +20,7 @@ def login(email, pw):
 
 def check(name, cond):
     global ok, fail
+    cond = bool(cond)
     print(("  OK  " if cond else "  !!  ") + name); ok += cond; fail += (not cond)
 
 top = login(*ADMIN); check("최고 관리자 로그인", bool(top))
@@ -27,8 +28,9 @@ roles = {r["name"]: r["id"] for r in req("GET", "/api/collections/roles/records?
 
 # 테스트 계정 만들기 (있으면 지우고)
 def mkuser(email, role):
-    s, d = req("GET", "/api/collections/users/records?filter=" + urllib.parse.quote(f'email="{email}"'), token=top)
-    for u in d.get("items", []): req("DELETE", f"/api/collections/users/records/{u['id']}", token=top)
+    s, d = req("GET", "/api/collections/users/records?perPage=500", token=top)  # 메일로 걸러 찾기는 막혀 있어 목록에서 찾음
+    for u in d.get("items", []):
+        if u.get("email") == email: req("DELETE", f"/api/collections/users/records/{u['id']}", token=top)
     s, d = req("POST", "/api/collections/users/records", {"email": email, "password": "test-12345", "passwordConfirm": "test-12345", "name": role, "role": roles[role], "status": "사용", "verified": True}, token=top)
     return d.get("id")
 import urllib.parse
@@ -131,6 +133,55 @@ s, d = req("GET", f"/api/collections/applications/records/{aid}", token=top); ch
 for c, i in [("inquiries", iid), ("certreqs", cid), ("applications", aid), ("jobs", j1), ("jobs", j2)]:
     if i: req("DELETE", f"/api/collections/{c}/records/{i}", token=top)
 for i in [sv_id, ds_id]: req("DELETE", f"/api/collections/users/records/{i}", token=top)
+
+# ── 4단계: 계정·로그인 ──
+import re as _re
+def raw_login(email, pw): return requests.post(f"{B}/api/collections/users/auth-with-password", json={"identity": email, "password": pw})
+lk_id = mkuser("lock@test.local", "본부 담당")
+for _ in range(5): raw_login("lock@test.local", "wrong-pw")
+r = raw_login("lock@test.local", "test-12345"); check(f"5번 틀리면 잠김 — 맞는 비밀번호도 거절 ({r.status_code})", r.status_code == 400 and "잠겼" in r.text)
+s, _ = req("POST", "/api/cms/users/unlock", {"id": lk_id}, token=bonbu); check(f"최고 관리자 아니면 잠금 못 풂 ({s})", s == 403)
+s, _ = req("POST", "/api/cms/users/unlock", {"id": lk_id}, token=top); check(f"잠금 풀기 ({s})", s == 200)
+check("잠금 푼 뒤 로그인", raw_login("lock@test.local", "test-12345").status_code == 200)
+s, d = req("GET", "/api/collections/login_logs/records?perPage=200&filter=" + urllib.parse.quote('email="lock@test.local"'), token=top)
+check(f"로그인 기록 남음 (실패·잠금·성공 {d.get('totalItems')}건)", d.get("totalItems", 0) >= 7 and any("잠금" in (x["reason"] or "") for x in d["items"]))
+s, d = req("GET", "/api/collections/login_logs/records", token=bonbu); check(f"권한 없으면 로그인 기록 못 봄 ({d.get('totalItems', 0)}건)", d.get("totalItems", 0) == 0)
+# 초대
+for u in req("GET", "/api/collections/users/records?perPage=500", token=top)[1].get("items", []):
+    if u.get("email") == "invite@test.local": req("DELETE", f"/api/collections/users/records/{u['id']}", token=top)
+m3 = len(mails())
+s, d = req("POST", "/api/cms/users/invite", {"email": "invite@test.local", "name": "초대 시험", "dept": "홍보팀", "role": roles["홍보 담당"]}, token=bonbu); check(f"최고 관리자 아니면 초대 못 함 ({s})", s == 403)
+s, d = req("POST", "/api/cms/users/invite", {"email": "invite@test.local", "name": "초대 시험", "dept": "홍보팀", "role": roles["홍보 담당"]}, token=top); inv = d.get("id")
+check(f"초대 → 계정 생성 ({s}, 메일 {d.get('mailed')})", s == 200 and inv)
+time.sleep(1); check("초대 메일(비밀번호 정하기 링크) 도착" + ("" if MAIL else " (건너뜀)"), (not MAIL) or ("invite@test.local" in mails()[m3:] and "confirm-password-reset" in mails()[m3:]))
+s, _ = req("POST", "/api/cms/users/invite", {"email": "invite@test.local"}, token=top); check(f"같은 메일 다시 초대 막힘 ({s})", s == 400)
+# 모든 기기 로그아웃
+old = login("lock@test.local", "test-12345")
+s, _ = req("POST", "/api/cms/users/logout-all", {"id": lk_id}, token=top)
+r = requests.post(f"{B}/api/collections/users/auth-refresh", headers={"Authorization": old}); check(f"모든 기기 로그아웃 → 예전 토큰 무효 ({r.status_code})", r.status_code == 401)
+# 2단계 인증 (메일 인증번호)
+if MAIL:
+    s, _ = req("POST", "/api/cms/login-rules", {"fail_limit": 5, "lock_minutes": 30, "idle_minutes": 30, "mfa": True}, token=top)
+    r = raw_login("lock@test.local", "test-12345"); mfa = r.json().get("mfaId")
+    check(f"2단계 인증 켜면 비밀번호만으로는 안 됨 ({r.status_code})", r.status_code == 401 and mfa)
+    m4 = len(mails())
+    otp = requests.post(f"{B}/api/collections/users/request-otp", json={"email": "lock@test.local"}).json().get("otpId")
+    time.sleep(1); body = mails()[m4:]
+    import quopri, base64
+    txt = quopri.decodestring(body.encode()).decode("utf-8", "ignore")
+    codes = _re.findall(r"(?:^|\s|>)(\d{6})(?:\s|<|$)", txt, _re.M)[:1]  # 홀로 있는 6자리 = 인증번호 (구분선 숫자 제외)
+    r = requests.post(f"{B}/api/collections/users/auth-with-otp", json={"otpId": otp, "password": codes[0] if codes else "000000", "mfaId": mfa})
+    check(f"메일 인증번호로 로그인 완료 ({r.status_code})", r.status_code == 200)
+    req("POST", "/api/cms/login-rules", {"fail_limit": 5, "lock_minutes": 30, "idle_minutes": 30, "mfa": False}, token=top)
+    check("2단계 인증 끄면 비밀번호로 다시 로그인", raw_login("lock@test.local", "test-12345").status_code == 200)
+for i in [lk_id, inv]:
+    if i: req("DELETE", f"/api/collections/users/records/{i}", token=top)
+
+# 역할 삭제: 쓰는 계정이 있거나 최고 관리자 역할이면 막음
+s, _ = req("DELETE", f"/api/collections/roles/records/{roles['채용 담당']}", token=top); check(f"쓰는 계정 있는 역할 삭제 차단 ({s})", s == 400)
+s, _ = req("DELETE", f"/api/collections/roles/records/{roles['최고 관리자']}", token=top); check(f"최고 관리자 역할 삭제 차단 ({s})", s == 400)
+s, d = req("POST", "/api/collections/roles/records", {"name": "삭제시험 역할", "perms": {"dash": 1}}, token=top)
+s, _ = req("DELETE", f"/api/collections/roles/records/{d.get('id')}", token=top); check(f"안 쓰는 역할은 삭제 ({s})", s == 204)
 
 # 정리
 for c, i in [("works", wid), ("jobs", jid), ("news", nid)]:

@@ -38,7 +38,7 @@ export default function Shell({ children }: { children: ReactNode }) {
             <strong id="ttl">{cur.label}{cur.option && <Opt />}</strong>
             <div className="r">
               <span className="hide-m">{user?.dept ? user.dept + " " : ""}{user?.name} ({role?.name ?? "역할 없음"})</span>
-              <button className="btn sm" onClick={logout}>로그아웃</button>
+              <button className="btn sm" onClick={() => logout()}>로그아웃</button>
             </div>
           </div>
           <div className="content">{children}</div>

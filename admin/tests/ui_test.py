@@ -51,7 +51,7 @@ with sync_playwright() as p:
     check("시험 글 삭제", pg.locator(".blist-t tbody tr", has_text="관리자 화면 시험 글").count() == 0)
     pg.screenshot(path=str(OUT / "news_list.png"))
 
-    pg.click("aside >> text=관리자 계정"); pg.wait_for_timeout(300)
+    pg.click("aside >> text=다국어 문구"); pg.wait_for_timeout(300)
     check("다음 단계 화면 안내", "다음 단계" in pg.inner_text(".content"))
     m = b.new_page(viewport={"width": 390, "height": 844}); m.on("pageerror", lambda e: errs.append(str(e)))
     m.goto(URL + "#/works"); m.wait_for_timeout(1500); m.screenshot(path=str(OUT / "mobile.png"))
