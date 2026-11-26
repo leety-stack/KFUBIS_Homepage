@@ -2,3 +2,8 @@
 *.log
 .DS_Store
 Thumbs.db
+제안서/png/
+제안서/_*.jpg
+제안서/.deck_cache/
+제안서/render_tmp.pptx
+~$*
