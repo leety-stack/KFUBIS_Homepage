@@ -25,7 +25,7 @@ with sync_playwright() as p:
         pg.evaluate('y=>scrollTo(0,y)', y - 120); pg.wait_for_timeout(700)
         pg.screenshot(path=str(OUT / f'{name}.png'))
     # 관리자 화면
-    for v in ['dash', 'page', 'menu', 'popup', 'inquiry', 'main', 'works', 'users']:
+    for v in ['dash', 'page', 'menu', 'popup', 'inquiry', 'main', 'works', 'users', 'stats']:
         pg.goto((S / '관리자.html').as_uri() + '#' + v); pg.wait_for_timeout(900)
         pg.screenshot(path=str(OUT / f'adm_{v}.png'))
     pg.goto((S / '관리자.html').as_uri() + '#works'); pg.wait_for_timeout(600)

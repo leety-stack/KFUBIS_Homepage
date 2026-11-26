@@ -32,6 +32,8 @@ fit(SH / 'a_target.png', 'j2.jpg', 0.79, (0.02, 0.04, 0.4, 0.9), 900)
 fit(SH / 'a_case.png', 'j3.jpg', 0.79, (0.02, 0.08, 0.4, 0.9), 900)
 fit(SH / 'a_inq.png', 'j4.jpg', 0.79, (0.03, 0.08, 0.4, 0.9), 900)
 fit(SH / 'adm_page.png', 'adm_page.jpg', 1.6)
+fit(SH / 'adm_stats.png', 'adm_stats.jpg', 1.6)
+fit(SH / 'adm_inquiry.png', 'adm_inq_src.jpg', 1.5, (0.29, 0.19, 0.46, 0.5), 1200)
 for n in ['dash', 'menu', 'popup', 'board', 'inquiry', 'users']:
     fit(SH / f'adm_{n}.png', f'g_{n}.jpg', 1.6, width=1200)
 print('ok')

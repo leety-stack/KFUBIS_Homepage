@@ -4,7 +4,7 @@ const path = require("path");
 const pptxgen = require(path.join(process.env.USERPROFILE, ".claude/skills/witco-deck/scripts/node_modules/pptxgenjs"));
 
 const A = (f) => path.join(__dirname, "assets", f);
-const OUT = path.join(__dirname, "[한방유비스 홈페이지] 대표홈페이지 개편_제안서(디자인형).pptx");
+const OUT = path.join(__dirname, process.argv[2] || "[한방유비스 홈페이지] 대표홈페이지 개편_제안서(디자인형).pptx");
 const R = "NanumSquare", B = "NanumSquare Bold", EB = "NanumSquare ExtraBold";
 const C = { dark: "0E1014", dark2: "171A20", off: "F3F1EC", white: "FFFFFF", ink: "15181D", sub: "6B7079", line: "D9D6CF", lineD: "2B2F37", red: "D42A1F", navy: "1D395E", mute: "8A8F98" };
 
@@ -57,7 +57,7 @@ function phone(s, img, x, y, w) {
   const s = pptx.addSlide(); s.background = { color: C.off };
   T(s, "CON\nTENTS", { x: 0.65, y: 0.9, w: 4.5, h: 2.6, fontSize: 64, fontFace: EB, charSpacing: -2, lineSpacingMultiple: 0.88 });
   T(s, "무엇을, 어떻게,\n언제까지 바꾸는지", { x: 0.7, y: 3.75, w: 4, h: 0.9, fontSize: 15, color: C.sub, lineSpacingMultiple: 1.3 });
-  const L = [["01", "BACKGROUND", "개편 배경"], ["02", "DIRECTION", "개편 방향 — B2B 5원칙"], ["03", "DESIGN CONCEPTS", "디자인 시안 4종"], ["04", "CMS", "직접 고치는 관리자"], ["05", "SCHEDULE & SCOPE", "일정과 범위"]];
+  const L = [["01", "BACKGROUND", "개편 배경"], ["02", "DIRECTION", "개편 방향 — B2B 5원칙"], ["03", "DESIGN CONCEPTS", "디자인 시안 4종"], ["04", "CMS & INSIGHT", "직접 고치는 관리자 · 접속 통계"], ["05", "SCHEDULE & SCOPE", "일정과 범위"]];
   L.forEach((r, i) => {
     const y = 1.0 + i * 1.08;
     s.addShape(pptx.ShapeType.line, { x: 5.6, y, w: 7.1, h: 0, line: { color: C.line, width: 0.75 } });
@@ -184,7 +184,7 @@ CON.forEach((c, i) => {
   const s = pptx.addSlide(); s.background = { color: C.off };
   label(s, "04", "CMS — 21 SCREENS");
   T(s, "홈페이지의 모든 것을 한 곳에서", { x: 0.6, y: 1.05, w: 9, h: 0.7, fontSize: 30, fontFace: EB, charSpacing: -1 });
-  const G = [["g_dash.jpg", "대시보드", "오늘 처리할 일 · 방문자 · 최근 변경"], ["g_menu.jpg", "메뉴 관리", "끌어서 순서 변경 · 노출 · 연결 페이지"], ["g_popup.jpg", "팝업", "기간 · 위치 · 기기 · 바로 미리보기"], ["g_board.jpg", "게시판 (실적 외 5종)", "목록에서 눌러 팝업으로 편집 · 국/영문"], ["g_inquiry.jpg", "문의 관리", "담당 본부 자동 배정 · 메모 · 답장"], ["g_users.jpg", "관리자 계정·권한", "역할별 보기 · 수정 · 게시 권한"]];
+  const G = [["g_dash.jpg", "대시보드", "오늘 처리할 일 · 방문자 · 최근 변경"], ["g_menu.jpg", "메뉴 관리", "끌어서 순서 변경 · 노출 · 연결 페이지"], ["g_popup.jpg", "팝업", "기간 · 위치 · 기기 · 바로 미리보기"], ["g_board.jpg", "게시판 (실적 외 5종)", "목록에서 눌러 팝업으로 편집 · 국/영문"], ["g_inquiry.jpg", "문의 관리", "담당 배정 · 들어온 경로 · 답장"], ["g_users.jpg", "관리자 계정·권한", "메뉴 21개별로 역할마다 권한 지정"]];
   const gw = 3.3, gh = gw / 1.6, gx = (12.13 - gw * 3) / 2;
   G.forEach((g, i) => {
     const x = 0.6 + (i % 3) * (gw + gx), y = 1.85 + Math.floor(i / 3) * (gh + 0.55);
@@ -195,7 +195,26 @@ CON.forEach((c, i) => {
   pageNo(s, 12);
 }
 
-/* 13 일정 — 간트 */
+/* 13 접속 통계 */
+{
+  const s = pptx.addSlide(); s.background = { color: C.dark };
+  label(s, "04", "INSIGHT", true);
+  T(s, "어디서 들어와\n어떤 문의가 됐는지", { x: 0.6, y: 1.15, w: 5, h: 1.6, fontSize: 32, fontFace: EB, color: C.white, charSpacing: -1, lineSpacingMultiple: 1.15 });
+  const P = [["들어온 곳", "직전 주소(리퍼러)로 네이버·구글·나라장터 등을 구분"], ["홍보 링크 꼬리표", "메일·링크드인·전시회 QR에 ?utm_ 꼬리표를 붙여 홍보별 효과 비교"], ["문의와 연결", "처음 들어온 경로를 문의서에 함께 저장 — 어디서 온 문의인지 바로 확인"], ["개인정보 보호", "이름·IP를 저장하지 않고, 검색 로봇은 제외"]];
+  P.forEach((p, i) => {
+    const y = 3.05 + i * 0.86;
+    T(s, "0" + (i + 1), { x: 0.62, y, w: 0.5, h: 0.3, fontSize: 11, fontFace: EB, color: C.red });
+    T(s, p[0], { x: 1.1, y: y - 0.02, w: 3.9, h: 0.3, fontSize: 13, fontFace: B, color: C.white });
+    T(s, p[1], { x: 1.1, y: y + 0.3, w: 3.9, h: 0.5, fontSize: 10, color: "9EA4AE", lineSpacingMultiple: 1.35 });
+  });
+  browser(s, "adm_stats.jpg", 5.45, 1.0, 6.2);
+  s.addImage({ path: A("adm_inq_src.jpg"), x: 9.55, y: 3.95, w: 3.2, h: 3.2 / 1.5, shadow: shadow() });
+  T(s, "문의 상세의 \"들어온 경로\"", { x: 9.55, y: 3.95 + 3.2 / 1.5 + 0.08, w: 3.2, h: 0.25, fontSize: 9, color: C.mute, align: "right" });
+  T(s, "관리자 시안 화면 — 접속 통계 · 표본 데이터", { x: 5.45, y: 1.0 + 0.26 + 6.2 / 1.6 + 0.08, w: 4, h: 0.25, fontSize: 9, color: C.mute });
+  pageNo(s, 13, true);
+}
+
+/* 14 일정 — 간트 */
 {
   const s = pptx.addSlide(); s.background = { color: C.white };
   label(s, "05", "SCHEDULE");
@@ -220,10 +239,10 @@ CON.forEach((c, i) => {
   const ms = [[2, "시안 확정"], [5, "디자인 확정"], [12, "오픈"]];
   ms.forEach((m) => T(s, "▲ " + m[1], { x: x0 + m[0] * cw - 0.75, y: y0 + 0.45 + 7 * rh + 0.05, w: 1.5, h: 0.25, fontSize: 9, fontFace: B, color: C.red, align: "center" }));
   T(s, "기간은 시안 확정 시점과 자료(사진·실적·영문) 준비 속도에 따라 조정합니다.", { x: 0.62, y: 1.72, w: 9, h: 0.25, fontSize: 9.5, color: C.sub });
-  pageNo(s, 13);
+  pageNo(s, 14);
 }
 
-/* 14 범위 */
+/* 15 범위 */
 {
   const s = pptx.addSlide(); s.background = { color: C.off };
   label(s, "05", "SCOPE");
@@ -246,10 +265,10 @@ CON.forEach((c, i) => {
     T(s, q[0], { x: 7.85, y: y - 0.02, w: 4.5, h: 0.3, fontSize: 13, fontFace: B, color: C.white });
     T(s, q[1], { x: 7.85, y: y + 0.3, w: 4.5, h: 0.3, fontSize: 10.5, color: "9EA4AE" });
   });
-  pageNo(s, 14);
+  pageNo(s, 15);
 }
 
-/* 15 마무리 */
+/* 16 마무리 */
 {
   const s = pptx.addSlide(); s.background = { color: C.dark };
   s.addImage({ path: A("C_pc.jpg"), x: 6.2, y: 0, w: 7.133, h: 7.5, sizing: { type: "cover", w: 7.133, h: 7.5 }, transparency: 55 });
