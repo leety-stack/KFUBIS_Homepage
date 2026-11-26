@@ -57,7 +57,7 @@ function phone(s, img, x, y, w) {
   const s = pptx.addSlide(); s.background = { color: C.off };
   T(s, "CON\nTENTS", { x: 0.65, y: 0.9, w: 4.5, h: 2.6, fontSize: 64, fontFace: EB, charSpacing: -2, lineSpacingMultiple: 0.88 });
   T(s, "무엇을, 어떻게,\n언제까지 바꾸는지", { x: 0.7, y: 3.75, w: 4, h: 0.9, fontSize: 15, color: C.sub, lineSpacingMultiple: 1.3 });
-  const L = [["01", "BACKGROUND", "개편 배경"], ["02", "DIRECTION", "개편 방향 — B2B 5원칙"], ["03", "DESIGN CONCEPTS", "디자인 시안 4종"], ["04", "CMS", "직접 고치는 관리자"], ["05", "SCHEDULE & SCOPE", "일정과 범위"]];
+  const L = [["01", "BACKGROUND", "개편 배경"], ["02", "DIRECTION", "개편 방향 — B2B 5원칙"], ["03", "DESIGN CONCEPTS", "디자인 시안 4종 · 첫 화면 계열사 선택"], ["04", "CMS", "직접 고치는 관리자"], ["05", "SCHEDULE & SCOPE", "일정과 범위"]];
   L.forEach((r, i) => {
     const y = 1.0 + i * 1.08;
     s.addShape(pptx.ShapeType.line, { x: 5.6, y, w: 7.1, h: 0, line: { color: C.line, width: 0.75 } });
@@ -161,6 +161,23 @@ CON.forEach((c, i) => {
   pageNo(s, 10, true);
 }
 
+/* 10-2 첫 화면 계열사 선택 */
+{
+  const s = pptx.addSlide(); s.background = { color: C.dark };
+  s.addImage({ path: A("gate.jpg"), x: 4.6, y: 0, w: 8.733, h: 7.5, sizing: { type: "cover", w: 8.733, h: 7.5 } });
+  s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 4.9, h: H, fill: { color: C.dark }, line: { color: C.dark } });
+  label(s, "03", "GROUP GATE", true);
+  T(s, "들어오면\n계열사부터\n고릅니다", { x: 0.6, y: 1.2, w: 4.1, h: 2.4, fontSize: 36, fontFace: EB, color: C.white, charSpacing: -1, lineSpacingMultiple: 1.1 });
+  const P = [["한방유비스", "고르면 선택 화면이 위로 걷히며 바로 메인으로"], ["한방 · 케이유비스 · AI", "각 회사 홈페이지로 이동"], ["다음부터 바로", "체크하면 다음 방문부터 안 뜸 · 건너뛰기"], ["관리자에서", "켜고 끄기, 회사·주소·사진·소개 수정"]];
+  P.forEach((p, i) => {
+    const y = 3.85 + i * 0.72;
+    T(s, "0" + (i + 1), { x: 0.62, y, w: 0.5, h: 0.3, fontSize: 11, fontFace: EB, color: C.red });
+    T(s, p[0], { x: 1.1, y: y - 0.02, w: 3.6, h: 0.3, fontSize: 12.5, fontFace: B, color: C.white });
+    T(s, p[1], { x: 1.1, y: y + 0.28, w: 3.6, h: 0.3, fontSize: 9.5, color: "9EA4AE" });
+  });
+  pageNo(s, 11, true);
+}
+
 /* 11 CMS */
 {
   const s = pptx.addSlide(); s.background = { color: C.dark };
@@ -176,7 +193,7 @@ CON.forEach((c, i) => {
   });
   browser(s, "adm_board.jpg", 5.45, 1.15, 7.35);
   T(s, "관리자 시안 화면 — 실적 관리 · 표본 데이터", { x: 5.45, y: 6.15, w: 7.35, h: 0.25, fontSize: 9, color: C.mute, align: "right" });
-  pageNo(s, 11, true);
+  pageNo(s, 12, true);
 }
 
 /* 12 CMS 19개 화면 */
@@ -192,7 +209,7 @@ CON.forEach((c, i) => {
     s.addShape(pptx.ShapeType.rect, { x, y, w: gw, h: gh, fill: { type: "none" }, line: { color: "D5D2CB", width: 0.75 } });
     T(s, [{ text: g[1] + "   ", options: { fontFace: B, fontSize: 12, color: C.ink } }, { text: g[2], options: { fontSize: 9.5, color: C.sub } }], { x, y: y + gh + 0.1, w: gw + 0.3, h: 0.3 });
   });
-  pageNo(s, 12);
+  pageNo(s, 13);
 }
 
 /* 13 일정 — 간트 */
@@ -220,7 +237,7 @@ CON.forEach((c, i) => {
   const ms = [[2, "시안 확정"], [5, "디자인 확정"], [12, "오픈"]];
   ms.forEach((m) => T(s, "▲ " + m[1], { x: x0 + m[0] * cw - 0.75, y: y0 + 0.45 + 7 * rh + 0.05, w: 1.5, h: 0.25, fontSize: 9, fontFace: B, color: C.red, align: "center" }));
   T(s, "기간은 시안 확정 시점과 자료(사진·실적·영문) 준비 속도에 따라 조정합니다.", { x: 0.62, y: 1.72, w: 9, h: 0.25, fontSize: 9.5, color: C.sub });
-  pageNo(s, 13);
+  pageNo(s, 14);
 }
 
 /* 14 범위 */
@@ -246,7 +263,7 @@ CON.forEach((c, i) => {
     T(s, q[0], { x: 7.85, y: y - 0.02, w: 4.5, h: 0.3, fontSize: 13, fontFace: B, color: C.white });
     T(s, q[1], { x: 7.85, y: y + 0.3, w: 4.5, h: 0.3, fontSize: 10.5, color: "9EA4AE" });
   });
-  pageNo(s, 14);
+  pageNo(s, 15);
 }
 
 /* 15 마무리 */

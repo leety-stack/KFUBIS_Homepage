@@ -17,7 +17,7 @@ with sync_playwright() as p:
     b = p.chromium.launch()
     pg = b.new_page(viewport={'width': 1600, 'height': 900})
     # 시안 A 구역별
-    pg.goto((S / 'A_기업정통형.html').as_uri()); pg.wait_for_timeout(2500)
+    pg.goto((S / 'A_기업정통형.html').as_uri() + '?gate=0'); pg.wait_for_timeout(2500)
     pg.screenshot(path=str(OUT / 'a_hero.png'))
     settle(pg)
     for name, sel in [('a_biz', '.biz'), ('a_target', '.target'), ('a_case', '.case'), ('a_inq', '#inq')]:
@@ -34,7 +34,7 @@ with sync_playwright() as p:
     # 휴대폰 (시안 C·D·A 첫 화면)
     m = b.new_page(viewport={'width': 390, 'height': 844}, device_scale_factor=2)
     for k, f in [('A', 'A_기업정통형.html'), ('C', 'C_다크프리미엄형.html'), ('D', 'D_화이트모던형.html')]:
-        m.goto((S / f).as_uri()); m.wait_for_timeout(2500)
+        m.goto((S / f).as_uri() + '?gate=0'); m.wait_for_timeout(2500)
         m.screenshot(path=str(OUT / f'mo_{k}.png'))
     b.close()
 print('ok')

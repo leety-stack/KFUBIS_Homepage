@@ -34,4 +34,5 @@ fit(SH / 'a_inq.png', 'j4.jpg', 0.79, (0.03, 0.08, 0.4, 0.9), 900)
 fit(SH / 'adm_board.png', 'adm_board.jpg', 1.6)
 for n in ['dash', 'menu', 'popup', 'board', 'inquiry', 'users', 'roles']:
     fit(SH / f'adm_{n}.png', f'g_{n}.jpg', 1.6, width=1200)
+fit(S / 'mock' / 'G_show.jpg', 'gate.jpg', 1.6)
 print('ok')

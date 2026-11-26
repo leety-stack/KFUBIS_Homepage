@@ -101,6 +101,7 @@
 
   /* ───────────── 메인 화면 구성 ───────────── */
   var SECS = [
+    { k: 'gate', n: '첫 화면 계열사 선택', on: true, set: '한방 · 한방유비스 · 케이유비스 · AI 계열사' },
     { k: 'hero', n: '첫 화면 (메인 배너)', on: true, set: '배너 3개 · 6초마다 넘김', link: '#banner' },
     { k: 'clients', n: '발주처 이름 띠', on: true, set: '6곳', items: ['인천국제공항공사', '롯데', '현대자동차', '현대제철', '정부종합청사', '주한미군'] },
     { k: 'biz', n: '사업분야', on: true, set: '5개 본부 (사업분야 페이지에서 가져옴)' },
@@ -131,7 +132,12 @@
       $('#mini').innerHTML = SECS.filter(function (s) { return s.on; }).map(function (s) { return '<div class="mini-b mb-' + s.k + '">' + E(s.n) + '</div>'; }).join('');
       var s = SECS[cur], p = '';
       $('#sec-t').textContent = s.n + ' 설정';
-      if (s.k === 'nums') p = '<div class="help" style="margin-bottom:8px">숫자는 홈페이지에서 0부터 올라가며 보입니다.</div>' + s.nums.map(function (n, j) { return '<div class="grid2" style="margin-bottom:8px"><div class="f"><label>숫자 ' + (j + 1) + '</label><input value="' + E(n[0]) + '"></div><div class="f"><label>설명 (국문)</label><input value="' + E(n[1]) + '"></div></div>'; }).join('') + '<button class="btn sm">+ 숫자 추가</button>';
+      if (s.k === 'gate') p = '<div class="help" style="margin-bottom:10px">홈페이지에 들어오면 맨 먼저 뜨는 회사 선택 화면입니다. 한방유비스를 고르면 바로 메인으로, 다른 회사는 그 홈페이지로 이동합니다.</div>' +
+        '<div class="f"><label>회사 (순서대로 나옴)</label><table class="gtt"><thead><tr><th>회사</th><th>홈페이지 주소</th><th>소개 한 줄</th><th>사진</th></tr></thead><tbody>' +
+        [['한방', 'https://hanbang1947.co.kr', '', 'img/hero_complex.jpg'], ['한방유비스', '(지금 홈페이지)', '공항·초고층·플랜트의 소방설계와 감리', 'img/hero_airport.jpg'], ['케이유비스', '', '', 'img/p_tower3.jpg'], ['AI 계열사(가칭)', '', '소방 데이터·AI 엔지니어링', 'img/p_data.jpg']].map(function (c) { return '<tr><td><input value="' + E(c[0]) + '"></td><td><input value="' + E(c[1]) + '" placeholder="주소 입력"' + (c[0] === '한방유비스' ? ' disabled' : '') + '></td><td><input value="' + E(c[2]) + '" placeholder="소개 입력"></td><td><img src="' + c[3] + '" alt=""></td></tr>'; }).join('') +
+        '</tbody></table><button class="btn sm" style="margin-top:8px">+ 회사 추가</button></div>' +
+        '<div class="grid2" style="margin-top:12px"><div class="f"><label>다시 뜨는 기준</label><select><option>새로 접속할 때마다 한 번</option><option>하루에 한 번</option><option>처음 한 번만</option></select></div><div class="f"><label>"다음부터 바로 한방유비스로"</label><select><option>보이기</option><option>숨기기</option></select></div></div>';
+      else if (s.k === 'nums') p = '<div class="help" style="margin-bottom:8px">숫자는 홈페이지에서 0부터 올라가며 보입니다.</div>' + s.nums.map(function (n, j) { return '<div class="grid2" style="margin-bottom:8px"><div class="f"><label>숫자 ' + (j + 1) + '</label><input value="' + E(n[0]) + '"></div><div class="f"><label>설명 (국문)</label><input value="' + E(n[1]) + '"></div></div>'; }).join('') + '<button class="btn sm">+ 숫자 추가</button>';
       else if (s.k === 'clients') p = '<div class="f"><label>발주처 (이름 또는 로고)</label><div class="chiplist">' + s.items.map(function (x) { return '<span>' + E(x) + ' <button>×</button></span>'; }).join('') + '</div><div style="display:flex;gap:6px;margin-top:8px"><input placeholder="발주처 이름"><button class="btn sm">추가</button><button class="btn sm">로고 이미지 올리기</button></div><span class="help">로고는 사용 허락을 받은 것만 올립니다. 로고가 없으면 이름으로 표시.</span></div>';
       else if (s.k === 'cases') p = '<div class="f"><label>메인에 보일 사례 (최대 3건)</label>' + WORKS.slice(0, 5).map(function (w, j) { return '<label class="ck"><input type="checkbox"' + (j < 3 ? ' checked' : '') + '> ' + E(w.name) + ' <span class="sub">' + E(w.type) + '</span></label>'; }).join('') + '<a class="help" href="#works" style="text-decoration:underline">실적 관리에서 사례 내용 고치기</a></div>';
       else if (s.k === 'hero') p = '<p>첫 화면 사진·문구는 <a href="#banner" style="color:var(--blue);font-weight:700">메인 배너</a>에서 고칩니다.</p>';
